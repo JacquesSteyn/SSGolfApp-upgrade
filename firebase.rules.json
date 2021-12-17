@@ -1,0 +1,23 @@
+{
+    "rules": {
+        ".read": true,
+        ".write": true,
+        "Content": {
+            ".read": true,
+            ".write": true,
+            "Golf": {
+                "Challenges": {
+                    ".indexOn": ["skillIdElementId"]
+                }
+            },
+            "Physical": {
+                "Challenges": {
+                    ".indexOn": ["attributeId"]
+                }
+            }
+        },
+        "Results": {
+            ".indexOn": ["challengeId", "index"]
+        }
+    }
+}
