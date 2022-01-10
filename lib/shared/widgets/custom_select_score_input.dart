@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 
 import 'disable_focus_node.dart';
 
-class CustomSelectBox extends StatelessWidget {
-  const CustomSelectBox(this.input, this.scoreState);
-  final ChallengeInputSelect input;
+class CustomSelectScoreBox extends StatelessWidget {
+  const CustomSelectScoreBox(this.input, this.scoreState);
+  final ChallengeInputSelectScore input;
   final scoreState;
 
   @override
@@ -50,26 +50,29 @@ class CustomSelectBox extends StatelessWidget {
                                   shrinkWrap: true,
                                   itemCount: selections.length,
                                   itemBuilder: (context, index) {
-                                    String val = selections[index].option;
+                                    SelectOptionScore option =
+                                        selections[index];
                                     return Container(
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 20, horizontal: 10),
                                       child: Material(
                                         child: InkWell(
-                                          key: ObjectKey(val),
+                                          key: ObjectKey(option.option),
                                           onTap: () {
-                                            scoreState.setInputSelectResult(
-                                                input.index, val);
+                                            scoreState
+                                                .setInputSelectScoreResult(
+                                                    input.index, option);
                                             Get.back();
                                           },
                                           child: Text(
-                                            val,
+                                            option.option,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                color: input.name == val
-                                                    ? Colors.blue
-                                                    : Colors.black),
+                                                color:
+                                                    input.name == option.option
+                                                        ? Colors.blue
+                                                        : Colors.black),
                                           ),
                                         ),
                                       ),
@@ -97,7 +100,8 @@ class CustomSelectBox extends StatelessWidget {
               ),
               fillColor: Colors.black,
               filled: true,
-              labelText: scoreState.getInputSelectResult(input.index),
+              labelText:
+                  scoreState.getInputSelectScoreResult(input.index)?.option,
               labelStyle: TextStyle(color: Colors.white),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),

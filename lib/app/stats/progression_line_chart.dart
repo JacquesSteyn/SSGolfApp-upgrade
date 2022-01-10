@@ -33,7 +33,7 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
   TimePeriod _selectedTimePeriod;
   List<TimePeriod> _timePeriods = [];
   DateTime currentDateTime;
-  int yAxisInterval = 2;
+  int yAxisInterval = 30;
 
   List<Color> gradientColors = [
     // const Color(0xFF625D7B),
@@ -70,7 +70,7 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
           endDay: Utilities.getCurrentDayId(),
           startDay: Utilities.getLastSixMonthsStartDayId(currentDateTime)),
     ]);
-    _selectedTimePeriod = _timePeriods[0];
+    _selectedTimePeriod = _timePeriods[4];
     _dataStream = _dataService.datedProgressionStatsStream(widget.userId,
         _selectedTimePeriod.startDay, _selectedTimePeriod.endDay);
     super.initState();

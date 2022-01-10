@@ -64,7 +64,10 @@ class _StatsViewState extends State<StatsView> {
                 child: Row(
                   children: [
                     statCard("Golf", currentStat.golfValue, 'golf'),
-                    statCard("Physical", currentStat.physicalValue, 'physical'),
+                    if (currentStat.physicalValue != null &&
+                        currentStat.physicalValue > 0)
+                      statCard(
+                          "Physical", currentStat.physicalValue, 'physical'),
                   ],
                 ),
               ),
@@ -93,6 +96,9 @@ class _StatsViewState extends State<StatsView> {
                       userId: userId,
                       chartType: progressionChartType,
                     ),
+                    SizedBox(
+                      height: 12,
+                    )
                   ],
                 ),
               ),

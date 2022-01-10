@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ss_golf/app/app_router.dart';
 import 'package:ss_golf/app/home/submit/feedback_dialog.dart';
-import 'package:ss_golf/services/data_service.dart';
-import 'package:ss_golf/shared/widgets/custom_radial_painter.dart';
+import 'package:ss_golf/shared/widgets/custome_donut.dart';
 import 'package:ss_golf/shared/widgets/primary_button.dart';
 
 class ResultPage extends StatefulWidget {
@@ -45,9 +44,9 @@ class _ResultPageState extends State<ResultPage> {
           children: [
             title('${widget.challengeName} Result'),
             // title('You scored'),
-            SizedBox(height: 5),
-            radialPainter(),
-            SizedBox(height: 5),
+            DonutChart(
+              value: widget.challengeScore,
+            ),
             title('Well Done!'),
             challengeRating(),
             actions(),
@@ -64,20 +63,6 @@ class _ResultPageState extends State<ResultPage> {
       child: Text(
         text,
         style: TextStyle(color: Colors.white, fontSize: 22),
-      ),
-    );
-  }
-
-  Widget radialPainter() {
-    return Container(
-      alignment: Alignment(-0.15, 0),
-      child: CustomPaint(
-        painter: CustomRadialPainter(
-          percentage: widget.challengeScore ?? 0,
-          dimension: Get.height * 0.25,
-          strokeWidth: 15,
-          color: Color(0xFF0EF50E),
-        ),
       ),
     );
   }

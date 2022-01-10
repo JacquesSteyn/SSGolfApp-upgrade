@@ -51,31 +51,18 @@ class GolfProfileView extends ConsumerWidget {
         // showBorder: false,
       ),
       SizedBox(height: 20),
-      // HANDICAP
-      if (profileState?.status == 'Amateur' ||
-          profileState?.status == 'Beginner')
-        handicapDirectSelection(profileState),
-//       CustomTextField(
-//         label: 'Handicap',
-//         inputType: TextInputType.number,
-//         onSaved: profileState.setHandicap,
-//         // initialValue: profileState?.handicap.toString(),
-// controller:
-//         validate: true,
-//         validatorMethod: (value) {
-//           if (value.isEmpty) {
-//             return 'Please enter a valid handicap';
-//           }
-//           return null;
-//         },
-//         missingFieldColor: true,
-//         // showBorder: false,
-//       ),
-      if (profileState?.status == 'Amateur' ||
-          profileState?.status == 'Beginner')
-        SizedBox(height: 20),
       statusSelection(profileState),
       SizedBox(height: 20),
+
+      if (profileState?.status == 'Amateur' ||
+          profileState?.status == 'Beginner')
+        Column(
+          children: [
+            handicapDirectSelection(profileState),
+            SizedBox(height: 20),
+          ],
+        ),
+
       stanceSelection(profileState),
     ];
   }

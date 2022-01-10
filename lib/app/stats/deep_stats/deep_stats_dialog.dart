@@ -8,6 +8,7 @@ import 'package:ss_golf/app/stats/deep_stats/dots_scroll_view_indicator.dart';
 import 'package:ss_golf/app/stats/deep_stats/spider_chart/spider_chart_page.dart';
 import 'package:ss_golf/app/stats/deep_stats/spider_chart/radar_chart.dart';
 import 'package:ss_golf/services/utilities_service.dart';
+import 'package:ss_golf/shared/models/benchmark.dart';
 import 'package:ss_golf/shared/models/golf/skill.dart';
 import 'package:ss_golf/shared/models/stat.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
@@ -72,20 +73,25 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
     );
   }
 
-  List<double> getSkillHandicapValues(List<Skill> skills, String userHandicap) {
+  List<double> getSkillHandicapValues(List<Skill> skills, String userHandicap,
+      Benchmark overallPhysicalBenchmark) {
     List<double> tempList = [];
     if (skills != null && userHandicap != null) {
       int handicap = 0;
+
+      if (userHandicap == 'N/A') {
+        userHandicap = '-1';
+      }
       if (userHandicap.contains('+')) {
-        handicap = 30;
+        handicap = -1;
       } else {
         handicap = int.parse(userHandicap);
       }
 
       skills.forEach((skill) {
-        if (handicap == 0) {
+        if (handicap < 0) {
           tempList.add(skill.benchmarks.pro.toDouble());
-        } else if (handicap > 0 && handicap < 10) {
+        } else if (handicap >= 0 && handicap < 10) {
           tempList.add(skill.benchmarks.zero_to_nine.toDouble());
         } else if (handicap < 20) {
           tempList.add(skill.benchmarks.ten_to_nineteen.toDouble());
@@ -95,8 +101,25 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
           tempList.add(skill.benchmarks.thirty_plus.toDouble());
         }
       });
+
       //Add physical attribute
-      tempList.add(0);
+      if (overallPhysicalBenchmark != null) {
+        if (handicap < 0) {
+          tempList.add(overallPhysicalBenchmark.pro.toDouble());
+        } else if (handicap >= 0 && handicap < 10) {
+          tempList.add(overallPhysicalBenchmark.zero_to_nine.toDouble());
+        } else if (handicap < 20) {
+          tempList.add(overallPhysicalBenchmark.ten_to_nineteen.toDouble());
+        } else if (handicap < 30) {
+          tempList
+              .add(overallPhysicalBenchmark.twenty_to_twenty_nine.toDouble());
+        } else {
+          tempList.add(overallPhysicalBenchmark.thirty_plus.toDouble());
+        }
+      } else {
+        tempList.add(0);
+      }
+
       return tempList;
     }
     return tempList;
@@ -112,6 +135,7 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
           final appState = watch(appStateProvider.state);
           final latestStat = appState.latestStat;
           final allSkills = appState.skills;
+          final overallPhysicalBenchmark = appState.overallPhysicalBenchmark;
           final allAttributes = appState.attributes;
           final userState = watch(userStateProvider.state).user;
           final profileState = watch(profileStateProvider);
@@ -151,6 +175,7 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
                 deepStats.add(DeepStat(name: attribute.name, value: 0));
               }
             });
+
             // latestStat.attributeStats.forEach((attributeStat) {
             //   deepStats
             //       .add(DeepStat(name: attributeStat.name, value: attributeStat.value));
@@ -192,11 +217,14 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
                           if (index == 0) {
                             //return SpiderChartPage(deepStats: deepStats);
                             return CustomRadarChart(
+                                chartType: widget.chartType,
                                 values: deepStats
                                     .map<double>((e) => e.value)
                                     .toList(),
                                 values2: getSkillHandicapValues(
-                                    allSkills, profileState?.handicap),
+                                    allSkills,
+                                    profileState?.handicap,
+                                    overallPhysicalBenchmark),
                                 labels: deepStats
                                     .map<String>((e) => e.name)
                                     .toList());
@@ -205,6 +233,7 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
                               deepStats: deepStats,
                               shouldShowSub:
                                   widget.chartType == 'golf' ? true : false,
+                              chartType: widget.chartType,
                             );
                           } else {
                             return DonutChartPage(

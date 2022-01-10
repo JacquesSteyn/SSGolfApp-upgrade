@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ss_golf/shared/widgets/chart_dialog.dart';
@@ -10,10 +12,14 @@ const entertainmentColor = Colors.white70;
 
 class CustomRadarChart extends StatefulWidget {
   const CustomRadarChart(
-      {@required this.values, this.values2, @required this.labels});
+      {@required this.values,
+      this.values2,
+      @required this.labels,
+      @required this.chartType});
   final List<double> values;
   final List<double> values2;
   final List<String> labels;
+  final String chartType;
 
   @override
   _CustomRadarChartState createState() => _CustomRadarChartState();
@@ -42,11 +48,17 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ChartInfo(
-            title: "Golfer Overview",
-            content:
-                "This is a blueprint of all your overall golfing ability (Blue), compared to the benchmarked standard for your specific handicap bracket (Grey). If the grey shape extends beyond the blue shape, that means you have some work to do in that area of your game!",
-          ),
+          widget.chartType == 'golf'
+              ? ChartInfo(
+                  title: "Golfer Overview",
+                  content:
+                      "This is a blueprint of all your overall golfing ability (Blue), compared to the benchmarked standard for your specific handicap bracket (Grey). If the grey shape extends beyond the blue shape, that means you have some work to do in that area of your game!",
+                )
+              : ChartInfo(
+                  title: "Physical Overview",
+                  content:
+                      "This is a blueprint of all your overall physical ability (Blue), compared to the benchmarked standard for your specific handicap bracket (Grey). If the grey shape extends beyond the blue shape, that means you have some work for that physical attribute!",
+                ),
           const SizedBox(height: 4),
           AspectRatio(
             aspectRatio: 1.3,
@@ -74,11 +86,11 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
                         title += "\n" + tempValues[index].round().toString();
                         return title;
                       },
-                      tickCount: 5,
+                      tickCount: maxTickScale(),
                       ticksTextStyle: const TextStyle(
-                          color: Colors.transparent, fontSize: 10),
-                      tickBorderData:
-                          const BorderSide(color: Colors.blue, width: 1),
+                          color: Colors.transparent, fontSize: 8),
+                      tickBorderData: BorderSide(
+                          color: Colors.blue.withOpacity(0.3), width: 1),
                       gridBorderData:
                           const BorderSide(color: gridColor, width: 2),
                     ),
@@ -96,12 +108,12 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
       var rawDataSet = entry.value;
 
       return RadarDataSet(
-        fillColor: rawDataSet.color.withOpacity(0.6),
+        fillColor: rawDataSet.fill,
         borderColor: rawDataSet.color,
-        entryRadius: 2,
+        entryRadius: 4,
         dataEntries:
             rawDataSet.values.map((e) => RadarEntry(value: e)).toList(),
-        borderWidth: 2,
+        borderWidth: 0,
       );
     }).toList();
   }
@@ -111,22 +123,49 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
       if (widget.values2 != null &&
           widget.values2.length == widget.values.length)
         RawDataSet(
+          fill: Colors.grey.withOpacity(0.7),
           color: Colors.grey,
           values: [...widget.values2],
         ),
       RawDataSet(
+        fill: Colors.blue.withOpacity(0.7),
         color: Colors.blue,
         values: [...widget.values],
       ),
+      RawDataSet(
+        fill: Colors.transparent,
+        color: Colors.white.withOpacity(0),
+        values: List.filled(widget.values.length, maxScoreScale()),
+      ),
     ];
+  }
+
+  double maxScoreScale() {
+    double maxScore =
+        [...widget.values].reduce((curr, next) => curr > next ? curr : next);
+    double maxHandicap =
+        [...widget.values2].reduce((curr, next) => curr > next ? curr : next);
+    double maxScale = maxScore > maxHandicap ? maxScore : maxHandicap;
+    return (((maxScale / 10).round() * 10) + 10).toDouble();
+  }
+
+  int maxTickScale() {
+    double maxScore = maxScoreScale();
+    print("maxScore: $maxScore");
+    if (maxScore <= 60)
+      return (maxScore ~/ 5);
+    else
+      return (maxScore ~/ 10);
   }
 }
 
 class RawDataSet {
+  final Color fill;
   final Color color;
   final List<double> values;
 
   RawDataSet({
+    @required this.fill,
     @required this.color,
     @required this.values,
   });

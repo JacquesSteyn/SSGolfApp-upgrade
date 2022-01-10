@@ -16,7 +16,6 @@ class SelectSkillView extends ConsumerWidget {
         ? Center(child: CircularProgressIndicator())
         : GridView.count(
             crossAxisCount: 2,
-            childAspectRatio: (itemWidth / itemHeight),
             padding: const EdgeInsets.all(10),
             children: appState.skills
                 .map<Widget>((skill) => skillCard(skill, itemWidth))
@@ -59,7 +58,7 @@ class SelectSkillView extends ConsumerWidget {
                           image:
                               AssetImage('assets/images/${skill.iconName}.png'),
                           fit: BoxFit.fitWidth,
-                          alignment: Alignment.topCenter,
+                          alignment: Alignment.bottomCenter,
                         ),
                       ),
                     ),

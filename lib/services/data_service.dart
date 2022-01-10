@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart'
     as FirebaseStoragePackage;
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ss_golf/shared/models/benchmark.dart';
 import 'package:ss_golf/shared/models/challenge_feedback.dart';
 import 'package:ss_golf/shared/models/golf/challenge_weightings.dart';
 import 'package:ss_golf/shared/models/golf/golf_challenge_result.dart';
@@ -22,6 +23,7 @@ const statsPath = 'Stats';
 const challengeFeedbackPath = 'Feedback';
 const countsPath = 'Counts';
 // admin content
+const overallPhysicalBenchPath = 'Content/Golf/OverallPhysical';
 const skillsPath = 'Content/Golf/Skills';
 const golfChallengesPath = 'Content/Golf/Challenges';
 const physicalChallengesPath = 'Content/Physical/Challenges';
@@ -50,6 +52,18 @@ class DataService {
   Future<void> updateUserProfile(UserProfile user) async {
     String userPath = '$usersPath/${user.id}';
     await dbReference.child(userPath).update(user.getJson());
+  }
+
+  Future<Benchmark> fetchOverallPhysicalBenchmark() async {
+    try {
+      DataSnapshot snapshot =
+          await dbReference.child(overallPhysicalBenchPath).once();
+
+      return Benchmark(snapshot.value);
+    } catch (e) {
+      debugPrint('Error -> fetchOverallPhysicalBenchmark -> $e');
+      return new Benchmark.init();
+    }
   }
 
   // *** ===================== SKILLS

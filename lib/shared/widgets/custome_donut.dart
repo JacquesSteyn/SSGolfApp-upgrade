@@ -4,8 +4,9 @@ import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:ss_golf/services/utilities_service.dart';
 
 class DonutChart extends StatelessWidget {
-  const DonutChart({this.value});
+  const DonutChart({this.value, this.total = 100});
   final double value;
+  final double total;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class DonutChart extends StatelessWidget {
       height: Get.size.width * 0.28,
       child: SleekCircularSlider(
         min: 0,
-        max: 100,
+        max: total,
         initialValue: value ?? 0,
         appearance: CircularSliderAppearance(
           startAngle: 270,

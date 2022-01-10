@@ -97,6 +97,8 @@ class PhysicalChallenge {
     this.inputs.forEach((input) {
       // print('NAME: ' + input.name.toString() + ' INDXE: ' + input.index.toString());
 
+      print("input type: ${input.type}");
+
       if (input.type == 'score') {
         challengeInputResults.add(ChallengeInputScoreResult(
             {'name': input.name, 'type': input.type, 'index': input.index}));

@@ -26,6 +26,8 @@ class _AppRootState extends State<AppRoot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: true,
       body: Consumer(
         builder: (context, watch, child) {
           final navbarIndex = watch(indexStateProvider.state);

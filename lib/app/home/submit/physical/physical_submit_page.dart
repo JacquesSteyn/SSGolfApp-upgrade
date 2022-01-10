@@ -134,15 +134,23 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: handicapWidget(),
                   ),
-                  collapsibleVideoView(physicalSubmitState),
-                  tabsSwitch(physicalSubmitState),
-                  Divider(color: Colors.grey[300]),
-                  Expanded(
-                    child: Container(
-                      // color: Get.theme.accentColor,
-                      child: viewsSwitch(physicalSubmitState),
-                    ),
-                  ),
+                  if (widget.challenge.videoUrl.isNotEmpty)
+                    collapsibleVideoView(physicalSubmitState),
+                  if (!physicalSubmitState.showVideo)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          tabsSwitch(physicalSubmitState),
+                          Divider(color: Colors.grey[300]),
+                          Expanded(
+                            child: Container(
+                              // color: Get.theme.accentColor,
+                              child: viewsSwitch(physicalSubmitState),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                 ],
               );
             },
@@ -165,6 +173,7 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
           dense: true,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          leading: Icon(Icons.ondemand_video_outlined, color: Colors.white),
           tileColor: Get.theme.accentColor.withOpacity(0.7),
           trailing: Icon(
               physicalSubmitState.showVideo

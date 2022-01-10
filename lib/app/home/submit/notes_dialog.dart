@@ -41,13 +41,12 @@ class _NotesDialogState extends State<NotesDialog> {
 
     challengeNotes = widget.scoreState.challengeNotes;
 
-    print('REBUILD: ');
     return GestureDetector(
       onTap: () {
-        // _handleClose();
+        _handleClose();
       },
       child: Container(
-        constraints: BoxConstraints.expand(),
+        padding: EdgeInsets.symmetric(vertical: Get.height * 0.02),
         color: Colors.black,
         child: Dialog(
           elevation: 0,
@@ -59,22 +58,24 @@ class _NotesDialogState extends State<NotesDialog> {
   }
 
   Widget _buildDialogContent(scoreState) {
-    return Scrollbar(
-      child: SingleChildScrollView(
-        // child: ConstrainedBox(
-        //   constraints: BoxConstraints(
-        //     maxHeight: Get.size.height,
-        //   ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            viewNotes(scoreState),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 15),
-              child: actionButtons(),
-            ),
-          ],
-          // ),
+    return Container(
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          // child: ConstrainedBox(
+          //   constraints: BoxConstraints(
+          //     maxHeight: Get.size.height,
+          //   ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              viewNotes(scoreState),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 15),
+                child: actionButtons(),
+              ),
+            ],
+            // ),
+          ),
         ),
       ),
     );
@@ -124,7 +125,7 @@ class _NotesDialogState extends State<NotesDialog> {
                         .map((option) => SizedBox(
                               height: 50,
                               child: RadioListTile(
-                                  activeColor: Colors.white,
+                                  activeColor: Colors.blue,
                                   title: Text(
                                     option,
                                     style: TextStyle(
@@ -132,7 +133,7 @@ class _NotesDialogState extends State<NotesDialog> {
                                             (scoreState.getChallengeNoteResult(
                                                         note.index) ==
                                                     option)
-                                                ? Colors.white
+                                                ? Colors.black
                                                 : Colors.grey),
                                   ),
                                   value: option,

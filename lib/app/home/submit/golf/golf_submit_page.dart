@@ -4,6 +4,7 @@ import 'package:ss_golf/app/home/submit/golf/golf_score_view.dart';
 import 'package:ss_golf/app/home/submit/instructions.dart';
 import 'package:ss_golf/app/home/submit/tips_and_advice.dart';
 import 'package:ss_golf/app/home/submit/video_player_screen.dart';
+import 'package:ss_golf/shared/models/challenge_input.dart';
 import 'package:ss_golf/shared/models/golf/golf_challenge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
@@ -90,6 +91,7 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
           child: Consumer(
             builder: (ctx, watch, child) {
               final golfSubmitViewState = watch(golfSubmitStateProvider);
+              int inputMax = widget.challenge.inputs[0].maxScore ?? null;
               return Column(
                 children: [
                   Container(
@@ -111,6 +113,7 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
                               height: Get.width * 0.2,
                               child: DonutChart(
                                 value: getTargetVal(),
+                                total: inputMax.toDouble() ?? null,
                               ),
                             ),
                           ],
@@ -132,15 +135,23 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: handicapWidget(),
                   ),
-                  collapsibleVideoView(golfSubmitViewState),
-                  tabsSwitch(golfSubmitViewState),
-                  Divider(color: Colors.grey[300]),
-                  Expanded(
-                    child: Container(
-                      // color: Get.theme.accentColor,
-                      child: viewsSwitch(golfSubmitViewState),
+                  if (widget.challenge.videoUrl.isNotEmpty)
+                    collapsibleVideoView(golfSubmitViewState),
+                  if (!golfSubmitViewState.showVideo)
+                    Expanded(
+                      child: Column(
+                        children: [
+                          tabsSwitch(golfSubmitViewState),
+                          Divider(color: Colors.grey[300]),
+                          Expanded(
+                            child: Container(
+                              // color: Get.theme.accentColor,
+                              child: viewsSwitch(golfSubmitViewState),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               );
             },

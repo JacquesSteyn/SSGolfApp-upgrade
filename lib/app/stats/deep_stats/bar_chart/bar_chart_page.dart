@@ -9,8 +9,10 @@ class BarChartPage extends StatelessWidget {
   final List<DeepStat> deepStats;
   // final String nestedStatType;
   final bool shouldShowSub;
+  final String chartType;
 
-  BarChartPage({this.deepStats, @required this.shouldShowSub});
+  BarChartPage(
+      {this.deepStats, @required this.shouldShowSub, @required this.chartType});
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +22,15 @@ class BarChartPage extends StatelessWidget {
 
         child: Column(
           children: [
-            ChartInfo(
-                title: "Skill Elements",
-                content:
-                    "Each part of your game is broken down into specific skill elements. Each element is a score out of 100 and is compared to the benchmarked standard for your specific handicap bracket (Grey Line). If the grey line extends above the bar in the graph, that means you have some work to do for that skill element of your game!"),
+            chartType == 'golf'
+                ? ChartInfo(
+                    title: "Skill Elements",
+                    content:
+                        "Each part of your game is broken down into specific skill elements. Each element is a score out of 100 and is compared to the benchmarked standard for your specific handicap bracket (Grey Line). If the grey line extends above the bar in the graph, that means you have some work to do for that skill element of your game!")
+                : ChartInfo(
+                    title: "Physical Attributes",
+                    content:
+                        "Each part of your game is broken down into specific physical attributes. Each attribute is a score out of 100 and is compared to the benchmarked standard for your specific handicap bracket (Grey Line). If the grey line extends above the bar in the graph, that means you have some work to do for that physical attribute of your game!"),
             Expanded(
                 child: HorizontalBarChart(
               stats: deepStats,
