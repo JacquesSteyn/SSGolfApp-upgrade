@@ -36,6 +36,7 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
   }
 
   double getTargetVal() {
+    print("THRESHOLD: ${widget.challenge.benchmarks.threshold}");
     switch (activeHandicap) {
       case 'Pro':
         return widget.challenge.benchmarks.pro.toDouble();
@@ -46,6 +47,8 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
       case '20-29':
         return widget.challenge.benchmarks.twenty_to_twenty_nine.toDouble();
       case '30+':
+        return widget.challenge.benchmarks.thirty_plus.toDouble();
+      default:
         return widget.challenge.benchmarks.thirty_plus.toDouble();
     }
   }
@@ -91,7 +94,14 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
           child: Consumer(
             builder: (ctx, watch, child) {
               final golfSubmitViewState = watch(golfSubmitStateProvider);
-              int inputMax = widget.challenge.inputs[0].maxScore ?? null;
+              double proLevel = widget.challenge.benchmarks.pro.toDouble();
+              double threshold =
+                  widget.challenge.benchmarks.threshold.toDouble();
+              double total = threshold > 0
+                  ? threshold
+                  : proLevel > 0
+                      ? proLevel
+                      : 100;
               return Column(
                 children: [
                   Container(
@@ -113,7 +123,7 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
                               height: Get.width * 0.2,
                               child: DonutChart(
                                 value: getTargetVal(),
-                                total: inputMax.toDouble() ?? null,
+                                total: total,
                               ),
                             ),
                           ],

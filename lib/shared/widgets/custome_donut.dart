@@ -14,7 +14,7 @@ class DonutChart extends StatelessWidget {
       height: Get.size.width * 0.28,
       child: SleekCircularSlider(
         min: 0,
-        max: total,
+        max: total ?? 50,
         initialValue: value ?? 0,
         appearance: CircularSliderAppearance(
           startAngle: 270,

@@ -106,6 +106,7 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
   void _onUpdateSelectedTimePeriod(TimePeriod period) {
     setState(() {
       _selectedTimePeriod = period;
+      _timePeriods = [];
       _dataStream = _dataService.datedProgressionStatsStream(
           widget.userId, period.startDay, period.endDay);
       // update for UI

@@ -38,6 +38,7 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
   }
 
   double getTargetVal() {
+    print("THRESHOLD: ${widget.challenge.benchmarks.threshold}");
     switch (activeHandicap) {
       case 'Pro':
         return widget.challenge.benchmarks.pro.toDouble();
@@ -48,6 +49,8 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
       case '20-29':
         return widget.challenge.benchmarks.twenty_to_twenty_nine.toDouble();
       case '30+':
+        return widget.challenge.benchmarks.thirty_plus.toDouble();
+      default:
         return widget.challenge.benchmarks.thirty_plus.toDouble();
     }
   }
@@ -92,6 +95,14 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
           child: Consumer(
             builder: (ctx, watch, child) {
               final physicalSubmitState = watch(physicalSubmitStateProvider);
+              double proLevel = widget.challenge.benchmarks.pro.toDouble();
+              double threshold =
+                  widget.challenge.benchmarks.threshold.toDouble();
+              double total = threshold > 0
+                  ? threshold
+                  : proLevel > 0
+                      ? proLevel
+                      : 100;
               return Column(
                 children: [
                   Container(
@@ -112,8 +123,7 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
                               width: 100,
                               height: 100,
                               child: DonutChart(
-                                value: getTargetVal(),
-                              ),
+                                  value: getTargetVal(), total: total),
                             ),
                           ],
                         )
