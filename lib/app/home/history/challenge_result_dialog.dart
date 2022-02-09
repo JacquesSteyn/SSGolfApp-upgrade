@@ -133,7 +133,7 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
   }
 
   Widget resultNotes() {
-    return widget.result.notes.length > 0
+    return widget.result.notes != null && widget.result.notes.length > 0
         ? Column(
             children: widget.result.notes
                 .map<Widget>((note) => individualNote(note))
@@ -149,19 +149,21 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
 
   Widget individualNote(ChallengeNoteResult note) {
     // Don't show if selectedOption is null
-
-    return Container(
-      padding: const EdgeInsets.only(top: 10),
-      child: Wrap(
-        children: [
-          title(note.title),
-          titleContent(note.selectedOption),
-          // Divider(
-          //   color: Colors.grey,
-          // ),
-        ],
-      ),
-    );
+    if (note.title == "" || note.selectedOption == "")
+      return Container();
+    else
+      return Container(
+        padding: const EdgeInsets.only(top: 10),
+        child: Wrap(
+          children: [
+            title(note.title),
+            titleContent(note.selectedOption),
+            // Divider(
+            //   color: Colors.grey,
+            // ),
+          ],
+        ),
+      );
   }
 
   Widget actionButtons() {
@@ -202,15 +204,13 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
   }
 
   Widget titleContent(String text) {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            text,
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          text,
+          style: TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
     );

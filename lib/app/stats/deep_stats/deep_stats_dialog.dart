@@ -121,6 +121,12 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
       }
 
       return tempList;
+    } else {
+      if (skills != null) {
+        skills.forEach((element) {
+          tempList.add(0);
+        });
+      }
     }
     return tempList;
   }
@@ -209,6 +215,12 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
           return (widget.chartType == 'physical' || widget.chartType == 'golf')
               ? Column(
                   children: [
+                    if (widget.chartType == 'golf' &&
+                        profileState?.handicap == null)
+                      Text(
+                        "Remember to set your handicap!",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     Expanded(
                       child: PageView.builder(
                         controller: _pageController,

@@ -120,6 +120,7 @@ class HistoryView extends ConsumerWidget {
             rawChallengeDataKeys = rawChallengeData.keys.toList();
           }
           rawChallengeDataKeys.sort((a, b) => b.compareTo(a));
+
           rawChallengeDataKeys.forEach((key) {
             if (historyViewState.difficultyFilter > -1) {
               // GolfChallengeResult result =

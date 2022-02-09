@@ -83,9 +83,12 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
           ),
           Container(
             alignment: Alignment.centerLeft,
-            child: Text(
-              'Duration: ${widget.challenge.duration}',
-              style: TextStyle(color: Get.theme.backgroundColor, fontSize: 14),
+            child: FittedBox(
+              child: Text(
+                'Duration: ${widget.challenge.duration}',
+                style:
+                    TextStyle(color: Get.theme.backgroundColor, fontSize: 14),
+              ),
             ),
           ),
         ],

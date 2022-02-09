@@ -1,4 +1,3 @@
-import 'package:direct_select/direct_select.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -11,11 +10,15 @@ import 'package:ss_golf/shared/widgets/disable_focus_node.dart';
 const limbDominanceSelectionOptions = ['Right', 'Left', 'Ambidextrous'];
 
 class PhysicalProfileView extends ConsumerWidget {
-  final TextEditingController heightTextController = new TextEditingController();
-  final TextEditingController weightTextController = new TextEditingController();
+  final TextEditingController heightTextController =
+      new TextEditingController();
+  final TextEditingController weightTextController =
+      new TextEditingController();
 
-  final heightSelectionOptions = List<int>.generate(100, (index) => (100 + index));
-  final weightSelectionOptions = List<int>.generate(334, (index) => (15 + index));
+  final heightSelectionOptions =
+      List<int>.generate(100, (index) => (100 + index));
+  final weightSelectionOptions =
+      List<int>.generate(334, (index) => (15 + index));
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -72,7 +75,8 @@ class PhysicalProfileView extends ConsumerWidget {
                       initialItem: initialIndex > -1 ? initialIndex : 0),
                   itemExtent: 40,
                   onSelectedItemChanged: (int index) {
-                    profileState.setHeight(heightSelectionOptions[index].toString());
+                    profileState
+                        .setHeight(heightSelectionOptions[index].toString());
                   },
                   looping: true,
                   children: heightSelectionOptions
@@ -99,7 +103,9 @@ class PhysicalProfileView extends ConsumerWidget {
         filled: true,
         labelText: 'Height',
         labelStyle: TextStyle(
-            color: profileState?.height == null ? Colors.red[300] : Colors.grey[300],
+            color: profileState?.height == null
+                ? Colors.red[300]
+                : Colors.grey[300],
             fontSize: 20),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -129,7 +135,8 @@ class PhysicalProfileView extends ConsumerWidget {
                       initialItem: initialIndex > -1 ? initialIndex : 0),
                   itemExtent: 40,
                   onSelectedItemChanged: (int index) {
-                    profileState.setWeight(weightSelectionOptions[index].toString());
+                    profileState
+                        .setWeight(weightSelectionOptions[index].toString());
                   },
                   looping: true,
                   children: weightSelectionOptions
@@ -156,7 +163,9 @@ class PhysicalProfileView extends ConsumerWidget {
         filled: true,
         labelText: 'Weight',
         labelStyle: TextStyle(
-            color: profileState?.weight == null ? Colors.red[300] : Colors.grey[300],
+            color: profileState?.weight == null
+                ? Colors.red[300]
+                : Colors.grey[300],
             fontSize: 20),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
@@ -168,7 +177,8 @@ class PhysicalProfileView extends ConsumerWidget {
 
   Widget upperLimbDominanceSelection(profileState) {
     return DropdownButtonFormField<String>(
-      items: limbDominanceSelectionOptions.map<DropdownMenuItem<String>>((String val) {
+      items: limbDominanceSelectionOptions
+          .map<DropdownMenuItem<String>>((String val) {
         return DropdownMenuItem<String>(
           value: val,
           child: Text(val),
@@ -199,7 +209,8 @@ class PhysicalProfileView extends ConsumerWidget {
 
   Widget lowerLimbDominanceSelection(profileState) {
     return DropdownButtonFormField<String>(
-      items: limbDominanceSelectionOptions.map<DropdownMenuItem<String>>((String val) {
+      items: limbDominanceSelectionOptions
+          .map<DropdownMenuItem<String>>((String val) {
         return DropdownMenuItem<String>(
           value: val,
           child: Text(val),

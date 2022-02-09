@@ -1,4 +1,4 @@
-package com.smartStats.golfApp
+package com.smartStats.smartGolfAppApp
 
 import io.flutter.embedding.android.FlutterActivity
 

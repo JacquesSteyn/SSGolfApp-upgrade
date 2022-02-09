@@ -30,19 +30,31 @@ class GolfChallengeResult {
             }).toList()
           : [];
 
-      this.notes = data['notes'] != null
-          ? data['notes'].map<ChallengeNoteResult>((noteData) {
-              return ChallengeNoteResult(noteData);
-            }).toList()
-          : [];
+      if (data['notes'] != null) {
+        try {
+          this.notes = data['notes'].map<ChallengeNoteResult>((noteData) {
+            return ChallengeNoteResult(noteData);
+          }).toList();
+        } catch (error) {
+          print(error);
+        }
+      } else {
+        this.notes = [];
+      }
+      // this.notes = data['notes'] != null
+      // ? data['notes'].map<ChallengeNoteResult>((noteData) {
+      //     return ChallengeNoteResult(noteData);
+      //   }).toList()
+      // : [];
 
       this.elementContributions = [];
       if (skillIdElementId != null) {
         this.elementContributions = [
           ElementContribution({
             'skillIdElementId': skillIdElementId,
-            'percentage':
-                data[skillIdElementId] != null ? data[skillIdElementId]['value'] : 0,
+            'percentage': data[skillIdElementId] != null
+                ? data[skillIdElementId]['value']
+                : 0,
           })
         ];
       }
@@ -59,7 +71,8 @@ class GolfChallengeResult {
       'difficulty': this.difficulty ?? '0',
       'inputResults': this
               .inputResults
-              .map((dynamic challengeInputResult) => challengeInputResult.getJson())
+              .map((dynamic challengeInputResult) =>
+                  challengeInputResult.getJson())
               .toList() ??
           0,
       'notes': this.notes.map((note) => note.getJson()).toList(),
@@ -67,10 +80,12 @@ class GolfChallengeResult {
       'dateTimeCreated': this.dateTimeCreated,
     };
 
-    this.elementContributions.forEach((e) => jsonObject['${e.skillIdElementId}'] = {
-          'value': e.percentage,
-          'skillIdElementId_index': '${e.skillIdElementId}_${this.index}'
-        });
+    this
+        .elementContributions
+        .forEach((e) => jsonObject['${e.skillIdElementId}'] = {
+              'value': e.percentage,
+              'skillIdElementId_index': '${e.skillIdElementId}_${this.index}'
+            });
 
     return jsonObject;
   }

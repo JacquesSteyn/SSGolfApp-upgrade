@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ss_golf/services/data_service.dart';
 import 'package:ss_golf/services/utilities_service.dart';
 
@@ -106,7 +107,6 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
   void _onUpdateSelectedTimePeriod(TimePeriod period) {
     setState(() {
       _selectedTimePeriod = period;
-      _timePeriods = [];
       _dataStream = _dataService.datedProgressionStatsStream(
           widget.userId, period.startDay, period.endDay);
       // update for UI
@@ -139,28 +139,33 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
   Widget timeLineButton(TimePeriod period) {
     bool isSelected = _selectedTimePeriod == period;
 
-    return ActionChip(
-      onPressed: () {
-        _onUpdateSelectedTimePeriod(period);
-      },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(12),
+    return Container(
+      constraints: BoxConstraints(maxWidth: Get.width / 5),
+      child: ActionChip(
+        onPressed: () {
+          _onUpdateSelectedTimePeriod(period);
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(12),
+          ),
+          side: BorderSide(color: isSelected ? Colors.grey : Colors.grey[800]),
         ),
-        side: BorderSide(color: isSelected ? Colors.grey : Colors.grey[800]),
-      ),
-      padding: const EdgeInsets.all(3),
-      elevation: isSelected ? 5 : 0,
-      label: Text(
-        period.label,
-        softWrap: true,
-        maxLines: 2,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: isSelected ? Colors.black87 : Colors.grey,
+        padding: const EdgeInsets.all(1),
+        elevation: isSelected ? 5 : 0,
+        label: FittedBox(
+          child: Text(
+            period.label,
+            softWrap: false,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? Colors.black87 : Colors.grey,
+            ),
+          ),
         ),
+        backgroundColor: isSelected ? Colors.grey[300] : Colors.black,
       ),
-      backgroundColor: isSelected ? Colors.grey[300] : Colors.black,
     );
   }
 
@@ -178,20 +183,26 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
 
           List<String> dayIds = Utilities.getDayIds(
               _selectedTimePeriod.startDay, _selectedTimePeriod.endDay);
+
+          double lastVal = 0;
+
           dayIds.asMap().forEach((index, dayId) {
             if (rawStats[dayId] != null &&
                 rawStats[dayId][widget.chartType] != null) {
               dataPoints.add(FlSpot(index.toDouble(),
                   rawStats[dayId][widget.chartType]['value']));
+
+              lastVal = rawStats[dayId][widget.chartType]['value'];
             } else {
               // TODO - what to do with this?? make prev val?
-              dataPoints.add(FlSpot(index.toDouble(), 0));
+              dataPoints.add(FlSpot(index.toDouble(), lastVal));
             }
           });
 
           // print('DAY IDS:: ' + dataPoints.toString());
-
-          return LineChart(lineChartData(dataPoints, dayIds));
+          return LineChart(
+            lineChartData(dataPoints, dayIds),
+          );
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -278,15 +289,6 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
       lineBarsData: [
         LineChartBarData(
           spots: dataPoints,
-          //     [
-          //   FlSpot(0, 90),
-          //   FlSpot(2.6, 28),
-          //   FlSpot(4.9, 54),
-          //   FlSpot(6.8, 60),
-          //   FlSpot(8, 62),
-          //   FlSpot(9.5, 49),
-          //   FlSpot(11, 55),
-          // ],
           dotData: FlDotData(
             show: false,
           ),

@@ -54,7 +54,7 @@ class CustomSelectBox extends StatelessWidget {
                                     return Container(
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 20, horizontal: 10),
+                                          vertical: 2, horizontal: 10),
                                       child: Material(
                                         child: InkWell(
                                           key: ObjectKey(val),
@@ -63,13 +63,18 @@ class CustomSelectBox extends StatelessWidget {
                                                 input.index, val);
                                             Get.back();
                                           },
-                                          child: Text(
-                                            val,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: input.name == val
-                                                    ? Colors.blue
-                                                    : Colors.black),
+                                          child: Container(
+                                            padding: EdgeInsets.all(10),
+                                            width: double.infinity,
+                                            color: Colors.white,
+                                            child: Text(
+                                              val,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: input.name == val
+                                                      ? Colors.blue
+                                                      : Colors.black),
+                                            ),
                                           ),
                                         ),
                                       ),

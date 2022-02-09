@@ -12,7 +12,10 @@ class ChallengeNoteResult {
 
   getJson() {
     if (this.selectedOption == null) {
-      return null;
+      return {
+        'title': "",
+        'selectedOption': "",
+      };
     } else {
       return {
         'title': this.title,
