@@ -12,13 +12,13 @@ class ProfileState extends ChangeNotifier {
   final ImagePicker imagePicker = new ImagePicker();
 
   String errorMessage = '';
-  UserProfile _fluxUserProfile;
+  UserProfile? _fluxUserProfile;
 
   bool profileChangesMade = false;
   bool profileChangesSaved = false;
   // *** Initialize
   bool _initSet = false;
-  initProfile(UserProfile userProfile) {
+  initProfile(UserProfile? userProfile) {
     if (!_initSet && userProfile != null) {
       print('USER PROFILE:::: ' + userProfile.getJson().toString());
       _fluxUserProfile = userProfile;
@@ -51,30 +51,30 @@ class ProfileState extends ChangeNotifier {
   GlobalKey<FormState> get userProfileFormKey => _userProfileFormKey;
   // user profile form field values
 
-  String get imageUrl => _fluxUserProfile?.imageUrl;
-  setImageUrl(String value) {
-    _fluxUserProfile.imageUrl = value;
+  String? get imageUrl => _fluxUserProfile?.imageUrl;
+  setImageUrl(String? value) {
+    _fluxUserProfile!.imageUrl = value;
     _changeMade();
     notifyListeners();
   }
 
-  String get name => _fluxUserProfile?.name;
-  setName(String value) {
-    _fluxUserProfile.name = value;
+  String? get name => _fluxUserProfile?.name;
+  setName(String? value) {
+    _fluxUserProfile!.name = value;
     _changeMade();
     notifyListeners();
   }
 
-  String get gender => _fluxUserProfile?.gender;
-  setGender(String value) {
-    _fluxUserProfile.gender = value;
+  String? get gender => _fluxUserProfile?.gender;
+  setGender(String? value) {
+    _fluxUserProfile!.gender = value;
     _changeMade();
     notifyListeners();
   }
 
-  String get dateOfBirth => _fluxUserProfile?.dateOfBirth;
-  setDateOfBirth(String value) {
-    _fluxUserProfile.dateOfBirth = value;
+  String? get dateOfBirth => _fluxUserProfile?.dateOfBirth;
+  setDateOfBirth(String? value) {
+    _fluxUserProfile!.dateOfBirth = value;
     _changeMade();
 
     notifyListeners();
@@ -83,35 +83,35 @@ class ProfileState extends ChangeNotifier {
   // *** Physical profile
   final _physicalProfileFormKey = new GlobalKey<FormState>();
   GlobalKey<FormState> get physicalProfileFormKey => _physicalProfileFormKey;
-  String get height => _fluxUserProfile.physicalProfile.height;
+  String? get height => _fluxUserProfile!.physicalProfile.height;
   setHeight(String value) {
-    _fluxUserProfile.physicalProfile.height = value;
+    _fluxUserProfile!.physicalProfile.height = value;
     _changeMade();
 
     notifyListeners();
   }
 
-  String get weight => _fluxUserProfile.physicalProfile.weight;
+  String? get weight => _fluxUserProfile!.physicalProfile.weight;
   setWeight(String value) {
-    _fluxUserProfile.physicalProfile.weight = value;
+    _fluxUserProfile!.physicalProfile.weight = value;
     _changeMade();
 
     notifyListeners();
   }
 
-  String get upperLimbDominance =>
-      _fluxUserProfile.physicalProfile.upperLimbDominance;
-  setUpperLimbDominance(String value) {
-    _fluxUserProfile.physicalProfile.upperLimbDominance = value;
+  String? get upperLimbDominance =>
+      _fluxUserProfile!.physicalProfile.upperLimbDominance;
+  setUpperLimbDominance(String? value) {
+    _fluxUserProfile!.physicalProfile.upperLimbDominance = value;
     _changeMade();
 
     notifyListeners();
   }
 
-  String get lowerLimbDominance =>
-      _fluxUserProfile.physicalProfile.lowerLimbDominance;
-  setLowerLimbDominance(String value) {
-    _fluxUserProfile.physicalProfile.lowerLimbDominance = value;
+  String? get lowerLimbDominance =>
+      _fluxUserProfile!.physicalProfile.lowerLimbDominance;
+  setLowerLimbDominance(String? value) {
+    _fluxUserProfile!.physicalProfile.lowerLimbDominance = value;
     _changeMade();
 
     notifyListeners();
@@ -120,13 +120,13 @@ class ProfileState extends ChangeNotifier {
   // *** Golf profile
   final _golfProfileFormKey = new GlobalKey<FormState>();
   GlobalKey<FormState> get golfProfileFormKey => _golfProfileFormKey;
-  String get status => _fluxUserProfile.golfProfile.status;
-  setStatus(String value) {
-    _fluxUserProfile.golfProfile.status = value;
+  String? get status => _fluxUserProfile!.golfProfile.status;
+  setStatus(String? value) {
+    _fluxUserProfile!.golfProfile.status = value;
     if (value != 'Beginner' && value != 'Amateur') {
       setHandicap('N/A');
     } else {
-      if (_fluxUserProfile.golfProfile.handicap == 'N/A') {
+      if (_fluxUserProfile!.golfProfile.handicap == 'N/A') {
         setHandicap('0');
       }
     }
@@ -134,25 +134,25 @@ class ProfileState extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get stance => _fluxUserProfile.golfProfile.stance;
-  setStance(String value) {
-    _fluxUserProfile.golfProfile.stance = value;
+  String? get stance => _fluxUserProfile!.golfProfile.stance;
+  setStance(String? value) {
+    _fluxUserProfile!.golfProfile.stance = value;
     _changeMade();
 
     notifyListeners();
   }
 
-  String get clubAffiliation => _fluxUserProfile.golfProfile.clubAffiliation;
-  setClubAffiliation(String value) {
-    _fluxUserProfile.golfProfile.clubAffiliation = value;
+  String? get clubAffiliation => _fluxUserProfile!.golfProfile.clubAffiliation;
+  setClubAffiliation(String? value) {
+    _fluxUserProfile!.golfProfile.clubAffiliation = value;
     _changeMade();
 
     notifyListeners();
   }
 
-  String get handicap => _fluxUserProfile.golfProfile.handicap;
+  String? get handicap => _fluxUserProfile!.golfProfile.handicap;
   setHandicap(String value) {
-    _fluxUserProfile.golfProfile.handicap = value;
+    _fluxUserProfile!.golfProfile.handicap = value;
     _changeMade();
 
     notifyListeners();
@@ -167,13 +167,13 @@ class ProfileState extends ChangeNotifier {
   }
 
   Future<bool> updateUserProfile() async {
-    print('UPDATE USER PROFILEEEE: ' + _fluxUserProfile.getJson().toString());
+    print('UPDATE USER PROFILEEEE: ' + _fluxUserProfile!.getJson().toString());
 
     if (true) {
       // TODO => validation -> validateForm(_userProfileFormKey)) {
       try {
         setIsLoading(true);
-        await _dataService.updateUserProfile(_fluxUserProfile);
+        await _dataService.updateUserProfile(_fluxUserProfile!);
         profileChangesSaved = true;
         setIsLoading(false);
         // Delayed callback
@@ -193,27 +193,28 @@ class ProfileState extends ChangeNotifier {
   }
 
   Future<void> uploadImage() async {
-    PickedFile newlyUploadedImage =
-        await imagePicker.getImage(source: ImageSource.gallery);
+    // PickedFile? newlyUploadedImage =
+    //     await imagePicker.getImage(source: ImageSource.gallery);
 
-    if (newlyUploadedImage != null) {
-      print('Image selected: ' + newlyUploadedImage.path.toString());
+    XFile? newlyUploadedImage =
+        await imagePicker.pickImage(source: ImageSource.gallery);
+
+    print('Image selected: ' + newlyUploadedImage!.path.toString());
 // TODO -> delete previous
-      // if (_fluxUserProfile.imageUrl != null && _fluxUserProfile.imageUrl.isNotEmpty) {
-      //   await _dataService.deleteImage(_fluxUserProfile.imageUrl);
-      // }
+    // if (_fluxUserProfile.imageUrl != null && _fluxUserProfile.imageUrl.isNotEmpty) {
+    //   await _dataService.deleteImage(_fluxUserProfile.imageUrl);
+    // }
 
-      String newImageUrl = await _dataService.uploadImage(
-          newlyUploadedImage, _fluxUserProfile.id);
+    String? newImageUrl = await _dataService.uploadImage(
+        newlyUploadedImage, _fluxUserProfile!.id);
 
-      setImageUrl(newImageUrl);
-    }
+    setImageUrl(newImageUrl);
   }
 
   validateForm(GlobalKey<FormState> key) {
     // TODO -> validate all
-    if (key.currentState.validate()) {
-      key.currentState.save();
+    if (key.currentState!.validate()) {
+      key.currentState!.save();
       return true;
     } else {
       return false;

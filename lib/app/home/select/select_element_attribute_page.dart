@@ -5,13 +5,12 @@ import 'package:ss_golf/shared/models/physical/attribute.dart';
 import 'package:ss_golf/shared/models/golf/skill.dart';
 import 'package:ss_golf/shared/models/golf/skill_element.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
-import 'package:ss_golf/shared/widgets/custom_radial_painter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ss_golf/shared/widgets/custome_donut.dart';
 import 'package:ss_golf/state/app.provider.dart';
 
 class SelectElementAttributePage extends StatefulWidget {
-  final Skill skill;
+  final Skill? skill;
 
   SelectElementAttributePage({this.skill});
 
@@ -26,7 +25,7 @@ class _SelectElementAttributePageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(title: widget.skill.name),
+      appBar: CustomAppBar(title: widget.skill!.name),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -50,10 +49,10 @@ class _SelectElementAttributePageState
     return Container(
       // color: Colors.orange,
       child: Consumer(
-        builder: (context, watch, child) {
-          final appState = watch(appStateProvider.state);
-          final skillStatIndex = appState.latestStat.day != null
-              ? appState.latestStat.findSkillIndex(widget.skill.id)
+        builder: (context, ref, child) {
+          final appState = ref.watch(appStateProvider);
+          final int skillStatIndex = appState.latestStat != null
+              ? appState.latestStat!.findSkillIndex(widget.skill!.id)
               : -1;
           if (skillStatIndex > -1) {
             return Stack(
@@ -68,8 +67,8 @@ class _SelectElementAttributePageState
                 ),
                 Center(
                   child: DonutChart(
-                      value:
-                          appState.latestStat.skillStats[skillStatIndex].value),
+                      value: appState
+                          .latestStat?.skillStats![skillStatIndex].value),
                 )
                 // Align(
                 //   alignment: Alignment(-0.2, 0),
@@ -101,7 +100,7 @@ class _SelectElementAttributePageState
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        title('${widget.skill.name} Challenges'),
+        title('${widget.skill!.name} Challenges'),
         elements(),
         SizedBox(height: 10),
         title('Physical Challenges'),
@@ -116,7 +115,7 @@ class _SelectElementAttributePageState
       child: Wrap(
         alignment: WrapAlignment.center,
         spacing: 10.0, // gap between lines
-        children: widget.skill.elements
+        children: widget.skill!.elements!
             .map<Widget>((SkillElement element) => elementContainer(element))
             .toList(),
       ),
@@ -129,7 +128,7 @@ class _SelectElementAttributePageState
       child: Wrap(
         alignment: WrapAlignment.center,
         spacing: 10.0, // gap between lines
-        children: widget.skill.attributes
+        children: widget.skill!.attributes!
             .map<Widget>((Attribute attribute) => attributeContainer(attribute))
             .toList(),
       ),
@@ -150,23 +149,24 @@ class _SelectElementAttributePageState
   Widget elementContainer(SkillElement element) {
     return InkWell(
       onTap: () {
-        String pageTitle = '${widget.skill.name} - ${element.name}';
-        String challengesRef = '${widget.skill.id}${element.id}';
+        String pageTitle = '${widget.skill!.name} - ${element.name}';
+        String challengesRef = '${widget.skill!.id}${element.id}';
         print('On tapped: ' + challengesRef.toString());
         Get.toNamed(AppRoutes.selectGolfChallengesPage,
             arguments: {'title': pageTitle, 'skillIdElementId': challengesRef});
       },
       child: Chip(
         shape: StadiumBorder(
-          side: BorderSide(color: Get.theme.accentColor), // Colors.grey[700]),
+          side: BorderSide(
+              color: Get.theme.colorScheme.secondary), // Colors.grey[700]),
         ),
         padding: const EdgeInsets.all(10),
         elevation: 1,
         label: Text(
-          element.name,
+          element.name!,
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Get.theme.accentColor,
+        backgroundColor: Get.theme.colorScheme.secondary,
         // .withOpacity(0.95), // Colors.blueGrey,
         shadowColor: Colors.grey[300],
       ),
@@ -176,7 +176,7 @@ class _SelectElementAttributePageState
   Widget attributeContainer(Attribute attribute) {
     return InkWell(
       onTap: () {
-        String pageTitle = '${widget.skill.name} - ${attribute.name}';
+        String pageTitle = '${widget.skill!.name} - ${attribute.name}';
         String challengesRef = '${attribute.id}';
         print('On tapped: ' + challengesRef.toString());
         Get.toNamed(AppRoutes.selectPhysicalChallengesPage,
@@ -184,15 +184,15 @@ class _SelectElementAttributePageState
       },
       child: Chip(
         shape: StadiumBorder(
-          side: BorderSide(color: Get.theme.accentColor),
+          side: BorderSide(color: Get.theme.colorScheme.secondary),
         ),
         padding: const EdgeInsets.all(10),
         elevation: 1,
         label: Text(
-          attribute.name,
+          attribute.name!,
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Get.theme.accentColor,
+        backgroundColor: Get.theme.colorScheme.secondary,
         shadowColor: Colors.grey[300],
       ),
     );

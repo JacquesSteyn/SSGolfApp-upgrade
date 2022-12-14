@@ -6,7 +6,7 @@ import 'package:ss_golf/shared/models/golf/golf_challenge.dart';
 import 'package:ss_golf/shared/widgets/neo/challenge_difficulty_rating.dart';
 
 class GolfChallengeCard extends StatefulWidget {
-  final GolfChallenge challenge;
+  final GolfChallenge? challenge;
   GolfChallengeCard({this.challenge});
 
   @override
@@ -31,14 +31,14 @@ class _GolfChallengeCardState extends State<GolfChallengeCard> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: 120,
-                child: widget.challenge.imageUrl == null ||
-                        widget.challenge.imageUrl.isEmpty
+                child: widget.challenge!.imageUrl == null ||
+                        widget.challenge!.imageUrl!.isEmpty
                     ? Image.asset(
                         'assets/images/default_image.png',
                         fit: BoxFit.fitWidth,
                       )
                     : Image.network(
-                        widget.challenge.imageUrl,
+                        widget.challenge!.imageUrl!,
                         fit: BoxFit.cover,
                       ),
               ),
@@ -53,7 +53,7 @@ class _GolfChallengeCardState extends State<GolfChallengeCard> {
                         child: FittedBox(
                           fit: BoxFit.fill,
                           child: Text(
-                            widget.challenge.name,
+                            widget.challenge!.name!,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -103,7 +103,7 @@ class _GolfChallengeCardState extends State<GolfChallengeCard> {
             child: ChallengeDifficultyRating(
               showText: false,
               iconColor: Colors.white,
-              difficultyRating: double.parse(widget.challenge.difficulty),
+              difficultyRating: double.parse(widget.challenge!.difficulty!),
             ),
           ),
 

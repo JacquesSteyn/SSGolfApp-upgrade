@@ -5,7 +5,7 @@ class CircleInnerHighlight extends StatelessWidget {
   final Color backgroundColor;
 
   const CircleInnerHighlight(
-      {Key key, @required this.highlightColor, @required this.backgroundColor})
+      {Key? key, required this.highlightColor, required this.backgroundColor})
       : super(key: key);
 
   @override

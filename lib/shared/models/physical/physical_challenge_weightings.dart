@@ -2,8 +2,8 @@ import 'package:ss_golf/shared/models/physical/attribute.dart';
 import 'package:ss_golf/shared/models/golf/challenge_weightings.dart';
 
 class PhysicalChallengeWeightings {
-  String attributeId;
-  List<PhysicalChallengeWeighting> weightings;
+  String? attributeId;
+  List<PhysicalChallengeWeighting>? weightings;
 
   PhysicalChallengeWeightings([data]) {
     if (data != null) {
@@ -26,8 +26,8 @@ class PhysicalChallengeWeightings {
 }
 
 class PhysicalChallengeWeighting {
-  Attribute attribute;
-  int weight;
+  Attribute? attribute;
+  int? weight;
 
   PhysicalChallengeWeighting([data]) {
     if (data != null) {
@@ -36,10 +36,10 @@ class PhysicalChallengeWeighting {
     }
   }
 
-  double getWeightingBandContribution(List<ChallengeBand> bands) {
-    double percentageContribution = 0;
+  double? getWeightingBandContribution(List<ChallengeBand> bands) {
+    double? percentageContribution = 0;
     bands.forEach((band) {
-      if (this.weight >= band.lowerRange && this.weight <= band.upperRange) {
+      if (this.weight! >= band.lowerRange! && this.weight! <= band.upperRange!) {
         percentageContribution = band.percentage;
       }
     });
@@ -47,10 +47,10 @@ class PhysicalChallengeWeighting {
     return percentageContribution;
   }
 
-  int getNumberOfPrevResultsToUse(List<ChallengeBand> bands) {
-    int noOfPrevResults = 20;
+  int? getNumberOfPrevResultsToUse(List<ChallengeBand> bands) {
+    int? noOfPrevResults = 20;
     bands.forEach((band) {
-      if (this.weight >= band.lowerRange && this.weight <= band.upperRange) {
+      if (this.weight! >= band.lowerRange! && this.weight! <= band.upperRange!) {
         noOfPrevResults = band.numberOfPreviousResults;
       }
     });

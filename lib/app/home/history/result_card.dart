@@ -5,8 +5,8 @@ import 'package:ss_golf/shared/models/golf/golf_challenge_result.dart';
 import 'package:ss_golf/shared/widgets/neo/challenge_difficulty_rating.dart';
 
 class ChallengeResultCard extends StatefulWidget {
-  final GolfChallengeResult result;
-  final String type;
+  final GolfChallengeResult? result;
+  final String? type;
   ChallengeResultCard({this.result, this.type});
 
   @override
@@ -38,7 +38,7 @@ class _ChallengeResultCardState extends State<ChallengeResultCard> {
             },
             pageBuilder: (BuildContext context, Animation animation,
                 Animation secondaryAnimation) {
-              return null;
+              return Container();
             },
           );
         },
@@ -47,7 +47,7 @@ class _ChallengeResultCardState extends State<ChallengeResultCard> {
             color: Color(0xFF1C1E23),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-                color: Utilities.gradedColors(widget.result.percentage),
+                color: Utilities.gradedColors(widget.result!.percentage),
                 width: 1.2),
           ),
           height: 100,
@@ -76,9 +76,9 @@ class _ChallengeResultCardState extends State<ChallengeResultCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.result.challengeName == ''
+            widget.result!.challengeName == ''
                 ? 'Challenge Name'
-                : widget.result.challengeName,
+                : widget.result!.challengeName!,
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           RichText(
@@ -90,9 +90,9 @@ class _ChallengeResultCardState extends State<ChallengeResultCard> {
                 ),
                 TextSpan(
                   text:
-                      '${Utilities.roundOffPercentageValue(widget.result.percentage)}',
+                      '${Utilities.roundOffPercentageValue(widget.result!.percentage!)}',
                   style: TextStyle(
-                      color: Utilities.gradedColors(widget.result.percentage),
+                      color: Utilities.gradedColors(widget.result!.percentage),
                       fontWeight: FontWeight.w600),
                 ),
               ],
@@ -114,14 +114,14 @@ class _ChallengeResultCardState extends State<ChallengeResultCard> {
             padding: const EdgeInsets.only(left: 20),
             child: Text(
               Utilities.formatDate(
-                  DateTime.parse(widget.result.dateTimeCreated)),
+                  DateTime.parse(widget.result!.dateTimeCreated!)),
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white, fontSize: 18),
             ),
           ),
           Center(
             child: ChallengeDifficultyRating(
-              difficultyRating: double.parse(widget.result.difficulty),
+              difficultyRating: double.parse(widget.result!.difficulty!),
               reverse: true,
             ),
           ),

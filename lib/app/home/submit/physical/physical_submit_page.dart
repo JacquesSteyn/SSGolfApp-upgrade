@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ss_golf/app/home/submit/golf/golf_score_view.dart';
 import 'package:ss_golf/app/home/submit/instructions.dart';
-import 'package:ss_golf/app/home/submit/physical/physical_score_state.dart';
 import 'package:ss_golf/app/home/submit/physical/physical_score_view.dart';
 import 'package:ss_golf/app/home/submit/tips_and_advice.dart';
 import 'package:ss_golf/app/home/submit/video_player_screen.dart';
-import 'package:ss_golf/shared/models/golf/golf_challenge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ss_golf/shared/models/physical/physical_challenge.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
 import 'package:ss_golf/shared/widgets/custome_donut.dart';
 
 class PhysicalSubmitPage extends StatefulWidget {
-  final PhysicalChallenge challenge;
+  final PhysicalChallenge? challenge;
 
   PhysicalSubmitPage({this.challenge});
 
@@ -38,20 +35,20 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
   }
 
   double getTargetVal() {
-    print("THRESHOLD: ${widget.challenge.benchmarks.threshold}");
+    print("THRESHOLD: ${widget.challenge!.benchmarks.threshold}");
     switch (activeHandicap) {
       case 'Pro':
-        return widget.challenge.benchmarks.pro.toDouble();
+        return widget.challenge!.benchmarks.pro.toDouble();
       case '0-9':
-        return widget.challenge.benchmarks.zero_to_nine.toDouble();
+        return widget.challenge!.benchmarks.zero_to_nine.toDouble();
       case '10-19':
-        return widget.challenge.benchmarks.ten_to_nineteen.toDouble();
+        return widget.challenge!.benchmarks.ten_to_nineteen.toDouble();
       case '20-29':
-        return widget.challenge.benchmarks.twenty_to_twenty_nine.toDouble();
+        return widget.challenge!.benchmarks.twenty_to_twenty_nine.toDouble();
       case '30+':
-        return widget.challenge.benchmarks.thirty_plus.toDouble();
+        return widget.challenge!.benchmarks.thirty_plus.toDouble();
       default:
-        return widget.challenge.benchmarks.thirty_plus.toDouble();
+        return widget.challenge!.benchmarks.thirty_plus.toDouble();
     }
   }
 
@@ -87,17 +84,18 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
-        title: widget.challenge.name,
+        title: widget.challenge!.name,
       ),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
           child: Consumer(
-            builder: (ctx, watch, child) {
-              final physicalSubmitState = watch(physicalSubmitStateProvider);
-              double proLevel = widget.challenge.benchmarks.pro.toDouble();
+            builder: (ctx, ref, child) {
+              final physicalSubmitState =
+                  ref.watch(physicalSubmitStateProvider);
+              double proLevel = widget.challenge!.benchmarks.pro.toDouble();
               double threshold =
-                  widget.challenge.benchmarks.threshold.toDouble();
+                  widget.challenge!.benchmarks.threshold.toDouble();
               double total = threshold > 0
                   ? threshold
                   : proLevel > 0
@@ -144,13 +142,13 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: handicapWidget(),
                   ),
-                  if (widget.challenge.videoUrl.isNotEmpty)
+                  if (widget.challenge!.videoUrl!.isNotEmpty)
                     collapsibleVideoView(physicalSubmitState),
                   if (!physicalSubmitState.showVideo)
                     Expanded(
                       child: Column(
                         children: [
-                          tabsSwitch(physicalSubmitState),
+                          tabsSwitch(ref, physicalSubmitState),
                           Divider(color: Colors.grey[300]),
                           Expanded(
                             child: Container(
@@ -176,7 +174,7 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
         // VIDEO PLAYER
         if (physicalSubmitState.showVideo)
           VideoPlayerScreen(
-            videoUrl: widget.challenge.videoUrl,
+            videoUrl: widget.challenge!.videoUrl,
           ),
         // collapsible button
         ListTile(
@@ -184,7 +182,7 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
           contentPadding:
               const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: Icon(Icons.ondemand_video_outlined, color: Colors.white),
-          tileColor: Get.theme.accentColor.withOpacity(0.7),
+          tileColor: Get.theme.colorScheme.secondary.withOpacity(0.7),
           trailing: Icon(
               physicalSubmitState.showVideo
                   ? Icons.arrow_drop_up
@@ -206,25 +204,26 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
     );
   }
 
-  Widget tabsSwitch(physicalSubmitState) {
+  Widget tabsSwitch(ref, physicalSubmitState) {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 10, 5, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          tabItem(physicalSubmitState, ViewMode.Score, 'Score'),
-          tabItem(physicalSubmitState, ViewMode.Instructions, 'Instructions'),
-          tabItem(physicalSubmitState, ViewMode.Tips, 'Tips + Advice'),
+          tabItem(ref, physicalSubmitState, ViewMode.Score, 'Score'),
+          tabItem(
+              ref, physicalSubmitState, ViewMode.Instructions, 'Instructions'),
+          tabItem(ref, physicalSubmitState, ViewMode.Tips, 'Tips + Advice'),
         ],
       ),
     );
   }
 
-  Widget tabItem(physicalSubmitState, ViewMode mode, String text) {
+  Widget tabItem(ref, physicalSubmitState, ViewMode mode, String text) {
     final bool tabIsSelected = physicalSubmitState.viewMode == mode;
     return InkWell(
       onTap: () {
-        context.read(physicalSubmitStateProvider).switchViewMode(mode);
+        ref.read(physicalSubmitStateProvider).switchViewMode(mode);
       },
       child: Text(
         text,
@@ -240,9 +239,9 @@ class _PhysicalSubmitPageState extends State<PhysicalSubmitPage> {
   Widget viewsSwitch(performState) {
     switch (performState.viewMode) {
       case ViewMode.Instructions:
-        return Instructions(instructions: widget.challenge.instructions);
+        return Instructions(instructions: widget.challenge!.instructions);
       case ViewMode.Tips:
-        return TipsAndAdvice(tips: widget.challenge.tipGroups);
+        return TipsAndAdvice(tips: widget.challenge!.tipGroups);
       case ViewMode.Score:
         return PhysicalScoreView(challenge: widget.challenge);
       default:

@@ -7,7 +7,7 @@ import 'package:ss_golf/shared/models/physical/physical_challenge_weightings.dar
 import 'package:ss_golf/shared/models/tip.dart';
 
 class PhysicalChallenge {
-  String name,
+  String? name,
       id,
       description,
       purpose,
@@ -16,18 +16,18 @@ class PhysicalChallenge {
       videoUrl,
       imageUrl;
 
-  List<String> equipment, instructions;
-  List<ChallengeNote> notes;
+  List<String>? equipment, instructions;
+  List<ChallengeNote>? notes;
 
-  List<TipGroup> tipGroups;
+  List<TipGroup>? tipGroups;
 
-  bool active;
+  bool? active;
 
-  PhysicalChallengeWeightings weightings;
-  List<ChallengeInput> inputs;
+  late PhysicalChallengeWeightings weightings;
+  List<ChallengeInput>? inputs;
 
-  String weightingBandId;
-  Benchmark benchmarks;
+  String? weightingBandId;
+  late Benchmark benchmarks;
 
   PhysicalChallenge([data, key]) {
     if (data != null) {
@@ -53,11 +53,11 @@ class PhysicalChallenge {
       int tempNotesIndex = 0;
       (data['notes'] ?? []).forEach((noteData) {
         // print('NOTESSSSS: ' + noteData.toString());
-        this.notes.add(ChallengeNote(noteData, tempNotesIndex));
+        this.notes!.add(ChallengeNote(noteData, tempNotesIndex));
         tempNotesIndex++;
       });
       // add custom notes
-      this.notes.add(ChallengeNote({'title': 'Custom notes'}, tempNotesIndex));
+      this.notes!.add(ChallengeNote({'title': 'Custom notes'}, tempNotesIndex));
 
       this.active = data['active'];
 
@@ -70,11 +70,11 @@ class PhysicalChallenge {
       inputsData.forEach((fieldInput) {
         if (fieldInput != null) {
           if (fieldInput['type'] == 'select') {
-            inputs.add(ChallengeInputSelect(fieldInput, tempInputsIndex));
+            inputs!.add(ChallengeInputSelect(fieldInput, tempInputsIndex));
           } else if (fieldInput['type'] == 'score') {
-            inputs.add(ChallengeInputScore(fieldInput, tempInputsIndex));
+            inputs!.add(ChallengeInputScore(fieldInput, tempInputsIndex));
           } else if (fieldInput['type'] == 'select-score') {
-            inputs.add(ChallengeInputSelectScore(fieldInput, tempInputsIndex));
+            inputs!.add(ChallengeInputSelectScore(fieldInput, tempInputsIndex));
           }
         }
         tempInputsIndex++;
@@ -94,7 +94,7 @@ class PhysicalChallenge {
   List<ChallengeInputResult> getAllChallengeInputResults() {
     List<ChallengeInputResult> challengeInputResults = [];
 
-    this.inputs.forEach((input) {
+    this.inputs!.forEach((input) {
       // print('NAME: ' + input.name.toString() + ' INDXE: ' + input.index.toString());
 
       print("input type: ${input.type}");
@@ -124,7 +124,7 @@ class PhysicalChallenge {
 
   List<ChallengeNoteResult> getChallengeNoteResults() {
     return this
-        .notes
+        .notes!
         .map<ChallengeNoteResult>((note) =>
             ChallengeNoteResult({'title': note.title, 'index': note.index}))
         .toList();

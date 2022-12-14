@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:better_player/better_player.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
-  final String videoUrl;
+  final String? videoUrl;
   VideoPlayerScreen({this.videoUrl});
 
   @override
@@ -10,14 +10,14 @@ class VideoPlayerScreen extends StatefulWidget {
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  BetterPlayerController _controller;
+  BetterPlayerController? _controller;
 
   @override
   void initState() {
     super.initState();
-    if (widget.videoUrl.isNotEmpty) {
+    if (widget.videoUrl!.isNotEmpty) {
       BetterPlayerDataSource betterPlayerDataSource =
-          BetterPlayerDataSource(BetterPlayerDataSourceType.network, widget.videoUrl);
+          BetterPlayerDataSource(BetterPlayerDataSourceType.network, widget.videoUrl!);
       _controller = BetterPlayerController(BetterPlayerConfiguration(),
           betterPlayerDataSource: betterPlayerDataSource);
     }
@@ -43,9 +43,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
           ), // Colors.white),
           // borderSide: Border(color: Colors.white),
         ),
-        child: widget.videoUrl.isNotEmpty
+        child: widget.videoUrl!.isNotEmpty
             ? BetterPlayer(
-                controller: _controller,
+                controller: _controller!,
               )
             : Center(
                 child: Text(

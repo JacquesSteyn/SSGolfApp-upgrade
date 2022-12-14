@@ -24,9 +24,9 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, watch, child) {
-        final userState = watch(userStateProvider.state)?.user;
-        final viewState = watch(viewStateProvider);
+      builder: (context, ref, child) {
+        final userState = ref.watch(userStateProvider).user;
+        final viewState = ref.watch(viewStateProvider);
 
         String titleText =
             userState?.name != null ? 'Hello,\n${userState?.name}' : 'Hello';
@@ -57,7 +57,7 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       Align(
                         alignment: Alignment(0, 0.8),
-                        child: tabsSwitch(viewState),
+                        child: tabsSwitch(ref, viewState),
 
                         // Text(
                         //   'Challenges with a Purpose',
@@ -84,25 +84,25 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget tabsSwitch(viewState) {
+  Widget tabsSwitch(ref, viewState) {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 10, 5, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          tabItem(viewState, ViewMode.Challenges, 'Challenges'),
-          tabItem(viewState, ViewMode.History, 'Score History'),
+          tabItem(ref, viewState, ViewMode.Challenges, 'Challenges'),
+          tabItem(ref, viewState, ViewMode.History, 'Score History'),
         ],
       ),
     );
   }
 
-  Widget tabItem(viewState, ViewMode mode, String text) {
+  Widget tabItem(ref, viewState, ViewMode mode, String text) {
     final bool tabIsSelected = viewState.viewMode == mode;
     return GestureDetector(
       onTap: () {
         print('Home view switch: ' + text.toString());
-        context.read(viewStateProvider).switchViewMode(mode);
+        ref.read(viewStateProvider).switchViewMode(mode);
       },
       child: Container(
         width: Get.size.width * 0.4,

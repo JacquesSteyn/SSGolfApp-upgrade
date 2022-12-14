@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ss_golf/app/profile/profile_state.dart';
-import 'package:ss_golf/shared/widgets/custom_text_field.dart';
 import 'package:ss_golf/shared/widgets/disable_focus_node.dart';
 
 const limbDominanceSelectionOptions = ['Right', 'Left', 'Ambidextrous'];
@@ -21,8 +19,8 @@ class PhysicalProfileView extends ConsumerWidget {
       List<int>.generate(334, (index) => (15 + index));
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final profileState = watch(profileStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(profileStateProvider);
 
     return SingleChildScrollView(
       child: Container(
@@ -56,7 +54,6 @@ class PhysicalProfileView extends ConsumerWidget {
   }
 
   Widget heightDirectSelection(profileState) {
-    print('HEIGHTTTT ' + profileState?.height.toString());
     int initialIndex = 0;
     if (profileState?.height != null) {
       heightTextController.text = '${profileState?.height} cm';
@@ -66,7 +63,7 @@ class PhysicalProfileView extends ConsumerWidget {
     return TextFormField(
       onTap: () {
         showModalBottomSheet(
-            context: Get.context,
+            context: Get.context!,
             builder: (BuildContext context) {
               return Container(
                 height: MediaQuery.of(context).size.height / 3,
@@ -116,7 +113,6 @@ class PhysicalProfileView extends ConsumerWidget {
   }
 
   Widget weightDirectSelection(profileState) {
-    print('WEIGHTTTT ' + profileState?.weight.toString());
     int initialIndex = 0;
     if (profileState?.weight != null) {
       weightTextController.text = '${profileState?.weight} kg';
@@ -126,7 +122,7 @@ class PhysicalProfileView extends ConsumerWidget {
     return TextFormField(
       onTap: () {
         showModalBottomSheet(
-            context: Get.context,
+            context: Get.context!,
             builder: (BuildContext context) {
               return Container(
                 height: MediaQuery.of(context).size.height / 3,
@@ -175,7 +171,7 @@ class PhysicalProfileView extends ConsumerWidget {
     );
   }
 
-  Widget upperLimbDominanceSelection(profileState) {
+  Widget upperLimbDominanceSelection(ProfileState profileState) {
     return DropdownButtonFormField<String>(
       items: limbDominanceSelectionOptions
           .map<DropdownMenuItem<String>>((String val) {
@@ -184,7 +180,7 @@ class PhysicalProfileView extends ConsumerWidget {
           child: Text(val),
         );
       }).toList(),
-      value: profileState?.upperLimbDominance,
+      value: profileState.upperLimbDominance,
       onChanged: profileState.setUpperLimbDominance,
       style: TextStyle(color: Colors.white),
       dropdownColor: Colors.grey,
@@ -194,7 +190,7 @@ class PhysicalProfileView extends ConsumerWidget {
         fillColor: Colors.black,
         labelText: 'Upper Limb Dominance',
         labelStyle: TextStyle(
-          color: profileState?.upperLimbDominance == null
+          color: profileState.upperLimbDominance == null
               ? Colors.red[300]
               : Colors.grey[300],
           fontSize: 20,
@@ -207,7 +203,7 @@ class PhysicalProfileView extends ConsumerWidget {
     );
   }
 
-  Widget lowerLimbDominanceSelection(profileState) {
+  Widget lowerLimbDominanceSelection(ProfileState profileState) {
     return DropdownButtonFormField<String>(
       items: limbDominanceSelectionOptions
           .map<DropdownMenuItem<String>>((String val) {
@@ -216,7 +212,7 @@ class PhysicalProfileView extends ConsumerWidget {
           child: Text(val),
         );
       }).toList(),
-      value: profileState?.lowerLimbDominance,
+      value: profileState.lowerLimbDominance,
       onChanged: profileState.setLowerLimbDominance,
       style: TextStyle(color: Colors.white),
       dropdownColor: Colors.grey,
@@ -226,7 +222,7 @@ class PhysicalProfileView extends ConsumerWidget {
         fillColor: Colors.black,
         labelText: 'Lower Limb Dominance',
         labelStyle: TextStyle(
-          color: profileState?.lowerLimbDominance == null
+          color: profileState.lowerLimbDominance == null
               ? Colors.red[300]
               : Colors.grey[300],
           fontSize: 20,
@@ -242,10 +238,10 @@ class PhysicalProfileView extends ConsumerWidget {
 
 // DIRECT SELECTION ITEM
 class DirectSelectionItem extends StatelessWidget {
-  final String title;
+  final String? title;
   final bool isForList;
 
-  const DirectSelectionItem({Key key, this.title, this.isForList = true})
+  const DirectSelectionItem({Key? key, this.title, this.isForList = true})
       : super(key: key);
 
   @override
@@ -278,7 +274,7 @@ class DirectSelectionItem extends StatelessWidget {
       alignment: Alignment.center,
       child: FittedBox(
           child: Text(
-        title,
+        title!,
       )),
     );
   }

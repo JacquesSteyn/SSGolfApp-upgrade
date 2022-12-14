@@ -1,6 +1,6 @@
 class SkillElement {
-  String name, id;
-  int weight;
+  String? name, id;
+  int? weight;
 
   SkillElement([data]) {
     this.name = data['name'];

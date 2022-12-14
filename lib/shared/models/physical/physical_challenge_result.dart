@@ -2,12 +2,12 @@ import 'package:ss_golf/shared/models/challenge_input_result.dart';
 import 'package:ss_golf/shared/models/challenge_note_result.dart';
 
 class PhysicalChallengeResult {
-  String challengeId, challengeName, difficulty, dateTimeCreated, index;
-  List<ChallengeNoteResult> notes;
-  List<dynamic> inputResults;
-  double percentage;
+  String? challengeId, challengeName, difficulty, dateTimeCreated, index;
+  List<ChallengeNoteResult>? notes;
+  List<dynamic>? inputResults;
+  double? percentage;
 
-  List<AttributeContribution> attributeContributions;
+  late List<AttributeContribution> attributeContributions;
 
   PhysicalChallengeResult([data, attributeId]) {
     if (data != null) {
@@ -57,11 +57,11 @@ class PhysicalChallengeResult {
       'challengeName': this.challengeName ?? '',
       'difficulty': this.difficulty ?? '0',
       'inputResults': this
-              .inputResults
+              .inputResults!
               .map((dynamic challengeInputResult) => challengeInputResult.getJson())
               .toList() ??
           0,
-      'notes': this.notes.map((note) => note.getJson()).toList(),
+      'notes': this.notes!.map((note) => note.getJson()).toList(),
       'percentage': this.percentage ?? 0.0,
       'dateTimeCreated': this.dateTimeCreated,
     };
@@ -76,8 +76,8 @@ class PhysicalChallengeResult {
 }
 
 class AttributeContribution {
-  double percentage;
-  String attributeId;
+  double? percentage;
+  String? attributeId;
 
   AttributeContribution([data]) {
     if (data != null) {

@@ -66,7 +66,8 @@ class Utilities {
   }
 
   static String getLastMonthStartDayId(DateTime date) {
-    DateTime firstDayOfLastMonth = new DateTime(date.year, date.month - 1, date.day);
+    DateTime firstDayOfLastMonth =
+        new DateTime(date.year, date.month - 1, date.day);
 
     String dayId = formatDate(firstDayOfLastMonth);
     print('LAST MONTH START DAY ID: ' + dayId.toString());
@@ -76,7 +77,7 @@ class Utilities {
 
   static String getLastThreeMonthsStartDayId(DateTime date) {
     DateTime firstDayOfLastThreeMonths =
-        new DateTime(date.year, date.month - 3, date.day);
+        new DateTime(date.year, date.month - 2, date.day);
 
     String dayId = formatDate(firstDayOfLastThreeMonths);
     print('LAST THREE MONTH START DAY ID: ' + dayId.toString());
@@ -85,7 +86,8 @@ class Utilities {
   }
 
   static String getLastSixMonthsStartDayId(DateTime date) {
-    DateTime firstDayOfLastSixMonth = new DateTime(date.year, date.month - 6, date.day);
+    DateTime firstDayOfLastSixMonth =
+        new DateTime(date.year, date.month - 5, date.day);
 
     String dayId = formatDate(firstDayOfLastSixMonth);
     print('LAST SIX MONTH START DAY ID: ' + dayId.toString());
@@ -93,7 +95,7 @@ class Utilities {
     return dayId;
   }
 
-  static Color gradedColors(double value) {
+  static Color gradedColors(double? value) {
     if (value == null) {
       return Colors.grey;
     }

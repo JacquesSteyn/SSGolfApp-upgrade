@@ -6,7 +6,7 @@ import 'package:ss_golf/shared/models/physical/physical_challenge.dart';
 import 'package:ss_golf/shared/widgets/neo/challenge_difficulty_rating.dart';
 
 class PhysicalChallengeCard extends StatefulWidget {
-  final PhysicalChallenge challenge;
+  final PhysicalChallenge? challenge;
   PhysicalChallengeCard({this.challenge});
 
   @override
@@ -34,14 +34,14 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: 120,
-                child: widget.challenge.imageUrl == null ||
-                        widget.challenge.imageUrl.isEmpty
+                child: widget.challenge!.imageUrl == null ||
+                        widget.challenge!.imageUrl!.isEmpty
                     ? Image.asset(
                         'assets/images/default_image.png',
                         fit: BoxFit.fitWidth,
                       )
                     : Image.network(
-                        widget.challenge.imageUrl,
+                        widget.challenge!.imageUrl!,
                         fit: BoxFit.cover,
                       ),
               ),
@@ -71,7 +71,7 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
           Row(children: [
             Flexible(
               child: Text(
-                widget.challenge.name,
+                widget.challenge!.name!,
                 style: TextStyle(color: Colors.white, fontSize: 14),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -85,7 +85,7 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
             alignment: Alignment.centerLeft,
             child: FittedBox(
               child: Text(
-                'Duration: ${widget.challenge.duration}',
+                'Duration: ${widget.challenge!.duration}',
                 style:
                     TextStyle(color: Get.theme.backgroundColor, fontSize: 14),
               ),
@@ -103,7 +103,7 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
         ChallengeDifficultyRating(
           iconColor: Colors.white,
           showText: false,
-          difficultyRating: double.parse(widget.challenge.difficulty),
+          difficultyRating: double.parse(widget.challenge!.difficulty!),
         ),
         IconButton(
             onPressed: () => showSheet(),

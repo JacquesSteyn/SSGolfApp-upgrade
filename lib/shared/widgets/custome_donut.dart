@@ -5,7 +5,7 @@ import 'package:ss_golf/services/utilities_service.dart';
 
 class DonutChart extends StatelessWidget {
   const DonutChart({this.value, this.total = 100});
-  final double value;
+  final double? value;
   final double total;
 
   @override

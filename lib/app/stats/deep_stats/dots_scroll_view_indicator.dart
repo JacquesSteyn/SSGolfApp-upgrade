@@ -3,15 +3,15 @@ import 'dart:math';
 
 class DotsScrollViewIndicator extends AnimatedWidget {
   DotsScrollViewIndicator({
-    this.controller,
+    required this.controller,
     this.itemCount,
     this.onPageSelected,
     this.color: Colors.white,
   }) : super(listenable: controller);
 
   final PageController controller;
-  final int itemCount;
-  final ValueChanged<int> onPageSelected;
+  final int? itemCount;
+  final ValueChanged<int>? onPageSelected;
   final Color color;
 
   // The base size of the dots
@@ -24,7 +24,7 @@ class DotsScrollViewIndicator extends AnimatedWidget {
   Widget build(BuildContext context) {
     return new Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: new List<Widget>.generate(itemCount, _buildDot),
+      children: new List<Widget>.generate(itemCount!, _buildDot),
     );
   }
 
@@ -47,7 +47,7 @@ class DotsScrollViewIndicator extends AnimatedWidget {
             width: _kDotSize * zoom,
             height: _kDotSize * zoom,
             child: new InkWell(
-              onTap: () => onPageSelected(index),
+              onTap: () => onPageSelected!(index),
             ),
           ),
         ),

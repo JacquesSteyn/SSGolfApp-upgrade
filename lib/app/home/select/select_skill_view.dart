@@ -7,10 +7,10 @@ import 'package:ss_golf/state/app.provider.dart';
 
 class SelectSkillView extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var itemWidth = MediaQuery.of(context).size.width * 0.4;
     var itemHeight = MediaQuery.of(context).size.height * 0.225;
-    final appState = watch(appStateProvider.state);
+    final appState = ref.watch(appStateProvider);
 
     return appState.isLoading
         ? Center(child: CircularProgressIndicator())
@@ -40,7 +40,7 @@ class SelectSkillView extends ConsumerWidget {
             children: [
               Expanded(
                 child: Card(
-                  color: Get.theme.accentColor, // Color(0xFF1E1E1E),
+                  color: Get.theme.colorScheme.secondary, // Color(0xFF1E1E1E),
                   // Color(0xFF23252F), //  Get.theme.accentColor, //Color(0xFF232233),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25.0),
@@ -66,7 +66,7 @@ class SelectSkillView extends ConsumerWidget {
                 ),
               ),
               Text(
-                skill.name,
+                skill.name!,
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

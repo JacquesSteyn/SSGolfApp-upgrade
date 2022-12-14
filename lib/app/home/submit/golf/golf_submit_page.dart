@@ -4,14 +4,13 @@ import 'package:ss_golf/app/home/submit/golf/golf_score_view.dart';
 import 'package:ss_golf/app/home/submit/instructions.dart';
 import 'package:ss_golf/app/home/submit/tips_and_advice.dart';
 import 'package:ss_golf/app/home/submit/video_player_screen.dart';
-import 'package:ss_golf/shared/models/challenge_input.dart';
 import 'package:ss_golf/shared/models/golf/golf_challenge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
 import 'package:ss_golf/shared/widgets/custome_donut.dart';
 
 class GolfSubmitPage extends StatefulWidget {
-  final GolfChallenge challenge;
+  final GolfChallenge? challenge;
 
   GolfSubmitPage({this.challenge});
 
@@ -36,20 +35,20 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
   }
 
   double getTargetVal() {
-    print("THRESHOLD: ${widget.challenge.benchmarks.threshold}");
+    print("THRESHOLD: ${widget.challenge!.benchmarks.threshold}");
     switch (activeHandicap) {
       case 'Pro':
-        return widget.challenge.benchmarks.pro.toDouble();
+        return widget.challenge!.benchmarks.pro.toDouble();
       case '0-9':
-        return widget.challenge.benchmarks.zero_to_nine.toDouble();
+        return widget.challenge!.benchmarks.zero_to_nine.toDouble();
       case '10-19':
-        return widget.challenge.benchmarks.ten_to_nineteen.toDouble();
+        return widget.challenge!.benchmarks.ten_to_nineteen.toDouble();
       case '20-29':
-        return widget.challenge.benchmarks.twenty_to_twenty_nine.toDouble();
+        return widget.challenge!.benchmarks.twenty_to_twenty_nine.toDouble();
       case '30+':
-        return widget.challenge.benchmarks.thirty_plus.toDouble();
+        return widget.challenge!.benchmarks.thirty_plus.toDouble();
       default:
-        return widget.challenge.benchmarks.thirty_plus.toDouble();
+        return widget.challenge!.benchmarks.thirty_plus.toDouble();
     }
   }
 
@@ -86,17 +85,17 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
-        title: widget.challenge.name,
+        title: widget.challenge!.name,
       ),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
           child: Consumer(
-            builder: (ctx, watch, child) {
-              final golfSubmitViewState = watch(golfSubmitStateProvider);
-              double proLevel = widget.challenge.benchmarks.pro.toDouble();
+            builder: (ctx, ref, child) {
+              final golfSubmitViewState = ref.watch(golfSubmitStateProvider);
+              double proLevel = widget.challenge!.benchmarks.pro.toDouble();
               double threshold =
-                  widget.challenge.benchmarks.threshold.toDouble();
+                  widget.challenge!.benchmarks.threshold.toDouble();
               double total = threshold > 0
                   ? threshold
                   : proLevel > 0
@@ -145,13 +144,13 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: handicapWidget(),
                   ),
-                  if (widget.challenge.videoUrl.isNotEmpty)
+                  if (widget.challenge!.videoUrl!.isNotEmpty)
                     collapsibleVideoView(golfSubmitViewState),
                   if (!golfSubmitViewState.showVideo)
                     Expanded(
                       child: Column(
                         children: [
-                          tabsSwitch(golfSubmitViewState),
+                          tabsSwitch(ref, golfSubmitViewState),
                           Divider(color: Colors.grey[300]),
                           Expanded(
                             child: Container(
@@ -177,7 +176,7 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
         // VIDEO PLAYER
         if (golfSubmitViewState.showVideo)
           VideoPlayerScreen(
-            videoUrl: widget.challenge.videoUrl,
+            videoUrl: widget.challenge!.videoUrl,
           ),
         // collapsible button
 
@@ -188,7 +187,7 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
           dense: true,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          tileColor: Get.theme.accentColor,
+          tileColor: Get.theme.colorScheme.secondary,
           leading: Icon(Icons.ondemand_video_outlined, color: Colors.white),
           trailing: Icon(
               golfSubmitViewState.showVideo
@@ -211,25 +210,26 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
     );
   }
 
-  Widget tabsSwitch(golfSubmitViewState) {
+  Widget tabsSwitch(ref, golfSubmitViewState) {
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 10, 5, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          tabItem(golfSubmitViewState, ViewMode.Score, 'Score'),
-          tabItem(golfSubmitViewState, ViewMode.Instructions, 'Instructions'),
-          tabItem(golfSubmitViewState, ViewMode.Tips, 'Tips + Advice'),
+          tabItem(ref, golfSubmitViewState, ViewMode.Score, 'Score'),
+          tabItem(
+              ref, golfSubmitViewState, ViewMode.Instructions, 'Instructions'),
+          tabItem(ref, golfSubmitViewState, ViewMode.Tips, 'Tips + Advice'),
         ],
       ),
     );
   }
 
-  Widget tabItem(golfSubmitViewState, ViewMode mode, String text) {
+  Widget tabItem(ref, golfSubmitViewState, ViewMode mode, String text) {
     final bool tabIsSelected = golfSubmitViewState.viewMode == mode;
     return InkWell(
       onTap: () {
-        context.read(golfSubmitStateProvider).switchViewMode(mode);
+        ref.read(golfSubmitStateProvider).switchViewMode(mode);
       },
       child: Text(
         text,
@@ -245,9 +245,9 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
   Widget viewsSwitch(performState) {
     switch (performState.viewMode) {
       case ViewMode.Instructions:
-        return Instructions(instructions: widget.challenge.instructions);
+        return Instructions(instructions: widget.challenge!.instructions);
       case ViewMode.Tips:
-        return TipsAndAdvice(tips: widget.challenge.tipGroups);
+        return TipsAndAdvice(tips: widget.challenge!.tipGroups);
       case ViewMode.Score:
         return ScoreView(challenge: widget.challenge);
       default:

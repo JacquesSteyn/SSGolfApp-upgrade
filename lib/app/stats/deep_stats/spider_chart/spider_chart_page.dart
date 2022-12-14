@@ -4,7 +4,7 @@ import 'package:ss_golf/app/stats/deep_stats/spider_chart/spider_chart_painter.d
 import 'package:ss_golf/services/utilities_service.dart';
 
 class SpiderChartPage extends StatelessWidget {
-  final List<DeepStat> deepStats;
+  final List<DeepStat>? deepStats;
 
   SpiderChartPage({this.deepStats});
 
@@ -13,10 +13,10 @@ class SpiderChartPage extends StatelessWidget {
     return Container(
       child: Center(
         child: SpiderChart(
-            values: deepStats
-                .map<int>((e) => Utilities.roundOffPercentageValueToInt(e.value))
+            values: deepStats!
+                .map<int>((e) => Utilities.roundOffPercentageValueToInt(e.value!))
                 .toList(),
-            labels: deepStats.map<String>((e) => e.name).toList()),
+            labels: deepStats!.map<String?>((e) => e.name).toList()),
       ),
     );
   }

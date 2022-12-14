@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:ss_golf/shared/widgets/chart_dialog.dart';
@@ -12,14 +10,14 @@ const entertainmentColor = Colors.white70;
 
 class CustomRadarChart extends StatefulWidget {
   const CustomRadarChart(
-      {@required this.values,
+      {required this.values,
       this.values2,
-      @required this.labels,
-      @required this.chartType});
-  final List<double> values;
-  final List<double> values2;
-  final List<String> labels;
-  final String chartType;
+      required this.labels,
+      required this.chartType});
+  final List<double?> values;
+  final List<double>? values2;
+  final List<String?> labels;
+  final String? chartType;
 
   @override
   _CustomRadarChartState createState() => _CustomRadarChartState();
@@ -27,7 +25,7 @@ class CustomRadarChart extends StatefulWidget {
 
 class _CustomRadarChartState extends State<CustomRadarChart> {
   bool loaded = false;
-  List<double> tempValues = [0, 0, 0];
+  List<double?> tempValues = [0, 0, 0];
 
   @override
   void initState() {
@@ -78,13 +76,13 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
                       titlePositionPercentageOffset: 0.2,
                       titleTextStyle:
                           const TextStyle(color: Colors.white, fontSize: 14),
-                      getTitle: (index) {
-                        String title = widget.labels[index];
+                      getTitle: (index, angle) {
+                        String title = widget.labels[index]!;
                         if (title.length > 11) {
                           title = title.replaceFirst(' ', '\n');
                         }
-                        title += "\n" + tempValues[index].round().toString();
-                        return title;
+                        title += "\n" + tempValues[index]!.round().toString();
+                        return RadarChartTitle(text: title);
                       },
                       tickCount: maxTickScale(),
                       ticksTextStyle: const TextStyle(
@@ -112,7 +110,7 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
         borderColor: rawDataSet.color,
         entryRadius: 4,
         dataEntries:
-            rawDataSet.values.map((e) => RadarEntry(value: e)).toList(),
+            rawDataSet.values.map((e) => RadarEntry(value: e!)).toList(),
         borderWidth: 0,
       );
     }).toList();
@@ -121,11 +119,11 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
   List<RawDataSet> rawDataSets() {
     return [
       if (widget.values2 != null &&
-          widget.values2.length == widget.values.length)
+          widget.values2!.length == widget.values.length)
         RawDataSet(
           fill: Colors.grey.withOpacity(0.7),
           color: Colors.grey,
-          values: [...widget.values2],
+          values: [...widget.values2!],
         ),
       RawDataSet(
         fill: Colors.blue.withOpacity(0.7),
@@ -142,9 +140,9 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
 
   double maxScoreScale() {
     double maxScore =
-        [...widget.values].reduce((curr, next) => curr > next ? curr : next);
+        [...widget.values].reduce((curr, next) => curr! > next! ? curr : next)!;
     double maxHandicap =
-        [...widget.values2].reduce((curr, next) => curr > next ? curr : next);
+        [...?widget.values2].reduce((curr, next) => curr > next ? curr : next);
     double maxScale = maxScore > maxHandicap ? maxScore : maxHandicap;
     return (((maxScale / 10).round() * 10) + 10).toDouble();
   }
@@ -162,11 +160,11 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
 class RawDataSet {
   final Color fill;
   final Color color;
-  final List<double> values;
+  final List<double?> values;
 
   RawDataSet({
-    @required this.fill,
-    @required this.color,
-    @required this.values,
+    required this.fill,
+    required this.color,
+    required this.values,
   });
 }

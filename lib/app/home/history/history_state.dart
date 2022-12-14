@@ -46,7 +46,7 @@ class HistoryState extends ChangeNotifier {
   }
 
   // *** Stream
-  Stream<Event> challengeResultsStream(String userId) {
+  Stream<DatabaseEvent> challengeResultsStream(String userId) {
     String type = 'golf';
     if (_challengeTypeFilter == ChallengeTypeFilter.Physical) {
       type = 'physical';

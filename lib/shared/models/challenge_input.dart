@@ -1,6 +1,6 @@
 abstract class ChallengeInput {
-  String type, name;
-  int index, maxScore;
+  String? type, name;
+  int? index, maxScore;
 
   ChallengeInput({
     this.type,
@@ -10,7 +10,7 @@ abstract class ChallengeInput {
 }
 
 class ChallengeInputSelect extends ChallengeInput {
-  List<SelectOptionScore> selectionOptions;
+  List<SelectOptionScore>? selectionOptions;
 
   ChallengeInputSelect(data, index) {
     this.type = data['type'];
@@ -25,8 +25,8 @@ class ChallengeInputSelect extends ChallengeInput {
 }
 
 class SelectOptionScore {
-  String option;
-  double score;
+  String? option;
+  double? score;
 
   SelectOptionScore(data) {
     this.option = data['option'];
@@ -42,7 +42,7 @@ class SelectOptionScore {
 }
 
 class ChallengeInputSelectScore extends ChallengeInput {
-  List<SelectOptionScore> selectionOptions;
+  List<SelectOptionScore>? selectionOptions;
 
   ChallengeInputSelectScore(data, index) {
     this.type = data['type'];
@@ -58,7 +58,7 @@ class ChallengeInputSelectScore extends ChallengeInput {
 }
 
 class ChallengeInputScore extends ChallengeInput {
-  int maxScore;
+  int? maxScore;
 
   ChallengeInputScore(data, index) {
     this.type = data['type'];

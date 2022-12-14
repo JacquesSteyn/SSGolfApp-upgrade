@@ -6,10 +6,10 @@ import 'package:ss_golf/shared/widgets/custome_donut.dart';
 import 'package:ss_golf/shared/widgets/primary_button.dart';
 
 class ResultPage extends StatefulWidget {
-  final String challengeName;
-  final String challengeId;
-  final String userId;
-  final double challengeScore;
+  final String? challengeName;
+  final String? challengeId;
+  final String? userId;
+  final double? challengeScore;
 
   ResultPage({
     this.challengeId,
@@ -101,50 +101,48 @@ class _ResultPageState extends State<ResultPage> {
               'Thank you for your feedback!',
               style: TextStyle(color: Colors.white),
             )
-          : SizedBox(
-              width: 200,
-              child: RaisedButton(
-                color: Colors.black,
-                onPressed: () {
-                  showGeneralDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    barrierColor: Colors.black87,
-                    transitionDuration: Duration(milliseconds: 200),
-                    transitionBuilder: (context, a1, a2, child) {
-                      return ScaleTransition(
-                        scale: CurvedAnimation(
-                            parent: a1,
-                            curve: Curves.decelerate,
-                            reverseCurve: Curves.easeOutCubic),
-                        child: FeedbackDialog(
-                          feedbackSubmitted: _onFeedbackSubmitted,
-                          userId: widget.userId,
-                          challengeId: widget.challengeId,
-                        ),
-                      );
-                    },
-                    pageBuilder: (BuildContext context, Animation animation,
-                        Animation secondaryAnimation) {
-                      return null;
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text(
-                    'Give feedback for this challenge',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                shape: RoundedRectangleBorder(
+          : GestureDetector(
+              onTap: () {
+                showGeneralDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  barrierColor: Colors.black87,
+                  transitionDuration: Duration(milliseconds: 200),
+                  transitionBuilder: (context, a1, a2, child) {
+                    return ScaleTransition(
+                      scale: CurvedAnimation(
+                          parent: a1,
+                          curve: Curves.decelerate,
+                          reverseCurve: Curves.easeOutCubic),
+                      child: FeedbackDialog(
+                        feedbackSubmitted: _onFeedbackSubmitted,
+                        userId: widget.userId,
+                        challengeId: widget.challengeId,
+                      ),
+                    );
+                  },
+                  pageBuilder: (BuildContext context, Animation animation,
+                      Animation secondaryAnimation) {
+                    return Container();
+                  },
+                );
+              },
+              child: Container(
+                width: 200,
+                padding: const EdgeInsets.all(15.0),
+                decoration: BoxDecoration(
+                  color: Colors.black,
                   borderRadius: new BorderRadius.circular(18.0),
-                  side: const BorderSide(
+                  border: Border.all(
                     color: Colors.white,
                     width: 1,
+                  ),
+                ),
+                child: Text(
+                  'Give feedback for this challenge',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                 ),
               ),

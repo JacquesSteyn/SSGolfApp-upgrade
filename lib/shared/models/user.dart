@@ -1,7 +1,7 @@
 enum LimbDominance { Right, Left, Ambidextrous }
 
 class PhysicalProfile {
-  String height, weight, upperLimbDominance, lowerLimbDominance;
+  String? height, weight, upperLimbDominance, lowerLimbDominance;
 
   PhysicalProfile([data]) {
     if (data != null) {
@@ -22,19 +22,26 @@ class PhysicalProfile {
   }
 }
 
-enum GolfStatus { Beginner, Amateur, ClubPro, LocalTourPro, InternationalTourPro }
+enum GolfStatus {
+  Beginner,
+  Amateur,
+  ClubPro,
+  LocalTourPro,
+  InternationalTourPro
+}
+
 enum GolfStance { Right, Left }
 
 class GolfProfile {
   // GolfStatus status;
   // double handicap; // only if amateur or beginner
   // GolfStance stance;
-  String status, stance, clubAffiliation, handicap;
+  String? status, stance, clubAffiliation, handicap;
 
   GolfProfile([data]) {
     if (data != null) {
       this.status = data['status'];
-      this.handicap = data['handicap'].toString();
+      this.handicap = (data['handicap'].toString());
       this.stance = data['stance'];
       this.clubAffiliation = data['clubAffiliation'];
     }
@@ -43,7 +50,7 @@ class GolfProfile {
   getJson() {
     return {
       'status': this.status,
-      'handicap': this.handicap,
+      'handicap': this.handicap ?? 0,
       'stance': this.stance,
       'clubAffiliation': this.clubAffiliation,
     };
@@ -51,26 +58,58 @@ class GolfProfile {
 }
 
 class UserProfile {
-  String id, email, type, name, gender, dateOfBirth, imageUrl;
-  // country, state, city;
-  GolfProfile golfProfile;
-  PhysicalProfile physicalProfile;
+  String? id, email, type, name, gender, dateOfBirth, imageUrl, plan;
+  double? balance;
+  late GolfProfile golfProfile;
+  late PhysicalProfile physicalProfile;
+
+  int? checkInStreak;
+  late int completedChallenges;
+  DateTime? lastClockInTime; //Only the first clock in for the day
+  DateTime?
+      lastChallengeRedemption; //Only allow one challenge a day to be redeemed
+  DateTime? freeTrailExpireDate;
 
   UserProfile([data]) {
-    if (data != null) {
-      this.id = data['id'];
-      this.email = data['email'];
-      this.type = data['type'];
-      this.name = data['name'];
-      this.gender = data['gender'];
-      this.dateOfBirth = data['dateOfBirth'];
-      this.imageUrl = data['imageUrl'];
-      // this.country = data['country'];
-      // this.state = data['state'];
-      // this.city = data['city'];
+    try {
+      if (data != null) {
+        this.id = data['id'];
+        this.email = data['email'];
+        this.type = data['type'];
+        this.name = data['name'];
+        this.gender = data['gender'];
+        this.dateOfBirth = data['dateOfBirth'];
+        this.imageUrl = data['imageUrl'];
+        this.plan = data['plan'] ?? "free";
 
-      this.golfProfile = GolfProfile(data['golfProfile']);
-      this.physicalProfile = PhysicalProfile(data['physicalProfile']);
+        this.balance = data['balance'] != null
+            ? double.parse(data['balance'].toString())
+            : 0;
+
+        this.checkInStreak =
+            data['checkInStreak'] != null ? data['checkInStreak'] : 0;
+
+        this.completedChallenges = data['completedChallenges'] != null
+            ? data['completedChallenges']
+            : 0;
+
+        this.lastClockInTime = data['lastClockInTime'] != null
+            ? DateTime.parse(data['lastClockInTime'])
+            : null;
+
+        this.lastChallengeRedemption = data['lastChallengeRedemption'] != null
+            ? DateTime.parse(data['lastChallengeRedemption'])
+            : null;
+
+        this.freeTrailExpireDate = data['freeTrailExpireDate'] != null
+            ? DateTime.parse(data['freeTrailExpireDate'])
+            : null;
+
+        this.golfProfile = GolfProfile(data['golfProfile']);
+        this.physicalProfile = PhysicalProfile(data['physicalProfile']);
+      }
+    } catch (e) {
+      print("ERROR INIT USER: $e");
     }
   }
 
@@ -83,27 +122,18 @@ class UserProfile {
       'gender': this.gender,
       'dateOfBirth': this.dateOfBirth,
       'imageUrl': this.imageUrl,
-      // 'country': this.country,
-      // 'state': this.state,
-      // 'city': this.city,
+      'balance': this.balance,
       'golfProfile': this.golfProfile.getJson(),
       'physicalProfile': this.physicalProfile.getJson(),
+      'plan': this.plan
     };
   }
 
   List<String> userProfileValidation() {
     List<String> missingFields = [];
-    if (this.name.isEmpty) {
+    if (this.name!.isEmpty) {
       missingFields.add('Name');
     }
-    // if (this.gender.isEmpty) {
-    //   missingFields.add('Gender');
-
-    // }
-    //  if (this.dateOfBirth.isEmpty || this.dateOfBirth == null) {
-    //   missingFields.add('Gender');
-
-    // }
 
     return missingFields;
   }

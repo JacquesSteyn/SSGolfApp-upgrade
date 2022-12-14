@@ -8,15 +8,15 @@ class NeuomorphicCircle extends StatelessWidget {
   final Color highlightColor;
   final Color shadowColor;
   final Color backgroundColor;
-  final Widget child;
+  final Widget? child;
 
   const NeuomorphicCircle(
-      {Key key,
-      @required this.innerShadow,
-      @required this.outerShadow,
-      @required this.highlightColor,
-      @required this.shadowColor,
-      @required this.backgroundColor,
+      {Key? key,
+      required this.innerShadow,
+      required this.outerShadow,
+      required this.highlightColor,
+      required this.shadowColor,
+      required this.backgroundColor,
       this.child})
       : super(key: key);
 
@@ -58,7 +58,7 @@ class NeuomorphicCircle extends StatelessWidget {
               ),
             )
           : SizedBox.shrink(),
-      (child != null) ? child : SizedBox.shrink()
+      (child != null) ? child! : SizedBox.shrink()
     ]);
   }
 }

@@ -1,6 +1,6 @@
 class ChallengeNoteResult {
-  String title, selectedOption;
-  int index;
+  String? title, selectedOption;
+  int? index;
 
   ChallengeNoteResult([data]) {
     if (data != null) {

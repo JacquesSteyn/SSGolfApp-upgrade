@@ -28,10 +28,10 @@ class PhysicalScoreState extends ChangeNotifier {
 
   // *** DYNAMIC USER INPUT FIELDS - FieldInputs cycles though the set user inputs and creates user input results to store in results.
   bool _userInputResultsSet = false;
-  List<ChallengeInput> _userInputs = [];
-  void setUserInputs(PhysicalChallenge challenge) {
+  List<ChallengeInput>? _userInputs = [];
+  void setUserInputs(PhysicalChallenge? challenge) {
     if (!_userInputResultsSet) {
-      _userInputs = challenge.inputs;
+      _userInputs = challenge!.inputs;
       _challengeNotes = challenge.notes;
       challengeResult.inputResults = challenge.getAllChallengeInputResults();
       challengeResult.notes = challenge.getChallengeNoteResults();
@@ -39,48 +39,48 @@ class PhysicalScoreState extends ChangeNotifier {
     }
   }
 
-  List<ChallengeNote> _challengeNotes = [];
-  List<dynamic> get challengeNotes => _challengeNotes;
-  String getChallengeNoteResult(int index) {
-    return challengeResult.notes[index].selectedOption;
+  List<ChallengeNote>? _challengeNotes = [];
+  List<dynamic>? get challengeNotes => _challengeNotes;
+  String? getChallengeNoteResult(int index) {
+    return challengeResult.notes![index].selectedOption;
   }
 
   void setChallengeNoteResult(int index, String selectedOption) {
-    challengeResult.notes[index].selectedOption = selectedOption;
+    challengeResult.notes![index].selectedOption = selectedOption;
     notifyListeners();
   }
 
-  List<dynamic> get userInputs => _userInputs;
-  List<dynamic> get inputResults => challengeResult.inputResults;
+  List<dynamic>? get userInputs => _userInputs;
+  List<dynamic>? get inputResults => challengeResult.inputResults;
   PhysicalChallengeResult challengeResult = PhysicalChallengeResult();
 
   setInputScoreResult(int scoreIndex, int selectedScore) {
-    challengeResult.inputResults[scoreIndex].selectedScore = selectedScore;
+    challengeResult.inputResults![scoreIndex].selectedScore = selectedScore;
     notifyListeners();
   }
 
-  int getInputScoreResult(int inputIndex) {
-    return inputResults[inputIndex].selectedScore;
+  int? getInputScoreResult(int inputIndex) {
+    return inputResults![inputIndex].selectedScore;
   }
 
   setInputSelectScoreResult(
       int inputIndex, SelectOptionScore selectedScoreOption) {
-    challengeResult.inputResults[inputIndex].selectedOption =
+    challengeResult.inputResults![inputIndex].selectedOption =
         selectedScoreOption;
     notifyListeners();
   }
 
-  SelectOptionScore getInputSelectScoreResult(int inputIndex) {
-    return inputResults[inputIndex].selectedOption;
+  SelectOptionScore? getInputSelectScoreResult(int inputIndex) {
+    return inputResults![inputIndex].selectedOption;
   }
 
   setInputSelectResult(int scoreIndex, String selectedOption) {
-    challengeResult.inputResults[scoreIndex].selectedOption = selectedOption;
+    challengeResult.inputResults![scoreIndex].selectedOption = selectedOption;
     notifyListeners();
   }
 
-  String getInputSelectResult(int inputIndex) {
-    return inputResults[inputIndex].selectedOption;
+  String? getInputSelectResult(int inputIndex) {
+    return inputResults![inputIndex].selectedOption;
   }
 
   bool _isCompleted = false;
@@ -100,7 +100,7 @@ class PhysicalScoreState extends ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<double> submit(
+  Future<double?> submit(
     String userId,
     PhysicalChallenge challenge,
     List<Attribute> attributes,
@@ -157,7 +157,7 @@ class PhysicalScoreState extends ChangeNotifier {
 
   validateForm() {
     bool validInputs = true;
-    for (var inputResult in challengeResult.inputResults) {
+    for (var inputResult in challengeResult.inputResults!) {
       if (inputResult.type == 'score') {
         if (inputResult.selectedScore < 0) {
           _errorMessage = '${inputResult.name} - please enter a score.';
@@ -178,28 +178,28 @@ class PhysicalScoreState extends ChangeNotifier {
   double _calculateChallengeScorePercentage(PhysicalChallenge challenge) {
     // ** 1. Total elements contribution points
     int totalPoints = 0;
-    challenge.weightings.weightings
-        .forEach((value) => totalPoints = totalPoints + value.weight);
+    challenge.weightings.weightings!
+        .forEach((value) => totalPoints = totalPoints + value.weight!);
 
     // ** 2. Additive total and division factor
     double score = 0;
     int divisionFactor = 0;
     double _maxScore = 0;
-    inputResults.forEach((inputResult) {
+    inputResults!.forEach((inputResult) {
       if (inputResult.type == 'score') {
         score = score + inputResult.selectedScore;
         divisionFactor++;
         // find max score - this is not ideal but works
         int userInputIndex =
-            userInputs.indexWhere((input) => input.name == inputResult.name);
-        _maxScore = _maxScore + userInputs[userInputIndex].maxScore;
+            userInputs!.indexWhere((input) => input.name == inputResult.name);
+        _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
       } else if (inputResult.type == 'inverted-score') {
         score = score + inputResult.selectedScore;
         divisionFactor++;
         // find max score - this is not ideal but works
         int userInputIndex =
-            userInputs.indexWhere((input) => input.name == inputResult.name);
-        _maxScore = _maxScore + userInputs[userInputIndex].maxScore;
+            userInputs!.indexWhere((input) => input.name == inputResult.name);
+        _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
 
         //create the inverse of the score
         score = score + (_maxScore - inputResult.selectedScore);
@@ -209,9 +209,9 @@ class PhysicalScoreState extends ChangeNotifier {
         divisionFactor++;
         // find max score - this is not ideal but works
         int userInputIndex =
-            userInputs.indexWhere((input) => input.name == inputResult.name);
+            userInputs!.indexWhere((input) => input.name == inputResult.name);
         double maxScoreForOptions =
-            userInputs[userInputIndex].selectionOptions.last.score;
+            userInputs![userInputIndex].selectionOptions.last.score;
         // .reduce<int>((a, b) => a.score > b.score ? a.score : b.score);
         _maxScore = _maxScore + maxScoreForOptions;
       }
@@ -231,7 +231,7 @@ class PhysicalScoreState extends ChangeNotifier {
     }
 
     // ** 4. Adjusted points (times by difficulty)
-    double difficulty = double.parse(challenge.difficulty);
+    double difficulty = double.parse(challenge.difficulty!);
     double adjustedPoints = points * (difficulty / 5);
 
     // ** 5. PhysicalChallenge score as percentage
@@ -243,7 +243,7 @@ class PhysicalScoreState extends ChangeNotifier {
   _updateAttributeScores(
     String userId,
     PhysicalChallenge challenge,
-    double newScorePercentage,
+    double? newScorePercentage,
     List<Attribute> attributes,
     Stat updatedStatScores,
     int skillsLength,
@@ -251,7 +251,7 @@ class PhysicalScoreState extends ChangeNotifier {
     // String relevantAttributeId = challenge.weightings.attributeId;
 
     // *** 1. Get the latest stat and bands
-    List<ChallengeBand> challengeBands =
+    List<ChallengeBand>? challengeBands =
         await _dataService.getChallengeBands(challenge.weightingBandId);
 
     // 2. Updated stat - only updates the specific attribute - check if it exists or create a new one
@@ -260,30 +260,30 @@ class PhysicalScoreState extends ChangeNotifier {
 
     // *** 3. UPDATE ATTRIBUTE SCORES
     for (PhysicalChallengeWeighting weighting
-        in challenge.weightings.weightings) {
-      if (weighting.weight > 0) {
+        in challenge.weightings.weightings!) {
+      if (weighting.weight! > 0) {
         print(
-            '0. STAT FOR ATTRIBUTE => ' + weighting.attribute.name.toString());
+            '0. STAT FOR ATTRIBUTE => ' + weighting.attribute!.name.toString());
 
         // * 1. Either exists or create a new one
         int attributeStatIndex =
-            updatedStatScores.findAttributeIndex(weighting.attribute.id);
+            updatedStatScores.findAttributeIndex(weighting.attribute!.id);
         print('1. ATTRIBUTE STAT INDEX => ' + attributeStatIndex.toString());
         if (attributeStatIndex == -1) {
-          updatedStatScores.attributeStats.add(
+          updatedStatScores.attributeStats!.add(
             AttributeStat(
-              {'value': 0, 'id': weighting.attribute.id},
+              {'value': 0, 'id': weighting.attribute!.id},
               weighting.attribute,
             ),
           );
-          attributeStatIndex = updatedStatScores.attributeStats.length - 1;
+          attributeStatIndex = updatedStatScores.attributeStats!.length - 1;
         }
 
         // * 2. Which band is current weighting in
-        double attributePercentageContribution =
-            weighting.getWeightingBandContribution(challengeBands);
+        double? attributePercentageContribution =
+            weighting.getWeightingBandContribution(challengeBands!);
         int noOfPreviousResults =
-            weighting.getNumberOfPrevResultsToUse(challengeBands);
+            weighting.getNumberOfPrevResultsToUse(challengeBands)!;
 
         print('2. PERCENTAGE CONTRIBUTION BAND VALUE => ' +
             attributePercentageContribution.toString());
@@ -291,25 +291,25 @@ class PhysicalScoreState extends ChangeNotifier {
         // * 3. While we're at it - set the attribute band for the result
         challengeResult.attributeContributions.add(AttributeContribution({
           'percentage': attributePercentageContribution,
-          'attributeId': weighting.attribute.id
+          'attributeId': weighting.attribute!.id
         }));
 
         // * 4. get previous results for this attribute
         List<PhysicalChallengeResult> previousResults =
             await _dataService.getLatestResultsForAttribute(
-                userId, weighting.attribute.id, noOfPreviousResults);
+                userId, weighting.attribute!.id, noOfPreviousResults);
 
         print('5. PREVIOUS RESULTS TOTAL => ' +
             previousResults.length.toString());
 
         // * 5. split out into their respective bands
-        Map<double, List<double>> filteredPreviousAttributeScores = {};
+        Map<double?, List<double?>> filteredPreviousAttributeScores = {};
         previousResults.forEach((previousResult) {
           if (filteredPreviousAttributeScores[
                   previousResult.attributeContributions[0].percentage] !=
               null) {
             filteredPreviousAttributeScores[
-                    previousResult.attributeContributions[0].percentage]
+                    previousResult.attributeContributions[0].percentage]!
                 .add(previousResult.percentage);
           } else {
             filteredPreviousAttributeScores[previousResult
@@ -324,7 +324,7 @@ class PhysicalScoreState extends ChangeNotifier {
         // * add in new score to contribute
         if (filteredPreviousAttributeScores[attributePercentageContribution] !=
             null) {
-          filteredPreviousAttributeScores[attributePercentageContribution]
+          filteredPreviousAttributeScores[attributePercentageContribution]!
               .add(newScorePercentage);
         } else {
           filteredPreviousAttributeScores[attributePercentageContribution] = [
@@ -341,14 +341,14 @@ class PhysicalScoreState extends ChangeNotifier {
         double redistributionVal = 0;
         // Iterable<double> contributionValueKeys = filteredPreviousElementScores.keys;
 
-        Iterable<double> contributionPercentageValues =
+        Iterable<double?> contributionPercentageValues =
             filteredPreviousAttributeScores.keys;
 
         for (var band in challengeBands) {
           if (contributionPercentageValues.contains(band.percentage)) {
             bandsWithScoreCount++; // should always be min of 1
           } else {
-            bandsWithNoScoreTally = bandsWithNoScoreTally + band.percentage;
+            bandsWithNoScoreTally = bandsWithNoScoreTally + band.percentage!;
           }
         }
         redistributionVal = bandsWithNoScoreTally / bandsWithScoreCount;
@@ -357,13 +357,13 @@ class PhysicalScoreState extends ChangeNotifier {
         // ** Cycle through and do calc
         List<double> attributeContributionValues = [];
         // var contributionPercentageValues = filteredPreviousAttributeScores.keys;
-        for (double key in contributionPercentageValues) {
-          int totalScores = filteredPreviousAttributeScores[key].length;
+        for (double? key in contributionPercentageValues) {
+          int totalScores = filteredPreviousAttributeScores[key]!.length;
           double totalScoresValue =
-              filteredPreviousAttributeScores[key].reduce((a, b) => a + b);
+              filteredPreviousAttributeScores[key]!.reduce((a, b) => a! + b!)!;
 
           attributeContributionValues.add((totalScoresValue / totalScores) *
-              ((key + redistributionVal) / 100));
+              ((key! + redistributionVal) / 100));
 
           print('REDISTTTT::: ' + (key + redistributionVal).toString());
         }
@@ -379,7 +379,7 @@ class PhysicalScoreState extends ChangeNotifier {
             updatedAttributePercentage.toString() +
             '\n\n');
 
-        updatedStatScores.attributeStats[attributeStatIndex].value =
+        updatedStatScores.attributeStats![attributeStatIndex].value =
             updatedAttributePercentage;
       }
     }
@@ -389,16 +389,16 @@ class PhysicalScoreState extends ChangeNotifier {
     int totalAttributes =
         attributes.length; // updatedStatScores.skillStats.length;
     double totalAttributeScores = 0;
-    updatedStatScores.attributeStats.forEach((attributeStat) =>
-        totalAttributeScores = totalAttributeScores + attributeStat.value);
+    updatedStatScores.attributeStats!.forEach((attributeStat) =>
+        totalAttributeScores = totalAttributeScores + attributeStat.value!);
     updatedStatScores.physicalValue = totalAttributeScores / totalAttributes;
 
     // *** 3. UPDATE OVERALL GOLF SCORE
     print('\n*** UPDATE OVERALL GOLF SCORE');
     int totalSkills = skillsLength + 1; // NB: plus 1 for physical score.
     double totalSkillsScore = 0;
-    updatedStatScores.skillStats.forEach(
-        (skillStat) => totalSkillsScore = totalSkillsScore + skillStat.value);
+    updatedStatScores.skillStats!.forEach(
+        (skillStat) => totalSkillsScore = totalSkillsScore + skillStat.value!);
 
     // add physical score
     totalSkillsScore =

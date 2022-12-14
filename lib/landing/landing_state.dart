@@ -5,6 +5,7 @@ import 'package:ss_golf/services/data_service.dart';
 import 'package:ss_golf/shared/models/user.dart';
 
 enum AuthMode { Signup, Login }
+
 const authModeLoginAlternateText = "Don't have an account?\nSign up here";
 const authModeSignUpAlternateText = "Already have an account?\nLog in here";
 
@@ -17,8 +18,8 @@ class LandingState extends ChangeNotifier {
   // GlobalKey<FormState> get signUpFormKey => _signUpFormKey;
   AuthMode _authMode = AuthMode.Login;
   String _authModeAlternateText = authModeLoginAlternateText;
-  String _errorMessage;
-  String get errorMessage => _errorMessage;
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
   void setErrorMessage(String val) {
     _errorMessage = val;
     notifyListeners();
@@ -41,10 +42,21 @@ class LandingState extends ChangeNotifier {
   String _password = '';
   String _confirmPassword = '';
   String _username = '';
-  String _emailError;
-  String _passwordError;
-  String _confirmPasswordError;
-  String _usernameError;
+  String? _emailError;
+  String? _passwordError;
+  String? _confirmPasswordError;
+  String? _usernameError;
+
+  void resetLandingState() {
+    _email = '';
+    _password = '';
+    _confirmPassword = '';
+    _username = '';
+    _emailError = '';
+    _passwordError = '';
+    _confirmPasswordError = '';
+    _usernameError = '';
+  }
 
   Future<bool> signIn() async {
     if (validateSignInForm()) {
@@ -53,6 +65,7 @@ class LandingState extends ChangeNotifier {
         setIsLoading(true);
         await _authService.signIn(email, password);
         setIsLoading(false);
+        resetLandingState();
         // resetFormKey(_loginFormKey);
         return true;
       } catch (e) {
@@ -78,8 +91,13 @@ class LandingState extends ChangeNotifier {
       try {
         setIsLoading(true);
         String userId = await _authService.signUp(email, password);
-        UserProfile newUser = UserProfile(
-            {'id': userId, 'email': _email, 'name': _username, 'type': 'client'});
+        UserProfile newUser = UserProfile({
+          'id': userId,
+          'email': _email,
+          'name': _username,
+          'type': 'client',
+          'balance': '0'
+        });
         await _dataService.createUser(newUser);
         setIsLoading(false);
         // resetFormKey(_signUpFormKey);
@@ -166,8 +184,8 @@ class LandingState extends ChangeNotifier {
   // }
 
   String get email => _email;
-  setEmail(String value) {
-    _email = value;
+  setEmail(String? value) {
+    _email = value ?? "";
   }
 
   String get password => _password;
@@ -181,30 +199,30 @@ class LandingState extends ChangeNotifier {
   }
 
   String get username => _username;
-  setUsername(String value) {
-    _username = value;
+  setUsername(String? value) {
+    _username = value ?? "";
   }
 
-  String get emailError => _emailError;
-  setEmailError(String value) {
+  String? get emailError => _emailError;
+  setEmailError(String? value) {
     _emailError = value;
     notifyListeners();
   }
 
-  String get passwordError => _passwordError;
-  setPasswordError(String value) {
+  String? get passwordError => _passwordError;
+  setPasswordError(String? value) {
     _passwordError = value;
     notifyListeners();
   }
 
-  String get confirmPasswordError => _confirmPasswordError;
-  setConfirmPasswordError(String value) {
+  String? get confirmPasswordError => _confirmPasswordError;
+  setConfirmPasswordError(String? value) {
     _confirmPasswordError = value;
     notifyListeners();
   }
 
-  String get usernameError => _usernameError;
-  setUsernameError(String value) {
+  String? get usernameError => _usernameError;
+  setUsernameError(String? value) {
     _usernameError = value;
     notifyListeners();
   }

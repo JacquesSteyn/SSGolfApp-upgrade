@@ -8,8 +8,8 @@ class SpiderChart extends StatelessWidget {
     this.values,
     this.labels,
   });
-  final List<int> values;
-  final List<String> labels;
+  final List<int>? values;
+  final List<String?>? labels;
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
@@ -34,7 +34,7 @@ class SpiderChartPainter extends CustomPainter {
     var labelRadius = centerX * 0.9;
 
     var blueprintPaint = Paint()
-      ..color = Colors.grey[900]
+      ..color = Colors.grey[900]!
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
       ..isAntiAlias = true;
@@ -44,7 +44,7 @@ class SpiderChartPainter extends CustomPainter {
     const double tickLabelFontSize = 10;
 
     var ticksPaint = Paint()
-      ..color = Colors.grey[900]
+      ..color = Colors.grey[900]!
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0
       ..isAntiAlias = true;

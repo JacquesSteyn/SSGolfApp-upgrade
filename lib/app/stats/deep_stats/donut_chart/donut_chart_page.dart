@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ss_golf/app/stats/deep_stats/deep_stats_dialog.dart';
-import 'package:ss_golf/shared/widgets/custom_radial_painter.dart';
 import 'package:ss_golf/shared/widgets/custome_donut.dart';
 
 class DonutChartPage extends StatefulWidget {
-  final List<DeepStat> deepStats;
-  final String nestedStatType;
+  final List<DeepStat>? deepStats;
+  final String? nestedStatType;
 
   DonutChartPage({this.deepStats, this.nestedStatType});
 
@@ -20,15 +19,15 @@ class _DonutChartPageState extends State<DonutChartPage> {
     return SingleChildScrollView(
       child: Wrap(
         alignment: WrapAlignment.center,
-        children: widget.deepStats
+        children: widget.deepStats!
             .map<Widget>((deepStat) =>
-                statCard(deepStat.name, deepStat.value, widget.nestedStatType))
+                statCard(deepStat.name!, deepStat.value, widget.nestedStatType))
             .toList(),
       ),
     );
   }
 
-  Widget statCard(String text, double value, String nestedStatType) {
+  Widget statCard(String text, double? value, String? nestedStatType) {
     // print('DEEP STAT: ' + text.toString() + ' val: ' + value.toString());
     return Container(
       padding: const EdgeInsets.all(5),
@@ -40,7 +39,7 @@ class _DonutChartPageState extends State<DonutChartPage> {
         borderRadius: BorderRadius.circular(18.0),
         border: Border.all(
             color: nestedStatType != null
-                ? Get.theme.accentColor
+                ? Get.theme.colorScheme.secondary
                 : Colors.transparent),
       ),
       child: Stack(
@@ -52,7 +51,7 @@ class _DonutChartPageState extends State<DonutChartPage> {
             alignment: Alignment(0, 0.9),
             child: InkWell(
               onTap: () {
-                print('Selected chart type: ' + nestedStatType);
+                print('Selected chart type: ' + nestedStatType!);
                 // setProgressionChartType(chartType);
               },
               child: Container(
@@ -73,11 +72,11 @@ class _DonutChartPageState extends State<DonutChartPage> {
     );
   }
 
-  Widget expandableStat(double value, String nestedStatType) {
+  Widget expandableStat(double? value, String nestedStatType) {
     return GestureDetector(
       onTap: () => showGeneralDialog(
         barrierDismissible: false,
-        context: Get.context,
+        context: Get.context!,
         barrierColor: Colors.black87,
         transitionDuration: Duration(milliseconds: 200),
         transitionBuilder: (context, a1, a2, child) {
@@ -95,14 +94,14 @@ class _DonutChartPageState extends State<DonutChartPage> {
         },
         pageBuilder: (BuildContext context, Animation animation,
             Animation secondaryAnimation) {
-          return null;
+          return Container();
         },
       ),
       child: regularStat(value),
     );
   }
 
-  Widget regularStat(double value) {
+  Widget regularStat(double? value) {
     return Container(
       color: Colors.transparent, // *** needs color to detect tap!?
       child: Align(

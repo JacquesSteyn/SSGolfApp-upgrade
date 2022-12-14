@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:ss_golf/app/app_router.dart';
 import 'package:ss_golf/app/stats/deep_stats/deep_stats_dialog.dart';
 import 'package:ss_golf/app/stats/progression_line_chart.dart';
 import 'package:ss_golf/shared/models/stat.dart';
 import 'package:ss_golf/shared/widgets/chart_dialog.dart';
-import 'package:ss_golf/shared/widgets/custom_radial_painter.dart';
 import 'package:ss_golf/shared/widgets/custome_donut.dart';
 // import 'package:ss_golf/shared/widgets/neo/neo_donut_chart.dart';
 import 'package:ss_golf/state/app.provider.dart';
@@ -27,9 +27,9 @@ class _StatsViewState extends State<StatsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, watch, child) {
-      final statsState = watch(appStateProvider.state);
-      final userState = watch(userStateProvider?.state);
+    return Consumer(builder: (context, ref, child) {
+      final statsState = ref.watch(appStateProvider);
+      final userState = ref.watch(userStateProvider);
 
       return Container(
         color: Colors.black,
@@ -38,14 +38,14 @@ class _StatsViewState extends State<StatsView> {
             color: Colors.black,
             child: statsState.isLoading
                 ? Center(child: CircularProgressIndicator())
-                : statsView(statsState, userState.user.id),
+                : statsView(userState, statsState, userState.user!.id),
           ),
         ),
       );
     });
   }
 
-  Widget statsView(statsState, String userId) {
+  Widget statsView(UserStateModel userState, statsState, String? userId) {
     final Stat currentStat =
         statsState.latestStat; //.length > 0 ? statsState.stats[0] : null;
 
@@ -63,11 +63,11 @@ class _StatsViewState extends State<StatsView> {
               Expanded(
                 child: Row(
                   children: [
-                    statCard("Golf", currentStat.golfValue, 'golf'),
+                    statCard(userState, "Golf", currentStat.golfValue, 'golf'),
                     if (currentStat.physicalValue != null &&
-                        currentStat.physicalValue > 0)
-                      statCard(
-                          "Physical", currentStat.physicalValue, 'physical'),
+                        currentStat.physicalValue! > 0)
+                      statCard(userState, "Physical", currentStat.physicalValue,
+                          'physical'),
                   ],
                 ),
               ),
@@ -106,11 +106,18 @@ class _StatsViewState extends State<StatsView> {
           );
   }
 
-  Widget statCard(String title, double value, String chartType) {
+  Widget statCard(
+      UserStateModel userState, String title, double? value, String chartType) {
     return Expanded(
       flex: 1,
       child: GestureDetector(
-        onTap: () => showStatsDialog(chartType),
+        onTap: () {
+          if (userState.user!.plan != "pro") {
+            Get.toNamed(AppRoutes.subscription);
+          } else {
+            showStatsDialog(chartType);
+          }
+        },
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -152,7 +159,7 @@ class _StatsViewState extends State<StatsView> {
           Radius.circular(12),
         ),
         side: BorderSide(
-            color: isSelected ? Colors.grey : Colors.grey[800], width: 2),
+            color: isSelected ? Colors.grey : Colors.grey[800]!, width: 2),
       ),
       padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
       elevation: isSelected ? 5 : 0,
@@ -167,7 +174,7 @@ class _StatsViewState extends State<StatsView> {
         ),
       ),
       backgroundColor: isSelected
-          ? Get.theme.accentColor
+          ? Get.theme.colorScheme.secondary
           : Colors.black, // Colors.grey[200] : Colors.black,
     );
   }
@@ -191,17 +198,17 @@ class _StatsViewState extends State<StatsView> {
       },
       pageBuilder: (BuildContext context, Animation animation,
           Animation secondaryAnimation) {
-        return null;
+        return Container();
       },
     );
   }
 
-  Widget expandableOverallStat(double value, String chartType) {
+  Widget expandableOverallStat(double? value, String chartType) {
     return Container(
         decoration: BoxDecoration(
           color: Colors.transparent, // *** needs color to detect tap!?
           borderRadius: BorderRadius.circular(18.0),
-          border: Border.all(color: Get.theme.accentColor),
+          border: Border.all(color: Get.theme.colorScheme.secondary),
         ),
         // color: Colors.red,
         child:

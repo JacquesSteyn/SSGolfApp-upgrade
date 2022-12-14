@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,13 +8,13 @@ import 'package:ss_golf/services/data_service.dart';
 import 'package:ss_golf/services/utilities_service.dart';
 
 class TimePeriod {
-  String label, startDay, endDay;
+  String? label, startDay, endDay;
   TimePeriod({this.label, this.startDay, this.endDay});
 }
 
 class ProgressionLineChart extends StatefulWidget {
-  final String userId;
-  final String chartType;
+  final String? userId;
+  final String? chartType;
   ProgressionLineChart({this.userId, this.chartType});
 
   @override
@@ -30,10 +31,10 @@ class TimePeriodLabels {
 
 class _ProgressionLineChartState extends State<ProgressionLineChart> {
   final DataService _dataService = DataService();
-  Stream _dataStream;
-  TimePeriod _selectedTimePeriod;
+  Stream? _dataStream;
+  TimePeriod? _selectedTimePeriod;
   List<TimePeriod> _timePeriods = [];
-  DateTime currentDateTime;
+  late DateTime currentDateTime;
   int yAxisInterval = 30;
 
   List<Color> gradientColors = [
@@ -73,7 +74,7 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
     ]);
     _selectedTimePeriod = _timePeriods[4];
     _dataStream = _dataService.datedProgressionStatsStream(widget.userId,
-        _selectedTimePeriod.startDay, _selectedTimePeriod.endDay);
+        _selectedTimePeriod!.startDay!, _selectedTimePeriod!.endDay!);
     super.initState();
   }
 
@@ -108,7 +109,7 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
     setState(() {
       _selectedTimePeriod = period;
       _dataStream = _dataService.datedProgressionStatsStream(
-          widget.userId, period.startDay, period.endDay);
+          widget.userId, period.startDay!, period.endDay!);
       // update for UI
       if (period.label == TimePeriodLabels.oneWeekPeriod) {
         yAxisInterval = 2;
@@ -149,13 +150,13 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
           borderRadius: BorderRadius.all(
             Radius.circular(12),
           ),
-          side: BorderSide(color: isSelected ? Colors.grey : Colors.grey[800]),
+          side: BorderSide(color: isSelected ? Colors.grey : Colors.grey[800]!),
         ),
         padding: const EdgeInsets.all(1),
         elevation: isSelected ? 5 : 0,
         label: FittedBox(
           child: Text(
-            period.label,
+            period.label!,
             softWrap: false,
             maxLines: 2,
             textAlign: TextAlign.center,
@@ -173,29 +174,30 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
     return StreamBuilder(
       stream: _dataStream,
       builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData &&
-            !snapshot.hasError &&
-            snapshot.data.snapshot.value != null) {
-          Map rawStats = snapshot.data.snapshot.value;
+        if (snapshot.hasData && !snapshot.hasError && snapshot.data != null) {
+          //Map? rawStats = snapshot.data as Map?;
+
+          Map? rawStats = (snapshot.data! as DatabaseEvent).snapshot.value
+              as Map<Object?, dynamic>?;
 
           // print('rawStats: ' + rawStats.toString());
           List<FlSpot> dataPoints = [];
 
           List<String> dayIds = Utilities.getDayIds(
-              _selectedTimePeriod.startDay, _selectedTimePeriod.endDay);
+              _selectedTimePeriod!.startDay!, _selectedTimePeriod!.endDay!);
 
-          double lastVal = 0;
+          double? lastVal = 0;
 
           dayIds.asMap().forEach((index, dayId) {
-            if (rawStats[dayId] != null &&
-                rawStats[dayId][widget.chartType] != null) {
+            if (rawStats?[dayId] != null &&
+                rawStats?[dayId][widget.chartType] != null) {
               dataPoints.add(FlSpot(index.toDouble(),
-                  rawStats[dayId][widget.chartType]['value']));
+                  rawStats?[dayId][widget.chartType]['value']));
 
-              lastVal = rawStats[dayId][widget.chartType]['value'];
+              lastVal = rawStats?[dayId][widget.chartType]['value'];
             } else {
               // TODO - what to do with this?? make prev val?
-              dataPoints.add(FlSpot(index.toDouble(), lastVal));
+              dataPoints.add(FlSpot(index.toDouble(), lastVal!));
             }
           });
 
@@ -231,22 +233,36 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
       ),
       titlesData: FlTitlesData(
         show: true,
-        leftTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 30,
-          margin: 10,
-          interval: 20,
-          getTextStyles: (value, index) => const TextStyle(color: Colors.grey),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 30,
+            //margin: 10,
+            interval: 20,
+            getTitlesWidget: (value, meta) {
+              return Text(
+                value.toStringAsFixed(0),
+                style: TextStyle(color: Colors.grey),
+              );
+            },
+          ),
         ),
-        bottomTitles: SideTitles(
-          showTitles: true,
-          margin: 10,
-          interval: yAxisInterval.toDouble(),
-          getTitles: (double index) {
-            return Utilities.formatXAxisLabel(dayIds[index.toInt()]);
-          },
-          getTextStyles: (value, index) => const TextStyle(
-            color: Colors.grey,
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            //margin: 10,
+            interval: yAxisInterval.toDouble(),
+            getTitlesWidget: (value, meta) {
+              return Container(
+                color: Colors.black,
+                margin: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  Utilities.formatXAxisLabel(dayIds[value.toInt()]),
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -295,14 +311,15 @@ class _ProgressionLineChartState extends State<ProgressionLineChart> {
           isCurved: true,
           barWidth: 3,
           isStrokeCapRound: true,
-          colors: [Colors.white], // gradientColors,
+          color: Colors.white, // gradientColors,
           belowBarData: BarAreaData(
-            gradientColorStops: [0.3, 0.75],
-            gradientFrom: const Offset(0.5, 0),
-            gradientTo: Offset(0.5, 1),
+            gradient: LinearGradient(
+              stops: [0.3, 0.75],
+              colors: gradientColors
+                  .map((color) => color.withOpacity(0.3))
+                  .toList(),
+            ),
             show: true,
-            colors:
-                gradientColors.map((color) => color.withOpacity(0.3)).toList(),
           ),
         ),
       ],

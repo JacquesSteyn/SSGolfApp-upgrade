@@ -8,4 +8,5 @@ class IndexState extends StateNotifier<int> {
   }
 }
 
-final indexStateProvider = StateNotifierProvider((ref) => IndexState());
+final indexStateProvider =
+    StateNotifierProvider<IndexState, int>((ref) => IndexState());

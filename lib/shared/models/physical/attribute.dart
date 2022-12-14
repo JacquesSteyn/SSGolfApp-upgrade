@@ -1,6 +1,6 @@
 class Attribute {
-  String name, id;
-  double weight;
+  String? name, id;
+  double? weight;
 
   Attribute([data]) {
     // print('ATTRIBURE INIT DATA;  ' + data.toString());

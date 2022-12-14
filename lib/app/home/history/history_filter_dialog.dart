@@ -6,8 +6,8 @@ import 'package:ss_golf/app/home/history/history_state.dart';
 
 class HistoryFilterDialog extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final historyViewState = watch(historyStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final historyViewState = ref.watch(historyStateProvider);
     return AlertDialog(
       title: Text(
         'Filter your results',
@@ -46,7 +46,7 @@ class HistoryFilterDialog extends ConsumerWidget {
           leading: Radio(
             value: ChallengeTypeFilter.Golf,
             groupValue: historyViewState.challengeTypeFilter,
-            onChanged: (_) {
+            onChanged: (dynamic _) {
               historyViewState.setTypeFilter(ChallengeTypeFilter.Golf);
             },
           ),
@@ -56,7 +56,7 @@ class HistoryFilterDialog extends ConsumerWidget {
           leading: Radio(
             value: ChallengeTypeFilter.Physical,
             groupValue: historyViewState.challengeTypeFilter,
-            onChanged: (_) {
+            onChanged: (dynamic _) {
               historyViewState.setTypeFilter(ChallengeTypeFilter.Physical);
             },
           ),
@@ -78,7 +78,7 @@ class HistoryFilterDialog extends ConsumerWidget {
           leading: Radio(
             value: true,
             groupValue: historyViewState.difficultyFilter > -1 ? false : true,
-            onChanged: (_) {
+            onChanged: (dynamic _) {
               historyViewState.setDifficultyFilter(-1.0);
             },
           ),

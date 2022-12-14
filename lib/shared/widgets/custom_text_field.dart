@@ -14,13 +14,13 @@ class CustomTextField extends StatelessWidget {
     this.missingFieldColor = false,
     this.filledDark = true,
   });
-  final String label;
-  final String initialValue;
-  final TextInputType inputType;
-  final Function(String) onSaved;
-  final Function(String) validatorMethod;
+  final String? label;
+  final String? initialValue;
+  final TextInputType? inputType;
+  final Function(String?)? onSaved;
+  final String Function(String?)? validatorMethod;
   final bool validate;
-  final String suffixText;
+  final String? suffixText;
   final bool missingFieldColor;
   final bool showBorder;
   final bool largeFont;
@@ -52,12 +52,13 @@ class CustomTextField extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: showBorder ? Colors.grey : Colors.transparent),
+          borderSide:
+              BorderSide(color: showBorder ? Colors.grey : Colors.transparent),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide:
-              BorderSide(color: showBorder ? Colors.grey[700] : Colors.transparent),
+          borderSide: BorderSide(
+              color: showBorder ? Colors.grey[700]! : Colors.transparent),
         ),
       ),
       onSaved: onSaved,
@@ -65,7 +66,7 @@ class CustomTextField extends StatelessWidget {
       validator: validatorMethod != null
           ? validatorMethod
           : (value) {
-              if (value.isEmpty && validate) {
+              if (value != null && value.isEmpty && validate) {
                 return '$label is required.';
               }
               return null;

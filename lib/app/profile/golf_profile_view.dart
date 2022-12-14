@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ss_golf/app/profile/profile_state.dart';
@@ -16,9 +15,10 @@ class GolfProfileView extends ConsumerWidget {
   final TextEditingController handicapTextController = TextEditingController();
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final profileState = watch(profileStateProvider);
-    handicapTextController.text = profileState?.handicap.toString();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(profileStateProvider);
+    handicapTextController.text =
+        profileState.handicap != null ? profileState.handicap.toString() : "";
 
     return SingleChildScrollView(
       child: Container(
@@ -39,14 +39,14 @@ class GolfProfileView extends ConsumerWidget {
     );
   }
 
-  List<Widget> displayGolfProfileViewFields(profileState) {
+  List<Widget> displayGolfProfileViewFields(ProfileState profileState) {
     return [
       // CLUB AFFILIATION
       CustomTextField(
         label: 'Club Affiliation',
         inputType: TextInputType.text,
         onSaved: profileState.setClubAffiliation,
-        initialValue: profileState?.clubAffiliation,
+        initialValue: profileState.clubAffiliation,
         missingFieldColor: true,
         // showBorder: false,
       ),
@@ -54,8 +54,7 @@ class GolfProfileView extends ConsumerWidget {
       statusSelection(profileState),
       SizedBox(height: 20),
 
-      if (profileState?.status == 'Amateur' ||
-          profileState?.status == 'Beginner')
+      if (profileState.status == 'Amateur' || profileState.status == 'Beginner')
         Column(
           children: [
             handicapDirectSelection(profileState),
@@ -81,7 +80,7 @@ class GolfProfileView extends ConsumerWidget {
         if (profileState?.status == 'Amateur' ||
             profileState?.status == 'Beginner') {
           showModalBottomSheet(
-              context: Get.context,
+              context: Get.context!,
               builder: (BuildContext context) {
                 return Container(
                   height: MediaQuery.of(context).size.height / 3,
@@ -132,7 +131,7 @@ class GolfProfileView extends ConsumerWidget {
     );
   }
 
-  Widget statusSelection(profileState) {
+  Widget statusSelection(ProfileState profileState) {
     return DropdownButtonFormField<String>(
       items: [
         'Beginner',
@@ -146,7 +145,7 @@ class GolfProfileView extends ConsumerWidget {
           child: Text(val),
         );
       }).toList(),
-      value: profileState?.status,
+      value: profileState.status,
       onChanged: profileState.setStatus,
       style: TextStyle(color: Colors.white),
       dropdownColor: Colors.grey,
@@ -156,7 +155,7 @@ class GolfProfileView extends ConsumerWidget {
         fillColor: Colors.black,
         labelText: 'Status',
         labelStyle: TextStyle(
-            color: profileState?.status == null
+            color: profileState.status == null
                 ? Colors.red[300]
                 : Colors.grey[300],
             fontSize: 22),
@@ -168,7 +167,7 @@ class GolfProfileView extends ConsumerWidget {
     );
   }
 
-  Widget stanceSelection(profileState) {
+  Widget stanceSelection(ProfileState profileState) {
     return DropdownButtonFormField<String>(
       items: ['Right', 'Left'].map<DropdownMenuItem<String>>((String val) {
         return DropdownMenuItem<String>(
@@ -176,7 +175,7 @@ class GolfProfileView extends ConsumerWidget {
           child: Text(val),
         );
       }).toList(),
-      value: profileState?.stance,
+      value: profileState.stance,
       onChanged: profileState.setStance,
       style: TextStyle(color: Colors.white),
       dropdownColor: Colors.grey,
@@ -186,7 +185,7 @@ class GolfProfileView extends ConsumerWidget {
         fillColor: Colors.black,
         labelText: 'Stance',
         labelStyle: TextStyle(
-            color: profileState?.stance == null
+            color: profileState.stance == null
                 ? Colors.red[300]
                 : Colors.grey[300],
             fontSize: 22),

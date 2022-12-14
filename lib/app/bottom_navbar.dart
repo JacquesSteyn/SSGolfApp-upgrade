@@ -4,11 +4,11 @@ import 'package:ss_golf/state/bottom_navbar_index.provider.dart';
 
 class BottomNavbar extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final indexState = watch(indexStateProvider.state);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final indexState = ref.watch(indexStateProvider);
     return Container(
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[900])),
+        border: Border(top: BorderSide(color: Colors.grey[900]!)),
         // borderRadius: BorderRadius.circular(12),
         // color: Colors.orange,
       ),
@@ -22,10 +22,10 @@ class BottomNavbar extends ConsumerWidget {
             label: 'Stats',
             icon: Icon(Icons.bar_chart),
           ),
-          // BottomNavigationBarItem(
-          //   label: 'History',
-          //   icon: Icon(Icons.calendar_today),
-          // ),
+          BottomNavigationBarItem(
+            label: 'Rewards',
+            icon: ImageIcon(AssetImage('assets/images/ticket_icon.png')),
+          ),
           BottomNavigationBarItem(
             label: 'Profile',
             icon: Icon(Icons.person),
@@ -33,11 +33,12 @@ class BottomNavbar extends ConsumerWidget {
         ],
         type: BottomNavigationBarType.fixed,
         currentIndex: indexState,
-        onTap: context.read(indexStateProvider).setIndex,
+        onTap: ref.read(indexStateProvider.notifier).setIndex,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
         elevation: 5,
-        backgroundColor: Colors.black, //  Color(0xFF232233), //  Color(0xFF1E1A2D),
+        backgroundColor:
+            Colors.black, //  Color(0xFF232233), //  Color(0xFF1E1A2D),
         // fixedColor: Colors.black,
       ),
     );

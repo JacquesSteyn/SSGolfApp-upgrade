@@ -10,11 +10,11 @@ final DataService _dataService = DataService();
 class AppStateModel {
   // Skills & Attributes
   List<Skill> skills;
-  Benchmark overallPhysicalBenchmark;
+  Benchmark? overallPhysicalBenchmark;
   List<Attribute> attributes;
   // Stats
   List<Stat> stats;
-  Stat latestStat;
+  Stat? latestStat;
   // general
   bool isLoading;
   // already set
@@ -43,7 +43,7 @@ class AppStateModel {
 // }
 
 class AppState extends StateNotifier<AppStateModel> {
-  AppState([List<Skill> skills, bool isLoading])
+  AppState([List<Skill>? skills, bool? isLoading])
       : super(
           AppStateModel(
             skills: [],
@@ -55,7 +55,7 @@ class AppState extends StateNotifier<AppStateModel> {
           ),
         );
 
-  void initAppState(String userId) async {
+  void initAppState(String? userId) async {
     if (!state.initSet) {
       state.isLoading = true;
       // fetch skills
@@ -100,7 +100,8 @@ class AppState extends StateNotifier<AppStateModel> {
   }
 }
 
-final appStateProvider = StateNotifierProvider((ref) => AppState());
+final appStateProvider =
+    StateNotifierProvider<AppState, AppStateModel>((ref) => AppState());
 
 // class StatsState extends StateNotifier<StatsStateModel> {
 //   StatsState([List<Stat> stats, Stat latestStat, bool isLoading])

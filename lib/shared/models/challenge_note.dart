@@ -1,7 +1,7 @@
 class ChallengeNote {
-  String title;
-  List<String> options;
-  int index;
+  String? title;
+  List<String>? options;
+  int? index;
 
   ChallengeNote([data, index]) {
     if (data != null) {

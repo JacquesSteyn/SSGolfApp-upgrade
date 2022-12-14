@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:get/get.dart';
 
 class ChallengeDifficultyRating extends StatefulWidget {
   const ChallengeDifficultyRating(
-      {Key key,
+      {Key? key,
       this.difficultyRating = 0,
       this.reverse = false,
       this.showText = true,
@@ -62,7 +61,7 @@ class _ChallengeDifficultyRatingState extends State<ChallengeDifficultyRating> {
           unratedColor: Colors.grey,
           itemBuilder: (context, _) =>
               Icon(Icons.star, color: widget.iconColor),
-          onRatingUpdate: null,
+          onRatingUpdate: (_) {},
         ),
         if (widget.showText)
           if (!widget.reverse) difficultyText(),

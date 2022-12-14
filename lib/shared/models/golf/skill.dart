@@ -3,11 +3,11 @@ import 'package:ss_golf/shared/models/physical/attribute.dart';
 import 'package:ss_golf/shared/models/golf/skill_element.dart';
 
 class Skill {
-  String name, id, iconName;
-  int index;
-  List<SkillElement> elements;
-  List<Attribute> attributes;
-  Benchmark benchmarks;
+  String? name, id, iconName;
+  int? index;
+  List<SkillElement>? elements;
+  List<Attribute>? attributes;
+  late Benchmark benchmarks;
 
   Skill([data, id]) {
     if (data != null) {

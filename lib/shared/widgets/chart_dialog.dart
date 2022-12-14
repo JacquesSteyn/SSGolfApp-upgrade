@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ChartInfo extends StatelessWidget {
-  const ChartInfo({@required this.title, @required this.content});
+  const ChartInfo({required this.title, required this.content});
 
   final String title;
   final String content;

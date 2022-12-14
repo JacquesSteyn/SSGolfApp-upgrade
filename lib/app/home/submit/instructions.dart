@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Instructions extends StatefulWidget {
-  final List<String> instructions;
+  final List<String>? instructions;
 
   Instructions({this.instructions});
 
@@ -16,9 +16,9 @@ class _InstructionsState extends State<Instructions> {
   @override
   void initState() {
     int i = 0;
-    widget.instructions.forEach((instruction) {
+    widget.instructions!.forEach((instruction) {
       if (i == 0) {
-        items.add(title(widget.instructions[0]));
+        items.add(title(widget.instructions![0]));
         i++;
       } else {
         items.add(subTitle('$i)', instruction));

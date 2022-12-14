@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:ss_golf/app/app_router.dart';
 import 'package:ss_golf/app/profile/profile_state.dart';
 import 'package:ss_golf/landing/landing_page.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
@@ -12,8 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final userState = watch(userStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(userStateProvider.notifier);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: CustomAppBar(
@@ -28,12 +30,12 @@ class Settings extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 settingsButton(() {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context) => premiumFeaturesDialog(),
-                  );
-                }, Icons.payment_outlined, 'Free plan'),
+                  Get.toNamed(AppRoutes.subscription);
+                },
+                    Icons.payment_outlined,
+                    userState.state.user!.plan != "pro"
+                        ? 'Free plan'
+                        : 'Pro plan'),
                 settingsButton(() {
                   userState.resetPasswordByEmail();
                   showDialog(
@@ -44,10 +46,10 @@ class Settings extends ConsumerWidget {
                   );
                 }, Icons.security, 'Reset password'),
                 settingsButton(() async {
-                  context.read(indexStateProvider).setIndex(0);
+                  ref.read(indexStateProvider.notifier).setIndex(0);
                   Get.offAll(LandingPage());
-                  context.read(profileStateProvider).resetProfile();
-                  context.read(appStateProvider).resetAppState();
+                  ref.read(profileStateProvider).resetProfile();
+                  ref.read(appStateProvider.notifier).resetAppState();
                   userState.logout();
                 }, Icons.exit_to_app_sharp, 'Log out'),
               ],
@@ -75,23 +77,6 @@ class Settings extends ConsumerWidget {
     return AlertDialog(
       title: Text(
         'Please check your email.',
-        textAlign: TextAlign.center,
-      ),
-      actions: [
-        TextButton(
-          child: Text('Ok'),
-          onPressed: () {
-            return Get.back();
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget premiumFeaturesDialog() {
-    return AlertDialog(
-      title: Text(
-        'Premium features coming soon.',
         textAlign: TextAlign.center,
       ),
       actions: [
@@ -167,7 +152,7 @@ class Settings extends ConsumerWidget {
       padding: const EdgeInsets.all(10),
       child: Center(
         child: Text(
-            'Please leave us a rating or contact us via support@smartstats.com.\n\nFollow us on social media.',
+            'Please leave us a rating or contact us via info@smartstats.co.za \n\nFollow us on social media.',
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.white)),
       ),
@@ -176,9 +161,50 @@ class Settings extends ConsumerWidget {
 
   Widget privacyPolicy() {
     return Center(
-      child: Text(
-        'Privacy Policy',
-        style: TextStyle(color: Colors.blue),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+              text: "For more Terms and Conditions please read the full ",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+              children: [
+                TextSpan(
+                    text: "Terms Agreement",
+                    style: TextStyle(color: Colors.blue[300], fontSize: 16),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        Uri url = Uri(
+                          scheme: 'https',
+                          host: 'www.smartstats.co.za',
+                          path: '/terms/',
+                        );
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      }),
+                TextSpan(text: " and "),
+                TextSpan(
+                    text: "Privacy Policy Agreement",
+                    style: TextStyle(color: Colors.blue[300], fontSize: 16),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        Uri url = Uri(
+                          scheme: 'https',
+                          host: 'www.smartstats.co.za',
+                          path: '/privacy-policy/',
+                        );
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      }),
+                TextSpan(text: " on our website."),
+              ]),
+        ),
       ),
     );
   }
@@ -191,7 +217,7 @@ class Settings extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(color: Colors.grey),
         ),
-        color: Get.theme.accentColor,
+        color: Get.theme.colorScheme.secondary,
 
         // elevation: 10,
         child: ListTile(

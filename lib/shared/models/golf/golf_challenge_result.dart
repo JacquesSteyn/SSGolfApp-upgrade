@@ -2,12 +2,12 @@ import 'package:ss_golf/shared/models/challenge_input_result.dart';
 import 'package:ss_golf/shared/models/challenge_note_result.dart';
 
 class GolfChallengeResult {
-  String challengeId, challengeName, difficulty, dateTimeCreated, index;
-  List<ChallengeNoteResult> notes;
-  List<dynamic> inputResults;
-  double percentage;
+  String? challengeId, challengeName, difficulty, dateTimeCreated, index;
+  List<ChallengeNoteResult>? notes;
+  List<dynamic>? inputResults;
+  double? percentage;
 
-  List<ElementContribution> elementContributions;
+  List<ElementContribution>? elementContributions;
 
   GolfChallengeResult([data, skillIdElementId]) {
     if (data != null) {
@@ -19,7 +19,7 @@ class GolfChallengeResult {
       this.dateTimeCreated = data['dateTimeCreated'] ?? '';
       // this.timeCreated = data['timeCreated'];
       this.inputResults = data['inputResults'] != null
-          ? data['inputResults'].map<ChallengeInputResult>((resultData) {
+          ? (data?['inputResults'] as Iterable).map((resultData) {
               if (resultData['type'] == 'select') {
                 return ChallengeInputSelectResult(resultData);
               } else if (resultData['type'] == 'select-score') {
@@ -70,30 +70,32 @@ class GolfChallengeResult {
       'challengeName': this.challengeName ?? '',
       'difficulty': this.difficulty ?? '0',
       'inputResults': this
-              .inputResults
+              .inputResults!
               .map((dynamic challengeInputResult) =>
                   challengeInputResult.getJson())
               .toList() ??
           0,
-      'notes': this.notes.map((note) => note.getJson()).toList(),
+      'notes': this.notes!.map((note) => note.getJson()).toList(),
       'percentage': this.percentage ?? 0.0,
       'dateTimeCreated': this.dateTimeCreated,
     };
 
-    this
-        .elementContributions
-        .forEach((e) => jsonObject['${e.skillIdElementId}'] = {
-              'value': e.percentage,
-              'skillIdElementId_index': '${e.skillIdElementId}_${this.index}'
-            });
+    if (this.elementContributions != null) {
+      this
+          .elementContributions!
+          .forEach((e) => jsonObject['${e.skillIdElementId}'] = {
+                'value': e.percentage,
+                'skillIdElementId_index': '${e.skillIdElementId}_${this.index}'
+              });
+    }
 
     return jsonObject;
   }
 }
 
 class ElementContribution {
-  double percentage;
-  String skillIdElementId;
+  double? percentage;
+  String? skillIdElementId;
 
   ElementContribution([data]) {
     if (data != null) {

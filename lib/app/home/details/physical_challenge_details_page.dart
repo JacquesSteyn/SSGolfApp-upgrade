@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:ss_golf/app/app_router.dart';
 import 'package:ss_golf/shared/models/physical/physical_challenge.dart';
@@ -8,7 +7,7 @@ import 'package:ss_golf/shared/widgets/neo/challenge_difficulty_rating.dart';
 import 'package:ss_golf/shared/widgets/primary_button.dart';
 
 class PhysicalChallengeDetailsPage extends StatefulWidget {
-  final PhysicalChallenge challenge;
+  final PhysicalChallenge? challenge;
 
   PhysicalChallengeDetailsPage({this.challenge});
 
@@ -23,7 +22,7 @@ class _PhysicalChallengeDetailsPageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: CustomAppBar(title: widget.challenge.name),
+      appBar: CustomAppBar(title: widget.challenge!.name),
       body: Align(
         alignment: Alignment.center,
         child: Container(
@@ -59,7 +58,7 @@ class _PhysicalChallengeDetailsPageState
     return Column(
       children: [
         title('Description'),
-        subTitle(widget.challenge.description),
+        subTitle(widget.challenge!.description!),
       ],
     );
   }
@@ -71,7 +70,7 @@ class _PhysicalChallengeDetailsPageState
         Align(
           alignment: Alignment.centerLeft,
           child: ChallengeDifficultyRating(
-            difficultyRating: double.parse(widget.challenge.difficulty),
+            difficultyRating: double.parse(widget.challenge!.difficulty!),
           ),
         ),
       ],
@@ -82,7 +81,7 @@ class _PhysicalChallengeDetailsPageState
     return Column(
       children: [
         title('Purpose'),
-        subTitle(widget.challenge.purpose),
+        subTitle(widget.challenge!.purpose!),
       ],
     );
   }
@@ -91,7 +90,7 @@ class _PhysicalChallengeDetailsPageState
     List<Widget> equipmentContent = [
       title('Equipment needed'),
     ];
-    widget.challenge.equipment.forEach((text) {
+    widget.challenge!.equipment!.forEach((text) {
       equipmentContent.add(subTitle('•  $text'));
     });
     return Column(

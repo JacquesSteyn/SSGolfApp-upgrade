@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Logo extends StatelessWidget {
-  final double dimension;
+  final double? dimension;
   final Alignment alignment;
   Logo({this.dimension, this.alignment = Alignment.topCenter});
 

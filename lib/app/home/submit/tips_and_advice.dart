@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ss_golf/shared/models/tip.dart';
 
 class TipsAndAdvice extends StatefulWidget {
-  final List<TipGroup> tips;
+  final List<TipGroup>? tips;
 
   TipsAndAdvice({this.tips});
 
@@ -21,7 +21,7 @@ class _TipsAndAdviceState extends State<TipsAndAdvice> {
     return Container(
       child: SingleChildScrollView(
         child: Column(
-          children: widget.tips
+          children: widget.tips!
               .map<Widget>((tipGroup) => tipGroupWidget(tipGroup))
               .toList(),
         ),
@@ -31,7 +31,7 @@ class _TipsAndAdviceState extends State<TipsAndAdvice> {
 
   Widget tipGroupWidget(TipGroup tipGroup) {
     List<Widget> columnTips =
-        tipGroup.tips.map<Widget>((tip) => tipWidget(tip)).toList();
+        tipGroup.tips!.map<Widget>((tip) => tipWidget(tip)).toList();
 
     columnTips.insert(
       0,
@@ -56,15 +56,15 @@ class _TipsAndAdviceState extends State<TipsAndAdvice> {
       child: Row(
         children: [
           Icon(
-            tip.checked ? Icons.check : Icons.clear,
-            color: tip.checked ? Colors.green : Colors.red,
+            tip.checked! ? Icons.check : Icons.clear,
+            color: tip.checked! ? Colors.green : Colors.red,
           ),
           SizedBox(width: 5),
           Flexible(
             child: Text(
-              tip.text,
+              tip.text!,
               style: TextStyle(
-                  color: tip.checked ? Colors.green : Colors.red, fontSize: 18),
+                  color: tip.checked! ? Colors.green : Colors.red, fontSize: 18),
             ),
           ),
         ],

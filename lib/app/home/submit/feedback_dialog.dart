@@ -6,9 +6,9 @@ import 'package:ss_golf/shared/models/challenge_feedback.dart';
 import 'package:ss_golf/shared/widgets/primary_button.dart';
 
 class FeedbackDialog extends StatefulWidget {
-  final VoidCallback feedbackSubmitted;
-  final String userId;
-  final String challengeId;
+  final VoidCallback? feedbackSubmitted;
+  final String? userId;
+  final String? challengeId;
   FeedbackDialog({this.feedbackSubmitted, this.userId, this.challengeId});
 
   @override
@@ -20,7 +20,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   bool _isClosing = false;
   bool _isLoading = false;
   bool _completed = false;
-  ChallengeFeedback _feedback;
+  late ChallengeFeedback _feedback;
 
   void _handleClose() {
     if (!_isClosing) {
@@ -81,7 +81,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       children: [
         title('How do you rate the challenge?'),
         RatingBar.builder(
-          initialRating: _feedback.rating,
+          initialRating: _feedback.rating!,
           minRating: 0,
           // allowHalfRating: true,
           itemCount: 5,
@@ -119,6 +119,12 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                   Icons.sentiment_very_satisfied,
                   color: Colors.green,
                   size: 80,
+                );
+              default:
+                return Icon(
+                  Icons.sentiment_very_dissatisfied,
+                  color: Colors.red,
+                  size: 40,
                 );
             }
           },
@@ -194,7 +200,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                           _isLoading = true;
                         });
                         await _dataService.submitChallengeFeedback(_feedback);
-                        widget.feedbackSubmitted();
+                        widget.feedbackSubmitted!();
                         _handleClose();
                         setState(() {
                           _isLoading = false;

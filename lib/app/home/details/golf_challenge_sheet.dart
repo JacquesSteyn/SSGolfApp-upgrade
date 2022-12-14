@@ -4,7 +4,7 @@ import 'package:ss_golf/shared/models/golf/golf_challenge.dart';
 import 'package:ss_golf/shared/widgets/neo/challenge_difficulty_rating.dart';
 
 class GolfChallengeDetailsSheet extends StatefulWidget {
-  final GolfChallenge challenge;
+  final GolfChallenge? challenge;
 
   GolfChallengeDetailsSheet({this.challenge});
 
@@ -41,7 +41,7 @@ class _GolfChallengeDetailsSheetState extends State<GolfChallengeDetailsSheet> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Text(
-                widget.challenge.name,
+                widget.challenge!.name!,
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -62,7 +62,7 @@ class _GolfChallengeDetailsSheetState extends State<GolfChallengeDetailsSheet> {
     return Column(
       children: [
         title('Description'),
-        subTitle(widget.challenge.description),
+        subTitle(widget.challenge!.description!),
       ],
     );
   }
@@ -78,7 +78,7 @@ class _GolfChallengeDetailsSheetState extends State<GolfChallengeDetailsSheet> {
             child: ChallengeDifficultyRating(
               showText: false,
               iconColor: Colors.white,
-              difficultyRating: double.parse(widget.challenge.difficulty),
+              difficultyRating: double.parse(widget.challenge!.difficulty!),
             ),
           ),
         ),
@@ -90,7 +90,7 @@ class _GolfChallengeDetailsSheetState extends State<GolfChallengeDetailsSheet> {
     return Column(
       children: [
         title('Purpose'),
-        subTitle(widget.challenge.purpose),
+        subTitle(widget.challenge!.purpose!),
       ],
     );
   }
@@ -99,7 +99,7 @@ class _GolfChallengeDetailsSheetState extends State<GolfChallengeDetailsSheet> {
     List<Widget> equipmentContent = [
       title('Equipment needed'),
     ];
-    widget.challenge.equipment.forEach((text) {
+    widget.challenge!.equipment!.forEach((text) {
       equipmentContent.add(subTitle('$text'));
     });
     return Column(

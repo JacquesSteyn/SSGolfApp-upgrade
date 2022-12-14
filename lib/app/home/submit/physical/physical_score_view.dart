@@ -6,13 +6,12 @@ import 'package:ss_golf/app/home/submit/field_inputs.dart';
 import 'package:ss_golf/app/home/submit/notes_dialog.dart';
 import 'package:ss_golf/app/home/submit/physical/physical_score_state.dart';
 import 'package:ss_golf/shared/models/physical/physical_challenge.dart';
-import 'package:ss_golf/shared/widgets/primary_button.dart';
 import 'package:ss_golf/shared/widgets/primary_icon_button.dart';
 import 'package:ss_golf/state/app.provider.dart';
 import 'package:ss_golf/state/auth.provider.dart';
 
 class PhysicalScoreView extends StatefulWidget {
-  final PhysicalChallenge challenge;
+  final PhysicalChallenge? challenge;
   PhysicalScoreView({this.challenge});
 
   @override
@@ -20,8 +19,8 @@ class PhysicalScoreView extends StatefulWidget {
 }
 
 class _PhysicalScoreViewState extends State<PhysicalScoreView> {
-  String userId;
-  dynamic localScoreState;
+  String? userId;
+  late dynamic localScoreState;
 
   void _showErrorDialog(scoreState) {
     Get.defaultDialog(
@@ -43,10 +42,10 @@ class _PhysicalScoreViewState extends State<PhysicalScoreView> {
   Widget build(BuildContext context) {
     return Container(
       child: Consumer(
-        builder: (context, watch, child) {
-          final scoreState = watch(physicalScoreStateProvider);
-          final userState = watch(userStateProvider.state)?.user;
-          final appState = watch(appStateProvider.state);
+        builder: (context, ref, child) {
+          final scoreState = ref.watch(physicalScoreStateProvider);
+          final userState = ref.watch(userStateProvider).user!;
+          final appState = ref.watch(appStateProvider);
           // final skills = appState.skills;
           final attributes = appState.attributes;
           final skills = appState.skills;
@@ -111,7 +110,7 @@ class _PhysicalScoreViewState extends State<PhysicalScoreView> {
           },
           pageBuilder: (BuildContext context, Animation animation,
               Animation secondaryAnimation) {
-            return null;
+            return Container();
           },
         );
       },
@@ -136,14 +135,14 @@ class _PhysicalScoreViewState extends State<PhysicalScoreView> {
             : PrimaryIconButton(
                 icon: Icon(Icons.arrow_forward, color: Colors.white),
                 onPressed: () async {
-                  double challengeScore = await scoreState.submit(
+                  double? challengeScore = await scoreState.submit(
                       userId, widget.challenge, attributes, latestStat, skills);
                   if (challengeScore != null) {
                     Get.offAndToNamed(AppRoutes.challengeResultPage,
                         arguments: {
                           'userId': userId,
-                          'challengeId': widget.challenge.id,
-                          'challengeName': widget.challenge.name,
+                          'challengeId': widget.challenge!.id,
+                          'challengeName': widget.challenge!.name,
                           'challengeScore': challengeScore,
                         });
                     // scoreState.resetScoreState();

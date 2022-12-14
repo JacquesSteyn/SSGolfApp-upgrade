@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ss_golf/app/stats/deep_stats/bar_chart/bar_chart_fl_chart.dart';
 import 'package:ss_golf/app/stats/deep_stats/deep_stats_dialog.dart';
-import 'package:ss_golf/services/utilities_service.dart';
 import 'package:ss_golf/shared/widgets/chart_dialog.dart';
 
 class BarChartPage extends StatelessWidget {
-  final List<DeepStat> deepStats;
+  final List<DeepStat>? deepStats;
   // final String nestedStatType;
   final bool shouldShowSub;
-  final String chartType;
+  final String? chartType;
 
   BarChartPage(
-      {this.deepStats, @required this.shouldShowSub, @required this.chartType});
+      {this.deepStats, required this.shouldShowSub, required this.chartType});
 
   @override
   Widget build(BuildContext context) {

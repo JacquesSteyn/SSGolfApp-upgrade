@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -9,9 +10,9 @@ import 'package:ss_golf/state/auth.provider.dart';
 
 class HistoryView extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final userState = watch(userStateProvider.state)?.user;
-    final historyViewState = watch(historyStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(userStateProvider).user!;
+    final historyViewState = ref.watch(historyStateProvider);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
@@ -23,8 +24,8 @@ class HistoryView extends ConsumerWidget {
             children: [
               ElevatedButton(
                 style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Get.theme.accentColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Get.theme.colorScheme.secondary),
                 ),
                 onPressed: () {
                   showDialog(
@@ -84,7 +85,8 @@ class HistoryView extends ConsumerWidget {
                   side: BorderSide(color: Get.theme.highlightColor, width: 2))),
           backgroundColor: tabIsSelected
               ? MaterialStateProperty.all<Color>(Colors.white)
-              : MaterialStateProperty.all<Color>(Get.theme.accentColor)),
+              : MaterialStateProperty.all<Color>(
+                  Get.theme.colorScheme.secondary)),
       onPressed: () {
         historyViewState.setTypeFilter(mode);
         print("$mode is selected");
@@ -98,27 +100,25 @@ class HistoryView extends ConsumerWidget {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,
-            color: tabIsSelected ? Get.theme.accentColor : Colors.grey,
+            color:
+                tabIsSelected ? Get.theme.colorScheme.secondary : Colors.grey,
           ),
         ),
       ),
     );
   }
 
-  Widget challengeResultsStream(historyViewState, String userId) {
+  Widget challengeResultsStream(historyViewState, String? userId) {
     return StreamBuilder(
       stream: historyViewState.challengeResultsStream(userId),
       builder: (context, snap) {
-        if (snap.hasData &&
-            !snap.hasError &&
-            snap.data.snapshot.value != null) {
-          Map rawChallengeData = snap.data.snapshot.value;
+        if (snap.hasData && !snap.hasError && snap.data != null) {
+          Map? rawChallengeData = (snap.data as DatabaseEvent).snapshot.value
+              as Map<Object?, dynamic>;
           List<ChallengeResultCard> challengeCards = [];
 
           var rawChallengeDataKeys = [];
-          if (rawChallengeData != null) {
-            rawChallengeDataKeys = rawChallengeData.keys.toList();
-          }
+          rawChallengeDataKeys = rawChallengeData.keys.toList();
           rawChallengeDataKeys.sort((a, b) => b.compareTo(a));
 
           rawChallengeDataKeys.forEach((key) {

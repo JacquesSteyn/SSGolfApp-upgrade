@@ -6,13 +6,12 @@ import 'package:ss_golf/app/home/submit/field_inputs.dart';
 import 'package:ss_golf/app/home/submit/golf/golf_score_state.dart';
 import 'package:ss_golf/app/home/submit/notes_dialog.dart';
 import 'package:ss_golf/shared/models/golf/golf_challenge.dart';
-import 'package:ss_golf/shared/widgets/primary_button.dart';
 import 'package:ss_golf/shared/widgets/primary_icon_button.dart';
 import 'package:ss_golf/state/app.provider.dart';
 import 'package:ss_golf/state/auth.provider.dart';
 
 class ScoreView extends StatefulWidget {
-  final GolfChallenge challenge;
+  final GolfChallenge? challenge;
   ScoreView({this.challenge});
 
   @override
@@ -20,8 +19,8 @@ class ScoreView extends StatefulWidget {
 }
 
 class _ScoreViewState extends State<ScoreView> {
-  String userId;
-  dynamic localScoreState;
+  String? userId;
+  late dynamic localScoreState;
 
   void _showErrorDialog(scoreState) {
     Get.defaultDialog(
@@ -46,10 +45,10 @@ class _ScoreViewState extends State<ScoreView> {
   Widget build(BuildContext context) {
     return Container(
       child: Consumer(
-        builder: (context, watch, child) {
-          final scoreState = watch(golfScoreStateProvider);
-          final userState = watch(userStateProvider.state)?.user;
-          final appState = watch(appStateProvider.state);
+        builder: (context, ref, child) {
+          final scoreState = ref.watch(golfScoreStateProvider);
+          final userState = ref.watch(userStateProvider).user!;
+          final appState = ref.watch(appStateProvider);
           final skills = appState.skills;
           final latestStat = appState.latestStat;
 
@@ -111,7 +110,7 @@ class _ScoreViewState extends State<ScoreView> {
           },
           pageBuilder: (BuildContext context, Animation animation,
               Animation secondaryAnimation) {
-            return null;
+            return Container();
           },
         );
       },
@@ -136,7 +135,7 @@ class _ScoreViewState extends State<ScoreView> {
             : PrimaryIconButton(
                 icon: Icon(Icons.arrow_forward, color: Colors.white),
                 onPressed: () async {
-                  double challengeScore = await scoreState.submit(
+                  double? challengeScore = await scoreState.submit(
                       userId, widget.challenge, latestStat, skills);
 
                   if (challengeScore != null) {
@@ -144,8 +143,8 @@ class _ScoreViewState extends State<ScoreView> {
                     Get.offAndToNamed(AppRoutes.challengeResultPage,
                         arguments: {
                           'userId': userId,
-                          'challengeId': widget.challenge.id,
-                          'challengeName': widget.challenge.name,
+                          'challengeId': widget.challenge!.id,
+                          'challengeName': widget.challenge!.name,
                           'challengeScore': challengeScore,
                         });
                   } else {

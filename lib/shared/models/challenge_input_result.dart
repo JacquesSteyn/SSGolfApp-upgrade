@@ -1,14 +1,14 @@
 import 'package:ss_golf/shared/models/challenge_input.dart';
 
 abstract class ChallengeInputResult {
-  String name, type;
-  int index;
+  String? name, type;
+  int? index;
   ChallengeInputResult({this.name, this.type, this.index});
 }
 
 class ChallengeInputSelectResult implements ChallengeInputResult {
-  String selectedOption, name, type;
-  int index;
+  String? selectedOption, name, type;
+  int? index;
 
   ChallengeInputSelectResult(data) {
     this.name = data['name'];
@@ -27,7 +27,7 @@ class ChallengeInputSelectResult implements ChallengeInputResult {
 }
 
 class ChallengeInputSelectScoreResult extends ChallengeInputResult {
-  SelectOptionScore selectedOption;
+  SelectOptionScore? selectedOption;
 
   ChallengeInputSelectScoreResult(data) {
     this.name = data['name'];
@@ -41,14 +41,14 @@ class ChallengeInputSelectScoreResult extends ChallengeInputResult {
     return {
       'name': this.name ?? null,
       'type': this.type ?? null,
-      'selectedOption': this.selectedOption.getJson() ?? null,
+      'selectedOption': this.selectedOption!.getJson() ?? null,
     };
   }
 }
 
 class ChallengeInputScoreResult implements ChallengeInputResult {
-  int selectedScore, index;
-  String name, type;
+  int? selectedScore, index;
+  String? name, type;
 
   ChallengeInputScoreResult(data) {
     this.name = data['name'];

@@ -141,8 +141,8 @@ import 'package:ss_golf/services/utilities_service.dart';
 import 'package:get/get.dart';
 
 class HorizontalBarChart extends StatefulWidget {
-  HorizontalBarChart({this.stats, @required this.shouldShowSub});
-  final List<DeepStat> stats;
+  HorizontalBarChart({this.stats, required this.shouldShowSub});
+  final List<DeepStat>? stats;
   final bool shouldShowSub;
 
   @override
@@ -159,14 +159,14 @@ class _HorizontalBarChartState extends State<HorizontalBarChart> {
         id: 'Stats',
         domainFn: (DeepStat stat, _) => stat.name.toString(),
         measureFn: (DeepStat stat, _) =>
-            Utilities.roundOffPercentageValueToInt(stat.value),
+            Utilities.roundOffPercentageValueToInt(stat.value!),
         fillColorFn: (DeepStat stat, _) =>
             charts.ColorUtil.fromDartColor(Utilities.gradedColors(stat.value)),
         // fillColorFn: (DeepStat stat, _) => charts.MaterialPalette.white, // Utilities.gradedColors(stat.value),
-        data: widget.stats,
+        data: widget.stats!,
         // Set a label accessor to control the text of the bar label.
         labelAccessorFn: (DeepStat stat, _) =>
-            '${Utilities.roundOffPercentageValue(stat.value)}   ${stat.name}',
+            '${Utilities.roundOffPercentageValue(stat.value!)}   ${stat.name}',
         insideLabelStyleAccessorFn: (DeepStat stat, _) {
           return new charts.TextStyleSpec(color: charts.MaterialPalette.white);
         },
@@ -179,11 +179,11 @@ class _HorizontalBarChartState extends State<HorizontalBarChart> {
         id: 'Stats-Stacked',
         domainFn: (DeepStat stat, _) => stat.name.toString(),
         measureFn: (DeepStat stat, _) =>
-            100 - Utilities.roundOffPercentageValueToInt(stat.value),
+            100 - Utilities.roundOffPercentageValueToInt(stat.value!),
         // labelAccessorFn: (DeepStat stat, _) =>
         //     '${Utilities.roundOffPercentageValue(stat.value)}   ${stat.name}',
-        seriesColor: charts.ColorUtil.fromDartColor(Get.theme.accentColor),
-        data: widget.stats,
+        seriesColor: charts.ColorUtil.fromDartColor(Get.theme.colorScheme.secondary),
+        data: widget.stats!,
         // Set a label accessor to control the text of the bar label.
         labelAccessorFn: (DeepStat stat, _) => '',
         //     '${stat.name}: ${Utilities.roundOffPercentageValue(stat.value)}',
@@ -207,7 +207,7 @@ class _HorizontalBarChartState extends State<HorizontalBarChart> {
       selectionModels: [
         charts.SelectionModelConfig(
             changedListener: (charts.SelectionModel model) {
-          String name = model.selectedDatum.first.datum.name;
+          String? name = model.selectedDatum.first.datum.name;
           if (name != "Physical" && widget.shouldShowSub)
             showDialog(
                 context: context,

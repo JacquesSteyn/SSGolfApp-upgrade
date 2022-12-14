@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ss_golf/app/app_router.dart';
 
 class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
-  final String title;
+  final String? title;
   final bool showActions;
   CustomAppBar({this.title, this.showActions = true});
 
@@ -33,7 +33,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
       // : [IconButton(onPressed: () {}, icon: Icon(Icons.visibility_outlined))],
       centerTitle: true,
       title: Text(
-        title,
+        title!,
       ),
     );
   }

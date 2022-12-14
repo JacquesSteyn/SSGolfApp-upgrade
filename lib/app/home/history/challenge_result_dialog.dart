@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:ss_golf/services/utilities_service.dart';
 import 'package:ss_golf/shared/models/challenge_note_result.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
-import 'package:ss_golf/shared/widgets/custom_radial_painter.dart';
 import 'package:ss_golf/shared/widgets/custome_donut.dart';
 import 'package:ss_golf/shared/widgets/primary_button.dart';
 
@@ -157,7 +156,7 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
         child: Wrap(
           children: [
             title(note.title),
-            titleContent(note.selectedOption),
+            titleContent(note.selectedOption!),
             // Divider(
             //   color: Colors.grey,
             // ),
@@ -191,7 +190,7 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
     );
   }
 
-  Widget title(String text) {
+  Widget title(String? text) {
     return Container(
       padding: const EdgeInsets.all(5), //fromLTRB(10, 5, 5, 5),
       alignment: Alignment.centerLeft,

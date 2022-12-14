@@ -4,9 +4,9 @@ import 'package:vector_math/vector_math.dart' as vm;
 // import './constants.dart';
 
 class ProgressRing extends StatelessWidget {
-  final double percentage;
+  final double? percentage;
 
-  const ProgressRing({Key key, @required this.percentage}) : super(key: key);
+  const ProgressRing({Key? key, required this.percentage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ProgressRing extends StatelessWidget {
           child: CustomPaint(
               painter: RingPainter(
         strokeWidth: constraints.maxWidth * 0.15,
-        percentage: (percentage / 100),
+        percentage: (percentage! / 100),
         gradedColor: Utilities.gradedColors(percentage),
       )));
     });
@@ -25,9 +25,9 @@ class ProgressRing extends StatelessWidget {
 class RingPainter extends CustomPainter {
   final double strokeWidth;
   final double percentage;
-  final Color gradedColor;
+  final Color? gradedColor;
 
-  RingPainter({@required this.strokeWidth, @required this.percentage, this.gradedColor});
+  RingPainter({required this.strokeWidth, required this.percentage, this.gradedColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -45,8 +45,8 @@ class RingPainter extends CustomPainter {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                gradedColor,
-                gradedColor,
+                gradedColor!,
+                gradedColor!,
                 // Colors.red,
                 // Colors.orange,
                 // Colors.green,

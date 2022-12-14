@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -13,8 +12,8 @@ class UserProfileView extends ConsumerWidget {
       new TextEditingController();
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final profileState = watch(profileStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(profileStateProvider);
 
     return SingleChildScrollView(
       child: Container(
@@ -33,21 +32,21 @@ class UserProfileView extends ConsumerWidget {
     );
   }
 
-  List<Widget> displayUserProfileViewFields(profileState) {
+  List<Widget> displayUserProfileViewFields(ProfileState profileState) {
     return [
       // FIRST NAME
       CustomTextField(
         label: 'Name',
         inputType: TextInputType.text,
         onSaved: profileState.setName,
-        initialValue: profileState?.name,
+        initialValue: profileState.name,
         validate: true,
         // showBorder: false,
         validatorMethod: (value) {
-          if (value.isEmpty) {
+          if (value == null || value.isEmpty) {
             return 'Please enter your name';
           }
-          return null;
+          return "";
         },
         missingFieldColor: true,
       ),
@@ -55,18 +54,20 @@ class UserProfileView extends ConsumerWidget {
       genderSelection(profileState),
       SizedBox(height: 20),
       dateOfBirthPicker(profileState),
+      SizedBox(
+        height: 20,
+      ),
     ];
   }
 
   Widget dateOfBirthPicker(profileState) {
-    print('DATE OF BIRTHHH: ' + profileState?.dateOfBirth.toString());
     if (profileState?.dateOfBirth != null) {
       dateOfBirthTextController.text = profileState?.dateOfBirth;
     }
     return TextFormField(
       onTap: () {
         DatePicker.showDatePicker(
-          Get.context,
+          Get.context!,
           minTime: DateTime(1920),
           maxTime: DateTime(2020),
           currentTime: profileState?.dateOfBirth != null
@@ -103,7 +104,7 @@ class UserProfileView extends ConsumerWidget {
     );
   }
 
-  Widget genderSelection(profileState) {
+  Widget genderSelection(ProfileState profileState) {
     return DropdownButtonFormField<String>(
       items: ['male', 'female', 'other']
           .map<DropdownMenuItem<String>>((String val) {
@@ -112,7 +113,7 @@ class UserProfileView extends ConsumerWidget {
           child: Text(val),
         );
       }).toList(),
-      value: profileState?.gender,
+      value: profileState.gender,
       onChanged: profileState.setGender,
       style: TextStyle(color: Colors.white, fontSize: 18),
       dropdownColor: Colors.grey,
@@ -123,7 +124,7 @@ class UserProfileView extends ConsumerWidget {
         labelText: 'Gender',
         labelStyle: TextStyle(
           color:
-              profileState?.gender == null ? Colors.red[300] : Colors.grey[300],
+              profileState.gender == null ? Colors.red[300] : Colors.grey[300],
           fontSize: 20,
         ),
         enabledBorder: OutlineInputBorder(

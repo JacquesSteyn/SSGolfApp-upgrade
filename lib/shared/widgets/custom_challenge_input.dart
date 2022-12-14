@@ -7,11 +7,11 @@ class CustomChallengeInput extends StatelessWidget {
       this.validate = false,
       this.validatorMethod,
       this.onSaved});
-  final String label;
+  final String? label;
 
-  final String inputType;
-  final Function(String) onSaved;
-  final Function(String) validatorMethod;
+  final String? inputType;
+  final Function(String?)? onSaved;
+  final Function(String)? validatorMethod;
   final bool validate;
 
   @override
@@ -20,9 +20,9 @@ class CustomChallengeInput extends StatelessWidget {
       case 'score':
         return scoreInput();
       case 'select':
-        return null;
+        return Container();
       default:
-        return null;
+        return Container();
     }
   }
 
@@ -41,9 +41,9 @@ class CustomChallengeInput extends StatelessWidget {
       ),
       onSaved: onSaved,
       validator: validatorMethod != null
-          ? validatorMethod
+          ? validatorMethod as String? Function(String?)?
           : (value) {
-              if (value.isEmpty) {
+              if (value != null && value.isEmpty) {
                 return '$label is required.';
               }
               return null;

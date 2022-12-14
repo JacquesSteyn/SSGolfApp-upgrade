@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ss_golf/landing/landing_state.dart';
 import 'package:ss_golf/main.dart';
@@ -15,16 +14,16 @@ class LandingPage extends ConsumerWidget {
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
 
-  void _showErrorDialog(landingState) {
+  void _showErrorDialog(LandingState landingState) {
     Get.defaultDialog(
       title: '', // 'Authentication failed!',
-      content: Text(landingState.errorMessage),
+      content: Text(landingState.errorMessage ?? ""),
       actions: [
         TextButton(
           child: Text('Try again'),
           onPressed: () {
             Get.back();
-            landingState.setErrorMessage(null);
+            landingState.setErrorMessage("");
           },
         ),
       ],
@@ -56,9 +55,9 @@ class LandingPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final landingState = watch(landingStateProvider);
-    final navbarIndex = watch(indexStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final landingState = ref.watch(landingStateProvider);
+    final navbarIndex = ref.watch(indexStateProvider.notifier);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -91,11 +90,11 @@ class LandingPage extends ConsumerWidget {
     );
   }
 
-  Widget _content(landingState, navIndexState) {
+  Widget _content(LandingState landingState, navIndexState) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 15),
       decoration: BoxDecoration(
-        color: Get.theme.accentColor.withOpacity(0.7),
+        color: Get.theme.colorScheme.secondary.withOpacity(0.7),
         borderRadius: BorderRadius.circular(18),
       ),
       child: landingState.authMode == AuthMode.Login
@@ -104,7 +103,7 @@ class LandingPage extends ConsumerWidget {
     );
   }
 
-  Widget _loginFields(landingState) {
+  Widget _loginFields(LandingState landingState) {
     return Form(
       // key: landingState.loginFormKey,
       child: Column(
@@ -130,7 +129,7 @@ class LandingPage extends ConsumerWidget {
     );
   }
 
-  Widget _signUpFields(landingState, navIndexState) {
+  Widget _signUpFields(LandingState landingState, navIndexState) {
     return Form(
       // key: landingState.signUpFormKey,
       child: ListView(
@@ -160,7 +159,7 @@ class LandingPage extends ConsumerWidget {
     );
   }
 
-  Widget _usernameField(landingState) {
+  Widget _usernameField(LandingState landingState) {
     return Column(
       children: [
         CustomTextField(
@@ -171,12 +170,13 @@ class LandingPage extends ConsumerWidget {
           largeFont: false,
         ),
         if (landingState.usernameError != null)
-          Text(landingState.usernameError, style: TextStyle(color: Colors.red)),
+          Text(landingState.usernameError ?? "",
+              style: TextStyle(color: Colors.red)),
       ],
     );
   }
 
-  Widget _emailField(landingState, bool filled) {
+  Widget _emailField(LandingState landingState, bool filled) {
     return Column(
       children: [
         CustomTextField(
@@ -188,12 +188,13 @@ class LandingPage extends ConsumerWidget {
           filledDark: filled,
         ),
         if (landingState.emailError != null)
-          Text(landingState.emailError, style: TextStyle(color: Colors.red)),
+          Text(landingState.emailError ?? "",
+              style: TextStyle(color: Colors.red)),
       ],
     );
   }
 
-  Widget _passwordField(landingState) {
+  Widget _passwordField(LandingState landingState) {
     return Column(
       children: [
         TextFormField(
@@ -213,7 +214,7 @@ class LandingPage extends ConsumerWidget {
                 borderSide: const BorderSide(color: Colors.grey)),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide(color: Colors.grey[700]),
+              borderSide: BorderSide(color: Colors.grey[700]!),
             ),
           ),
           onChanged: landingState.setPassword,
@@ -226,17 +227,18 @@ class LandingPage extends ConsumerWidget {
           // },
         ),
         if (landingState.passwordError != null)
-          Text(landingState.passwordError, style: TextStyle(color: Colors.red)),
+          Text(landingState.passwordError ?? "",
+              style: TextStyle(color: Colors.red)),
       ],
     );
   }
 
-  Widget _confirmPasswordField(landingState) {
-    String showErrorForConfirmPasswordField;
+  Widget _confirmPasswordField(LandingState landingState) {
+    String? showErrorForConfirmPasswordField;
     if (landingState.confirmPasswordError != null) {
       showErrorForConfirmPasswordField = landingState.confirmPasswordError;
     } else if (landingState.confirmPasswordError != null &&
-        landingState.confirmPasswordField != _passwordController.value.text) {
+        landingState.confirmPassword != _passwordController.value.text) {
       showErrorForConfirmPasswordField = 'Passwords do not match';
     }
     return Column(
@@ -256,7 +258,7 @@ class LandingPage extends ConsumerWidget {
                 borderSide: const BorderSide(color: Colors.grey)),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide(color: Colors.grey[700]),
+              borderSide: BorderSide(color: Colors.grey[700]!),
             ),
           ),
           onChanged: landingState.setConfirmPassword,
@@ -276,7 +278,7 @@ class LandingPage extends ConsumerWidget {
     );
   }
 
-  Widget _logInButton(landingState) {
+  Widget _logInButton(LandingState landingState) {
     return landingState.isLoading
         ? Center(child: CircularProgressIndicator())
         : PrimaryButton(
@@ -292,7 +294,7 @@ class LandingPage extends ConsumerWidget {
           );
   }
 
-  Widget _signUpButton(landingState, IndexState navIndexState) {
+  Widget _signUpButton(LandingState landingState, IndexState navIndexState) {
     return landingState.isLoading
         ? CircularProgressIndicator()
         : PrimaryButton(
@@ -309,7 +311,7 @@ class LandingPage extends ConsumerWidget {
           );
   }
 
-  Widget _forgotPassword(landingState) {
+  Widget _forgotPassword(LandingState landingState) {
     return SizedBox(
       width: 200,
       child: TextButton(
@@ -345,7 +347,7 @@ class LandingPage extends ConsumerWidget {
     );
   }
 
-  Widget _switchAuthMode(landingState) {
+  Widget _switchAuthMode(LandingState landingState) {
     List<String> texts = landingState.authModeAlternateText.split('\n');
     return SizedBox(
       width: 200,

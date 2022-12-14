@@ -3,12 +3,12 @@ import 'package:ss_golf/shared/models/physical/attribute.dart';
 import 'package:ss_golf/shared/models/golf/skill.dart';
 
 class Stat {
-  String day, name;
-  double golfValue, physicalValue;
-  List<SkillStat> skillStats;
-  List<AttributeStat> attributeStats;
+  String? day, name;
+  double? golfValue, physicalValue;
+  List<SkillStat>? skillStats;
+  List<AttributeStat>? attributeStats;
 
-  Stat([data, dayId, List<Skill> skills, List<Attribute> attributes]) {
+  Stat([data, dayId, List<Skill>? skills, List<Attribute>? attributes]) {
     if (data != null) {
       // print('STAT DATA: ' + data.toString());
       this.day = dayId;
@@ -20,9 +20,9 @@ class Stat {
         var skillIdKeys = (rawGolfData.keys).toList();
         skillIdKeys.remove('value');
         this.skillStats = skillIdKeys.map<SkillStat>((skillId) {
-          int skillIndex = skills?.indexWhere((skill) => skill.id == skillId);
+          int? skillIndex = skills?.indexWhere((skill) => skill.id == skillId);
           return SkillStat(rawGolfData[skillId], skillId,
-              (skills != null && skillIndex > -1) ? skills[skillIndex] : null);
+              (skills != null && skillIndex! > -1) ? skills[skillIndex] : null);
         }).toList();
       } else {
         this.skillStats = [];
@@ -34,11 +34,11 @@ class Stat {
         var attributeIdKeys = (rawPhysicalData.keys).toList();
         attributeIdKeys.remove('value');
         this.attributeStats = attributeIdKeys.map<AttributeStat>((attributeId) {
-          int attributeIndex =
-              attributes?.indexWhere((attribute) => attribute.id == attributeId);
+          int? attributeIndex = attributes
+              ?.indexWhere((attribute) => attribute.id == attributeId);
           return AttributeStat(
               rawPhysicalData[attributeId],
-              (attributes != null && attributeIndex > -1)
+              (attributes != null && attributeIndex! > -1)
                   ? attributes[attributeIndex]
                   : null);
         }).toList();
@@ -51,22 +51,24 @@ class Stat {
     }
   }
 
-  int findSkillIndex(String skillId) {
-    return this.skillStats.indexWhere((skillStat) => skillStat.id == skillId);
+  int findSkillIndex(String? skillId) {
+    return this.skillStats!.indexWhere((skillStat) => skillStat.id == skillId);
   }
 
   int findSkillIndexByName(String skillName) {
-    return this.skillStats.indexWhere((skillStat) => skillStat.name == skillName);
+    return this
+        .skillStats!
+        .indexWhere((skillStat) => skillStat.name == skillName);
   }
 
-  int findAttributeIndex(String attributeId) {
+  int findAttributeIndex(String? attributeId) {
     return this
-        .attributeStats
+        .attributeStats!
         .indexWhere((attributeStat) => attributeStat.id == attributeId);
   }
 
   getJson() {
-    Map<String, Map<String, dynamic>> jsonObject = {
+    Map<String, Map<String?, dynamic>> jsonObject = {
       'golf': {
         'value': this.golfValue,
       },
@@ -74,78 +76,97 @@ class Stat {
         'value': this.physicalValue,
       },
     };
-    // *** Skills & Elements
-    this.skillStats.forEach((skillStat) {
-      // print('SKILL STAT: ' + skillStat.toString());
-      var elementsJsonObject = {};
-      skillStat.elementStats.forEach((elementStat) {
-        // print('ELEMENT STAT: ' + elementStat.toString());
-        elementsJsonObject[elementStat.id] = {
-          'id': elementStat.id,
-          'value': elementStat.value
+
+    if (this.skillStats != null) {
+      // *** Skills & Elements
+      this.skillStats!.forEach((skillStat) {
+        // print('SKILL STAT: ' + skillStat.toString());
+        var elementsJsonObject = {};
+        if (skillStat.elementStats != null) {
+          skillStat.elementStats!.forEach((elementStat) {
+            // print('ELEMENT STAT: ' + elementStat.toString());
+            elementsJsonObject[elementStat.id] = {
+              'id': elementStat.id,
+              'value': elementStat.value
+            };
+          });
+        }
+        jsonObject['golf']![skillStat.id] = {
+          'value': skillStat.value,
+          'elements': elementsJsonObject
         };
       });
-      jsonObject['golf']
-          [skillStat.id] = {'value': skillStat.value, 'elements': elementsJsonObject};
-    });
+    }
 
-    // *** Attributes
-    this.attributeStats.forEach((attributeStat) {
-      jsonObject['physical'][attributeStat.id] = {
-        'value': attributeStat.value,
-      };
-    });
+    if (this.attributeStats != null) {
+      // *** Attributes
+      this.attributeStats!.forEach((attributeStat) {
+        jsonObject['physical']![attributeStat.id] = {
+          'value': attributeStat.value,
+        };
+      });
+    }
 
     return jsonObject;
   }
 }
 
 class SkillStat {
-  String id, name;
-  double value;
-  List<ElementStat> elementStats;
+  String? id, name;
+  double? value;
+  List<ElementStat>? elementStats;
 
-  SkillStat([data, skillId, Skill skill]) {
-    if (data != null) {
-      // print('SKILL DATA: ' + skill.elements.length.toString());
+  SkillStat([data, skillId, Skill? skill]) {
+    try {
+      if (data != null) {
+        // print('SKILL DATA: ' + skill.elements.length.toString());
 
-      this.id = skillId;
-      this.name = skill?.name;
-      this.value = data['value'].toDouble();
+        this.id = skillId;
+        this.name = skill?.name;
+        this.value = data['value'].toDouble();
 
-      // TODO - why the fuck is there a random null coming through!?
-      var rawElementsData = data['elements'] != null
-          ? data['elements'].where((element) => element != null)
-          : [];
-      this.elementStats = rawElementsData.map<ElementStat>((element) {
-        if (element != null && skill != null) {
-          int elementIndex = skill.elements
-              .indexWhere((skillElement) => skillElement.id == element['id']);
+        var rawElementsData = data['elements'] != null
+            ? data['elements'].where((element) => element != null)
+            : [];
 
-          return ElementStat(element, skill.elements[elementIndex]);
-        }
-      }).toList();
-    } else {
-      this.elementStats = [];
+        this.elementStats = (rawElementsData as Iterable).map((element) {
+          if (element != null && skill != null) {
+            int elementIndex = skill.elements!
+                .indexWhere((skillElement) => skillElement.id == element['id']);
+            return ElementStat(element, skill.elements![elementIndex]);
+          } else
+            return ElementStat();
+        }).toList();
+      } else {
+        this.elementStats = [];
+      }
+    } catch (e) {
+      print("SKILL STAT init ERROR -> $e");
     }
   }
 
-  int findElementIndex(String elementId) {
-    return this.elementStats.indexWhere((elementStat) => elementStat.id == elementId);
+  int findElementIndex(String? elementId) {
+    return this
+        .elementStats!
+        .indexWhere((elementStat) => elementStat.id == elementId);
   }
 }
 
 class ElementStat {
-  String id, name;
-  double value;
+  String? id, name;
+  double? value;
 
-  ElementStat([data, SkillElement element]) {
+  ElementStat([data, SkillElement? element]) {
     // print('ELEMENT DATA: ' + element.toString());
 
-    if (data != null) {
-      this.id = data['id'].toString();
-      this.value = data['value'].toDouble();
-      this.name = element?.name;
+    try {
+      if (data != null) {
+        this.id = data['id'].toString();
+        this.value = data['value'].toDouble();
+        this.name = element?.name;
+      }
+    } catch (e) {
+      print("ElementStat init error -> $e");
     }
   }
 
@@ -159,10 +180,10 @@ class ElementStat {
 }
 
 class AttributeStat {
-  String id, name;
-  double value;
+  String? id, name;
+  double? value;
 
-  AttributeStat([data, Attribute attribute]) {
+  AttributeStat([data, Attribute? attribute]) {
     if (data != null) {
       this.id = data['id'] ?? attribute?.id;
       this.value = data['value'].toDouble();

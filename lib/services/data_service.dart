@@ -6,8 +6,12 @@ import 'package:firebase_storage/firebase_storage.dart'
     as FirebaseStoragePackage;
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:ss_golf/shared/models/benchmark.dart';
 import 'package:ss_golf/shared/models/challenge_feedback.dart';
+import 'package:ss_golf/shared/models/draws/promotional_draw.dart';
+import 'package:ss_golf/shared/models/draws/redeemed_voucher.dart';
+import 'package:ss_golf/shared/models/draws/ticket.dart';
 import 'package:ss_golf/shared/models/golf/challenge_weightings.dart';
 import 'package:ss_golf/shared/models/golf/golf_challenge_result.dart';
 import 'package:ss_golf/shared/models/golf/skill.dart';
@@ -15,6 +19,8 @@ import 'package:ss_golf/shared/models/physical/attribute.dart';
 import 'package:ss_golf/shared/models/physical/physical_challenge_result.dart';
 import 'package:ss_golf/shared/models/stat.dart';
 import 'package:ss_golf/shared/models/user.dart';
+
+import '../shared/models/draws/transaction.dart';
 
 // DATABASE PATHS
 const usersPath = 'Users';
@@ -29,9 +35,11 @@ const golfChallengesPath = 'Content/Golf/Challenges';
 const physicalChallengesPath = 'Content/Physical/Challenges';
 const attributesPath = 'Content/Physical/Attributes';
 const weightingBandsPath = 'Content/Bands';
+const promotionalDrawPath = 'PromotionalDraws';
+const voucherPath = 'Vouchers';
 
 class DataService {
-  final dbReference = FirebaseDatabase.instance.reference();
+  final dbReference = FirebaseDatabase.instance.ref();
   // final dbReference = FirebaseDatabase(
   //         databaseURL: 'https://smart-stats-golf-dev-database.firebaseio.com/')
   //     .reference();
@@ -39,9 +47,9 @@ class DataService {
   // *** ===================== USER
 
   Future<UserProfile> fetchUser(String userId) async {
-    DataSnapshot snapshot =
+    DatabaseEvent snapshot =
         await dbReference.child(usersPath).child(userId).once();
-    return UserProfile(snapshot.value);
+    return UserProfile(snapshot.snapshot.value);
   }
 
   Future<void> createUser(UserProfile user) async {
@@ -56,10 +64,10 @@ class DataService {
 
   Future<Benchmark> fetchOverallPhysicalBenchmark() async {
     try {
-      DataSnapshot snapshot =
+      DatabaseEvent snapshot =
           await dbReference.child(overallPhysicalBenchPath).once();
 
-      return Benchmark(snapshot.value);
+      return Benchmark(snapshot.snapshot.value);
     } catch (e) {
       debugPrint('Error -> fetchOverallPhysicalBenchmark -> $e');
       return new Benchmark.init();
@@ -70,20 +78,21 @@ class DataService {
 
   Future<List<Skill>> fetchSkills() async {
     try {
-      DataSnapshot snapshot = await dbReference
+      DatabaseEvent snapshot = await dbReference
           .child(skillsPath)
           // .orderByChild('index')
           // .startAt(0)
           // .endAt(3)
           .once();
 
-      var skillKeys = snapshot.value.keys;
+      Map values = snapshot.snapshot.value as Map<dynamic, dynamic>;
+      List<Skill> skills = [];
 
-      List<Skill> skills = skillKeys
-          .map<Skill>((key) => Skill(snapshot.value[key], key))
-          .toList();
+      values.forEach((key, value) {
+        skills.add(Skill(value, key));
+      });
 
-      skills.sort((a, b) => a.index.compareTo(b.index));
+      skills.sort((a, b) => a.index!.compareTo(b.index!));
 
       return skills;
     } catch (e) {
@@ -96,14 +105,16 @@ class DataService {
 
   Future<List<Attribute>> fetchAttributes() async {
     try {
-      DataSnapshot snapshot = await dbReference.child(attributesPath).once();
+      DatabaseEvent source = await dbReference.child(attributesPath).once();
+      DataSnapshot snapshot = source.snapshot;
 
-      var attributeKeys = snapshot.value.keys;
-      List<Attribute> attributes = attributeKeys.map<Attribute>((key) {
-        var rawData = snapshot.value[key];
+      Map values = snapshot.value as Map<dynamic, dynamic>;
+      List<Attribute> attributes = [];
+      values.forEach((key, value) {
+        var rawData = value;
         rawData["id"] = key;
-        return Attribute(rawData);
-      }).toList();
+        attributes.add(Attribute(rawData));
+      });
 
       return attributes;
     } catch (e) {
@@ -119,9 +130,12 @@ class DataService {
     // String usersResultPath = '$resultsPath/$userId/golf';
     result.index = '${userId}_golf';
     // print('GOLF RESULTTT: ' + result.getJson().toString());
+
     await dbReference.child(resultsPath).push().set(result.getJson());
 
     await _incrementCount('$countsPath/Results/${result.challengeId}');
+
+    await updateUserChallengeCompleted(userId);
   }
 
   Future<void> submitPhysicalChallengeResult(
@@ -130,10 +144,14 @@ class DataService {
     result.index = '${userId}_physical';
     print('PHYSICAL RESULTTT: ' + result.getJson().toString());
     await dbReference.child(resultsPath).push().set(result.getJson());
+
     await _incrementCount('$countsPath/Results/${result.challengeId}');
+
+    await updateUserChallengeCompleted(userId);
   }
 
-  Stream<Event> streamedChallenges(bool golf, String refName, String refValue) {
+  Stream<DatabaseEvent> streamedChallenges(
+      bool golf, String refName, String? refValue) {
     String basePath = golf ? golfChallengesPath : physicalChallengesPath;
     return dbReference
         .child(basePath)
@@ -142,20 +160,22 @@ class DataService {
         .onValue;
   }
 
-  Future<List<ChallengeBand>> getChallengeBands(String weightingBandId) async {
+  Future<List<ChallengeBand>?> getChallengeBands(
+      String? weightingBandId) async {
     String bandsPath = '$weightingBandsPath/$weightingBandId';
-    DataSnapshot bandsSnapshot = await dbReference.child(bandsPath).once();
+    DatabaseEvent bandsSnapshot = await dbReference.child(bandsPath).once();
 
-    var rawData = bandsSnapshot.value['bands'] != null
-        ? bandsSnapshot.value['bands']
-        : [];
+    Map value = bandsSnapshot.snapshot.value as Map<dynamic, dynamic>;
+
+    var rawData = value['bands'] != null ? value['bands'] : [];
 
     return rawData
         .map<ChallengeBand>((rawBand) => ChallengeBand(rawBand))
         .toList();
   }
 
-  Stream<Event> streamedChallengeResults(String userId, String refValue) {
+  Stream<DatabaseEvent> streamedChallengeResults(
+      String userId, String refValue) {
     // String userResultsPath = '$resultsPath/$userId';
     return dbReference
         .child(resultsPath)
@@ -168,8 +188,8 @@ class DataService {
 
   // *** ===================== STATS
 
-  Stream<Event> datedProgressionStatsStream(
-    String userId,
+  Stream<DatabaseEvent> datedProgressionStatsStream(
+    String? userId,
     String startDay,
     String endDay,
   ) {
@@ -190,12 +210,14 @@ class DataService {
   Future<Stat> getLatestStat(
       String userId, List<Skill> skills, List<Attribute> attributes) async {
     String userStatsPath = '$statsPath/$userId';
-    DataSnapshot latestStatSnapshot =
+    DatabaseEvent latestStatSnapshot =
         await dbReference.child(userStatsPath).limitToLast(1).once();
 
-    String dayId = latestStatSnapshot.value?.keys?.first;
+    Map? value = latestStatSnapshot.snapshot.value as Map<dynamic, dynamic>?;
 
-    var rawData = dayId != null ? latestStatSnapshot.value[dayId] : null;
+    String? dayId = value?.keys.first;
+
+    var rawData = dayId != null ? value![dayId] : null;
 
     return Stat(rawData, dayId, skills, attributes);
   }
@@ -214,7 +236,7 @@ class DataService {
 
     // String userResultsPath = '$resultsPath/$userId/golf';
     // get last 20 of each element weighting
-    DataSnapshot latestResults = await dbReference
+    DatabaseEvent latestResults = await dbReference
         .child(resultsPath)
         .orderByChild('$skillIdElementId/skillIdElementId_index')
         .equalTo('${skillIdElementId}_${userId}_golf')
@@ -222,25 +244,26 @@ class DataService {
             noOfPreviousResults) // limitToFirst => check which is right!!
         .once();
 
-    var latestResultsKeys = latestResults.value?.keys ?? [];
+    Map? value = latestResults.snapshot.value as Map<dynamic, dynamic>?;
+
+    var latestResultsKeys = value?.keys ?? [];
 
     for (var key in latestResultsKeys) {
-      previousResults
-          .add(GolfChallengeResult(latestResults.value[key], skillIdElementId));
+      previousResults.add(GolfChallengeResult(value![key], skillIdElementId));
     }
     return previousResults;
   }
 
   Future<List<PhysicalChallengeResult>> getLatestResultsForAttribute(
     String userId,
-    String attributeId,
+    String? attributeId,
     int noOfPreviousResults,
   ) async {
     List<PhysicalChallengeResult> previousResults = [];
 
     // String userResultsPath = '$resultsPath/$userId/physical';
     // get last 20 of each element weighting
-    DataSnapshot latestResults = await dbReference
+    DatabaseEvent latestResults = await dbReference
         .child(resultsPath)
         .orderByChild('$attributeId/attributeId_index')
         .equalTo('${attributeId}_${userId}_physical')
@@ -248,14 +271,12 @@ class DataService {
         .limitToLast(noOfPreviousResults)
         .once();
 
-    var latestResultsKeys = latestResults.value?.keys ?? [];
+    Map? value = latestResults.snapshot.value as Map<dynamic, dynamic>?;
 
-    // print('ATTRRRRR ID ' + attributeId.toString());
-    // print('LAST 20000000000000000000000000000000 ' + last20keys.toString());
+    var latestResultsKeys = value?.keys ?? [];
 
     for (var key in latestResultsKeys) {
-      previousResults
-          .add(PhysicalChallengeResult(latestResults.value[key], attributeId));
+      previousResults.add(PhysicalChallengeResult(value![key], attributeId));
     }
     return previousResults;
   }
@@ -274,7 +295,7 @@ class DataService {
 
   // *** ===================== IMAGES
 
-  Future<String> uploadImage(PickedFile pickedImage, String uuid) async {
+  Future<String?> uploadImage(XFile pickedImage, String? uuid) async {
     try {
       final FirebaseStoragePackage.Reference imagesRef =
           FirebaseStoragePackage.FirebaseStorage.instance.ref().child('Images');
@@ -295,7 +316,7 @@ class DataService {
     }
   }
 
-  Future<bool> deleteImage(
+  Future<bool?> deleteImage(
     String fileUrl,
   ) async {
     try {
@@ -318,16 +339,526 @@ class DataService {
     DatabaseReference countDbRef = dbReference.child(countRef);
 
     TransactionResult transactionResult =
-        await countDbRef.runTransaction((MutableData nodeData) async {
-      // ** if null/doesn't exist
-      if (nodeData.value == null || nodeData.value['count'] == null) {
-        nodeData.value = {'count': 1};
+        await countDbRef.runTransaction((Object? val) {
+      if (val == null) {
+        val = {'count': 1};
+        return Transaction.success(val);
       } else {
-        nodeData.value['count'] = (nodeData.value['count'] ?? 0) + 1;
+        Map<String, dynamic> _val = Map<String, dynamic>.from(val as Map);
+        _val['count'] = (_val['count'] ?? 0) + 1;
+        return Transaction.success(_val);
       }
-      return nodeData;
     });
 
     return transactionResult.committed;
+  }
+
+  // *** ===================== PROMOTIONAL DRAWS
+
+  Future<List<PromotionalDraw>> fetchPromotionalDraws() async {
+    try {
+      DatabaseEvent snapshot = await dbReference
+          .child(promotionalDrawPath)
+          .orderByChild('drawStatus')
+          .equalTo("open")
+          .once();
+
+      Map? values = snapshot.snapshot.value as Map<dynamic, dynamic>?;
+      List<PromotionalDraw> draws = [];
+
+      if (values != null) {
+        values.forEach((key, value) {
+          draws.add(PromotionalDraw(value, key));
+        });
+      }
+      return draws;
+    } catch (e) {
+      debugPrint('Error -> fetchPromotionalDraws -> $e');
+      return [];
+    }
+  }
+
+  Future<void> updateUserBalance(String? uuid, double newBalance) async {
+    String userPath = '$usersPath/$uuid/balance';
+    await dbReference.child(userPath).set(newBalance);
+    return Future.value();
+  }
+
+  Future<void> updateUserPlan(String? uuid, String plan, bool freeTrail) async {
+    String userPath = '$usersPath/$uuid/plan';
+    await dbReference.child(userPath).set(plan);
+
+    if (freeTrail) {
+      String path = '$usersPath/$uuid/freeTrailExpireDate';
+      DateTime now = DateTime.now();
+      DateTime date = DateTime(now.year, now.month + 1, now.day);
+      await dbReference.child(path).set(date.toString());
+    }
+
+    return Future.value();
+  }
+
+  Future<PromotionalDraw> fetchAPromotionalDraw(String drawID) async {
+    String drawPath = '$promotionalDrawPath/$drawID';
+    DatabaseEvent snapshot = await dbReference.child(drawPath).once();
+    return PromotionalDraw([snapshot.snapshot.value, drawID]);
+  }
+
+  Future<bool> _incrementTicketSoldCount(String? drawID) async {
+    String drawPath = '$promotionalDrawPath/$drawID/ticketsSold';
+    DatabaseReference countDbRef = dbReference.child(drawPath);
+
+    try {
+      TransactionResult transactionResult =
+          await countDbRef.runTransaction((Object? val) {
+        if (val == null) {
+          val = 1;
+          return Transaction.success(val);
+        } else {
+          val = int.parse(val.toString()) + 1;
+          return Transaction.success(val);
+        }
+      });
+
+      return transactionResult.committed;
+    } catch (e) {
+      print("UNABLE TO INCREASE TICKETS_SOLD: " + e.toString());
+      return false;
+    }
+  }
+
+  Future<String?> purchaseTicket(
+      PromotionalTicket ticket, PromotionalDraw draw, String? uuid) async {
+    try {
+      String ticketPath = '$promotionalDrawPath/${draw.id}/tickets';
+
+      final newTicketKey = dbReference.child(ticketPath).push().key;
+
+      int ticketNumber = 1;
+      if (draw.ticketsSold == null || draw.ticketsSold == 0) {
+        ticketNumber = 1;
+      } else {
+        ticketNumber = draw.ticketsSold! + 1;
+      }
+
+      final Map<String, Map> updates = {};
+
+      ticket.ticketNumber = ticketNumber.toString();
+
+      updates['$ticketPath/$newTicketKey'] = ticket.getJson();
+      updates['$usersPath/$uuid/draws/${draw.id}/tickets/$newTicketKey'] =
+          ticket.getJson();
+
+      dbReference.update(updates);
+
+      await this._incrementTicketSoldCount(draw.id);
+
+      return newTicketKey;
+    } catch (e) {
+      print("PURCHASE TICKET: " + e.toString());
+      return "failed";
+    }
+  }
+
+  Future<List<PromotionalDraw>> fetchUserTickets(String? uuid) async {
+    try {
+      DatabaseEvent snapshot =
+          await dbReference.child("$usersPath/$uuid/draws").once();
+
+      Map? values = snapshot.snapshot.value as Map<dynamic, dynamic>?;
+      List<PromotionalDraw> draws = [];
+
+      if (values != null) {
+        values.forEach((key, value) async {
+          DatabaseEvent snapshotTwo =
+              await dbReference.child("$promotionalDrawPath/$key").once();
+
+          Map originalDrawSnap =
+              snapshotTwo.snapshot.value as Map<dynamic, dynamic>;
+
+          originalDrawSnap['tickets'] = value['tickets'];
+
+          draws.add(PromotionalDraw(originalDrawSnap, key));
+        });
+      }
+
+      return draws;
+    } catch (e) {
+      print('Error -> fetchUserTickets for user -> ' + e.toString());
+      return [];
+    }
+  }
+
+  Future<List<UserTransaction>> fetchUserTransactions(
+      String? uuid, String? startDate) async {
+    try {
+      DatabaseEvent snapshot = await dbReference
+          .child("$usersPath/$uuid/transactions")
+          .orderByChild("purchaseDate")
+          .startAfter('$startDate-01 00:00:00')
+          .endAt('$startDate-31 00:00:00')
+          .limitToLast(300)
+          .once();
+
+      Map? values = snapshot.snapshot.value as Map<dynamic, dynamic>?;
+      List<UserTransaction> transactions = [];
+
+      if (values != null && values.isNotEmpty) {
+        values.forEach((key, value) async {
+          transactions.add(UserTransaction(value, key));
+        });
+      }
+
+      transactions.sort((a, b) => b.purchaseDate!.compareTo(a.purchaseDate!));
+
+      return transactions;
+    } catch (e) {
+      print('Error -> fetchUserTransactions for user -> ' + e.toString());
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchUserTodayTransaction(
+      String? uuid, bool spent) async {
+    try {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final yesterday = DateTime(now.year, now.month, now.day - 1);
+      double total = 0;
+      final customDateFormat = DateFormat('y-M-dd');
+
+      String toDate = customDateFormat.format(today);
+      String fromDate = customDateFormat.format(yesterday);
+
+      Map<String, dynamic> result = {};
+
+      DatabaseEvent snapshot = await dbReference
+          .child("$usersPath/$uuid/transactions")
+          .orderByChild("purchaseDate")
+          .startAfter('$fromDate 23:59:00.000001')
+          .endAt('$toDate 23:59:00.000000')
+          //.limitToFirst(1)
+          .once();
+
+      Map? values = snapshot.snapshot.value as Map<dynamic, dynamic>?;
+      List<UserTransaction> transactions = [];
+
+      if (values != null && values.isNotEmpty) {
+        values.forEach((key, value) async {
+          if (value['type'] != null) {
+            if (spent && value['type'] == 'spent') {
+              transactions.add(UserTransaction(value, key));
+              total += value['price'] != null
+                  ? double.parse(value['price'].toString())
+                  : 0;
+            } else if (!spent && value['type'] != 'spent') {
+              transactions.add(UserTransaction(value, key));
+              total += value['price'] != null
+                  ? double.parse(value['price'].toString())
+                  : 0;
+            }
+          }
+        });
+      }
+
+      transactions.sort((a, b) => b.purchaseDate!.compareTo(a.purchaseDate!));
+
+      if (transactions.length > 0) {
+        result.addAll({'total': total, 'transaction': transactions.first});
+      }
+
+      return Future.value(result);
+    } catch (e) {
+      print('Error -> fetchUserTransactions for user -> ' + e.toString());
+      return Future.value({});
+    }
+  }
+
+  Future<String> createUserTransaction(
+      UserTransaction transaction, String? uuid) async {
+    try {
+      String path = '$usersPath/$uuid/transactions';
+
+      await dbReference.child(path).push().set(transaction.getJson());
+
+      return "success";
+    } catch (e) {
+      print("CREATE TRANSACTION: " + e.toString());
+      return "failed";
+    }
+  }
+
+  // returns the value to be added to the balance
+  Future<double> redeemVoucher(String voucherNumber, String? uuid) async {
+    DatabaseEvent result = await dbReference
+        .child(voucherPath)
+        .orderByChild('voucherNumber')
+        .equalTo(voucherNumber)
+        .once();
+
+    Map? values = result.snapshot.value as Map<dynamic, dynamic>?;
+
+    double? updatePrice = 0;
+
+    try {
+      if (values != null) {
+        Map value = {};
+        String voucherID = "";
+        values.forEach((key, currentValue) {
+          value = currentValue;
+          voucherID = key;
+        });
+
+        String status = value['voucherStatus'] ?? "";
+        if (status.isNotEmpty && status == "Active") {
+          int allowedEntries =
+              int.parse(value['voucherAllowedEntries'].toString());
+          Map redeemedUsers = value['redeemedVouchers'] ?? {};
+
+          if (allowedEntries <= redeemedUsers.length) {
+            if (voucherID.isNotEmpty) {
+              String updatePath = "$voucherPath/$voucherID/voucherStatus";
+              await dbReference.child(updatePath).set('Complete');
+            }
+            return Future.value(0);
+          }
+
+          if (redeemedUsers.length > 0) {
+            bool allRedemption = true;
+            redeemedUsers.forEach((key, value) {
+              if (value['userID'] == uuid) {
+                allRedemption = false;
+              }
+            });
+
+            //-1 for vouchers already used by the current user
+            if (allRedemption == false) {
+              return Future.value(0);
+            }
+          }
+
+          return Future.value(0);
+
+          if (value['voucherExpireDate'] != null) {
+            try {
+              DateTime now = DateTime.now();
+              DateTime voucherExpireDate =
+                  DateTime.parse(value['voucherExpireDate']);
+
+              if (now.compareTo(voucherExpireDate) > 0) {
+                if (voucherID.isNotEmpty) {
+                  String updatePath = "$voucherPath/$voucherID/voucherStatus";
+                  await dbReference.child(updatePath).set('Expired');
+                }
+                return Future.value(0);
+              }
+            } catch (e) {
+              print("invalid date format");
+            }
+          }
+
+          UserTransaction transaction = new UserTransaction.init(
+              name: "Voucher redeemed",
+              price: double.parse(value['voucherPrice'].toString()),
+              purchaseDate: DateTime.now(),
+              type: "voucher");
+
+          String status = await this.createUserTransaction(transaction, uuid);
+          if (status == 'success') {
+            RedeemedVoucher voucher = RedeemedVoucher.init(
+                userID: uuid, redeemedDate: DateTime.now());
+
+            String? voucherID = value['id'];
+            if (voucherID != null && voucherID.isNotEmpty) {
+              String path = "$voucherPath/$voucherID/redeemedVouchers";
+              await dbReference.child(path).push().set(voucher.getJson());
+              updatePrice = transaction.price;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return Future.value(updatePrice);
+  }
+
+  Future<double> redeemGifts(String title, double price, String? uuid) async {
+    double? updatePrice = 0;
+
+    String type = "";
+    switch (title) {
+      case "Daily Check-In":
+        type = "check-in";
+        break;
+      case "3 Day Check-In Streak":
+        type = "3day";
+        break;
+      case "5 Day Check-In Streak":
+        type = "3day";
+        break;
+      case "7 Day Check-In Streak":
+        type = "3day";
+        break;
+      case "Complete Challenge (1/2)":
+        type = "challenge";
+        break;
+      case "Complete Challenge (2/2)":
+        type = "challenge";
+        break;
+    }
+
+    try {
+      UserTransaction transaction = new UserTransaction.init(
+          name: title, price: price, purchaseDate: DateTime.now(), type: type);
+
+      String status = await this.createUserTransaction(transaction, uuid);
+      if (status == 'success') {
+        updatePrice = transaction.price;
+        if (type == "check-in" || type == "3day") {
+          await this.resetUserStreak(uuid);
+        } else {
+          await this.resetUserChallengeCompleted(uuid);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return Future.value(updatePrice);
+  }
+
+  Future<void> updateUserStreak(UserProfile user) async {
+    try {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final yesterday = DateTime(now.year, now.month, now.day - 1);
+
+      if (user.lastClockInTime == null) {
+        user.lastClockInTime = today;
+      }
+
+      final dateToCheck = user.lastClockInTime!;
+      final aDate =
+          DateTime(dateToCheck.year, dateToCheck.month, dateToCheck.day);
+
+      if ((aDate == today && user.checkInStreak == 0) ||
+          (aDate.compareTo(today) < 0) ||
+          (aDate == yesterday && user.checkInStreak! >= 1 ||
+              user.checkInStreak == null)) {
+        DatabaseReference countDbRef =
+            dbReference.child("$usersPath/${user.id}");
+
+        await countDbRef.runTransaction((Object? val) {
+          if (val == null) {
+            return Transaction.success(val);
+          } else {
+            Map<String, dynamic> _val = Map<String, dynamic>.from(val as Map);
+
+            if (_val['checkInStreak'] == null) {
+              _val['checkInStreak'] = 1;
+            } else {
+              int checkInStreak = _val['checkInStreak'] as int;
+              _val['checkInStreak'] = checkInStreak + 1;
+            }
+
+            _val['lastClockInTime'] = DateTime.now().toString();
+
+            return Transaction.success(_val);
+          }
+        });
+      }
+    } catch (e) {
+      print("USER STREAK UPDATE ERROR: $e");
+    }
+
+    return Future.value();
+  }
+
+  Future<void> resetUserStreak(String? userID) async {
+    try {
+      DatabaseReference countDbRef = dbReference.child("$usersPath/$userID");
+
+      await countDbRef.runTransaction((Object? val) {
+        if (val == null) {
+          return Transaction.success(val);
+        } else {
+          Map<String, dynamic> _val = Map<String, dynamic>.from(val as Map);
+
+          if (_val['checkInStreak'] != null) {
+            _val['checkInStreak'] = 0;
+          }
+
+          DateTime now = DateTime.now();
+          DateTime tomorrow =
+              DateTime(now.year, now.month, now.day + 1, 0, 1, 1);
+
+          _val['lastClockInTime'] = tomorrow.toString();
+
+          return Transaction.success(_val);
+        }
+      });
+    } catch (e) {
+      print("RESET USER STREAK UPDATE ERROR: $e");
+    }
+
+    return Future.value();
+  }
+
+  Future<void> updateUserChallengeCompleted(String userID) async {
+    try {
+      DatabaseReference countDbRef =
+          dbReference.child("$usersPath/$userID/completedChallenges");
+
+      await countDbRef.runTransaction((Object? val) {
+        if (val == null) {
+          val = 1;
+          return Transaction.success(val);
+        } else {
+          int completedChallenges = val as int;
+          val = completedChallenges + 1;
+          return Transaction.success(val);
+        }
+      });
+    } catch (e) {
+      print("USER CHALLENGE COMPLETED UPDATE ERROR: $e");
+    }
+
+    return Future.value();
+  }
+
+  Future<void> resetUserChallengeCompleted(String? userID) async {
+    try {
+      DatabaseReference countDbRef =
+          dbReference.child("$usersPath/$userID/completedChallenges");
+
+      await countDbRef.runTransaction((Object? val) {
+        if (val == null) {
+          return Transaction.success(0);
+        } else {
+          return Transaction.success(0);
+        }
+      });
+
+      await updateUserChallengeRedemption(userID);
+    } catch (e) {
+      print("RESET USER CHALLENGE COMPLETED UPDATE ERROR: $e");
+    }
+
+    return Future.value();
+  }
+
+  Future<void> updateUserChallengeRedemption(String? userID) async {
+    try {
+      DatabaseReference countDbRef =
+          dbReference.child("$usersPath/$userID/lastChallengeRedemption");
+
+      return countDbRef.set(DateTime.now().toString());
+    } catch (e) {
+      print("USER CHALLENGE DATE ERROR: $e");
+    }
+
+    return Future.value();
   }
 }

@@ -5,8 +5,8 @@ import 'package:ss_golf/app/home/select/golf/golf_challenge_state.dart';
 
 class GolfChallengeFilterDialog extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final golfChallengeState = watch(golfChallengeStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final golfChallengeState = ref.watch(golfChallengeStateProvider);
     return AlertDialog(
       title: Text(
         'Filter the challenges',
@@ -19,8 +19,9 @@ class GolfChallengeFilterDialog extends ConsumerWidget {
             leading: Radio(
               value: GolfChallengeTypeFilter.Range,
               groupValue: golfChallengeState.challengeTypeFilter,
-              onChanged: (_) {
-                golfChallengeState.setChallengeType(GolfChallengeTypeFilter.Range);
+              onChanged: (dynamic _) {
+                golfChallengeState
+                    .setChallengeType(GolfChallengeTypeFilter.Range);
               },
             ),
           ),
@@ -29,8 +30,9 @@ class GolfChallengeFilterDialog extends ConsumerWidget {
             leading: Radio(
               value: GolfChallengeTypeFilter.Course,
               groupValue: golfChallengeState.challengeTypeFilter,
-              onChanged: (_) {
-                golfChallengeState.setChallengeType(GolfChallengeTypeFilter.Course);
+              onChanged: (dynamic _) {
+                golfChallengeState
+                    .setChallengeType(GolfChallengeTypeFilter.Course);
               },
             ),
           ),
@@ -39,8 +41,9 @@ class GolfChallengeFilterDialog extends ConsumerWidget {
             leading: Radio(
               value: GolfChallengeTypeFilter.All,
               groupValue: golfChallengeState.challengeTypeFilter,
-              onChanged: (_) {
-                golfChallengeState.setChallengeType(GolfChallengeTypeFilter.All);
+              onChanged: (dynamic _) {
+                golfChallengeState
+                    .setChallengeType(GolfChallengeTypeFilter.All);
               },
             ),
           ),
@@ -51,7 +54,7 @@ class GolfChallengeFilterDialog extends ConsumerWidget {
         ],
       ),
       actions: [
-        FlatButton(
+        TextButton(
           child: Text('Done'),
           onPressed: () {
             return Get.back();

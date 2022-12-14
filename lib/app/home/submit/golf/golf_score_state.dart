@@ -30,10 +30,10 @@ class ScoreState extends ChangeNotifier {
 
   // *** DYNAMIC USER INPUT FIELDS - FieldInputs cycles though the set user inputs and creates user input results to store in results.
   bool _userInputResultsSet = false;
-  List<ChallengeInput> _userInputs = [];
-  void setUserInputs(GolfChallenge challenge) {
+  List<ChallengeInput>? _userInputs = [];
+  void setUserInputs(GolfChallenge? challenge) {
     if (!_userInputResultsSet) {
-      _userInputs = challenge.inputs;
+      _userInputs = challenge!.inputs;
       _challengeNotes = challenge.notes;
       challengeResult.inputResults = challenge.getAllChallengeInputResults();
       challengeResult.notes = challenge.getChallengeNoteResults();
@@ -41,52 +41,52 @@ class ScoreState extends ChangeNotifier {
     }
   }
 
-  List<ChallengeNote> _challengeNotes = [];
-  List<dynamic> get challengeNotes => _challengeNotes;
-  String getChallengeNoteResult(int index) {
-    return challengeResult.notes[index].selectedOption;
+  List<ChallengeNote>? _challengeNotes = [];
+  List<dynamic>? get challengeNotes => _challengeNotes;
+  String? getChallengeNoteResult(int index) {
+    return challengeResult.notes![index].selectedOption;
   }
 
   void setChallengeNoteResult(int index, String selectedOption) {
-    challengeResult.notes[index].selectedOption = selectedOption;
+    challengeResult.notes![index].selectedOption = selectedOption;
     notifyListeners();
   }
 
-  List<dynamic> get userInputs => _userInputs;
-  List<dynamic> get inputResults => challengeResult.inputResults;
+  List<dynamic>? get userInputs => _userInputs;
+  List<dynamic>? get inputResults => challengeResult.inputResults;
   GolfChallengeResult challengeResult = GolfChallengeResult();
 
   // ** SCORE INPUT
   setInputScoreResult(int scoreIndex, int selectedScore) {
-    challengeResult.inputResults[scoreIndex].selectedScore = selectedScore;
+    challengeResult.inputResults![scoreIndex].selectedScore = selectedScore;
     notifyListeners();
   }
 
-  int getInputScoreResult(int inputIndex) {
-    return inputResults[inputIndex].selectedScore;
+  int? getInputScoreResult(int inputIndex) {
+    return inputResults![inputIndex].selectedScore;
   }
 
   // ** SELECT SCORE INPUT
   setInputSelectScoreResult(
       int inputIndex, SelectOptionScore selectedScoreOption) {
-    challengeResult.inputResults[inputIndex].selectedOption =
+    challengeResult.inputResults![inputIndex].selectedOption =
         selectedScoreOption;
     notifyListeners();
   }
 
-  SelectOptionScore getInputSelectScoreResult(int inputIndex) {
-    return inputResults[inputIndex].selectedOption;
+  SelectOptionScore? getInputSelectScoreResult(int inputIndex) {
+    return inputResults![inputIndex].selectedOption;
   }
 
   // ** SELECT INPUT
   setInputSelectResult(int scoreIndex, String selectedOption) {
-    challengeResult.inputResults[scoreIndex].selectedOption = selectedOption;
-    print("Selected Index:${scoreIndex} Option:${selectedOption}");
+    challengeResult.inputResults![scoreIndex].selectedOption = selectedOption;
+    print("Selected Index:$scoreIndex Option:$selectedOption");
     notifyListeners();
   }
 
-  String getInputSelectResult(int inputIndex) {
-    return inputResults[inputIndex].selectedOption;
+  String? getInputSelectResult(int inputIndex) {
+    return inputResults![inputIndex].selectedOption;
   }
 
   void resetScoreState() {
@@ -99,7 +99,7 @@ class ScoreState extends ChangeNotifier {
     // notifyListeners();
   }
 
-  Future<double> submit(
+  Future<double?> submit(
     String userId,
     GolfChallenge challenge,
     Stat latestStat,
@@ -145,7 +145,7 @@ class ScoreState extends ChangeNotifier {
 
   bool validateInputs() {
     bool validInputs = true;
-    for (var inputResult in challengeResult.inputResults) {
+    for (var inputResult in challengeResult.inputResults!) {
       if (inputResult.type == 'score') {
         if (inputResult.selectedScore < 0) {
           _errorMessage = '${inputResult.name} - please enter a score.';
@@ -168,8 +168,8 @@ class ScoreState extends ChangeNotifier {
 
     // ** 1. Total points from each elements contribution
     int totalPoints = 0;
-    challenge.weightings.weightings
-        .forEach((value) => totalPoints = totalPoints + value.weight);
+    challenge.weightings.weightings!
+        .forEach((value) => totalPoints = totalPoints + value.weight!);
     // print('Challenge weightings: ' + challenge.weightings.getJson().toString());
     // print('\nChallenge weightings total: ' + totalPoints.toString());
 
@@ -177,19 +177,19 @@ class ScoreState extends ChangeNotifier {
     double score = 0;
     int divisionFactor = 0;
     double _maxScore = 0;
-    inputResults.forEach((inputResult) {
+    inputResults!.forEach((inputResult) {
       if (inputResult.type == 'score') {
         score = score + inputResult.selectedScore;
         divisionFactor++;
         // find max score - this is not ideal but works
         int userInputIndex =
-            userInputs.indexWhere((input) => input.name == inputResult.name);
-        _maxScore = _maxScore + userInputs[userInputIndex].maxScore;
+            userInputs!.indexWhere((input) => input.name == inputResult.name);
+        _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
       } else if (inputResult.type == 'inverted-score') {
         // find max score - this is not ideal but works
         int userInputIndex =
-            userInputs.indexWhere((input) => input.name == inputResult.name);
-        _maxScore = _maxScore + userInputs[userInputIndex].maxScore;
+            userInputs!.indexWhere((input) => input.name == inputResult.name);
+        _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
 
         //create the inverse of the score
         score = score + (_maxScore - inputResult.selectedScore);
@@ -199,9 +199,9 @@ class ScoreState extends ChangeNotifier {
         divisionFactor++;
         // TODO: find max score - this is not ideal but works
         int userInputIndex =
-            userInputs.indexWhere((input) => input.name == inputResult.name);
+            userInputs!.indexWhere((input) => input.name == inputResult.name);
         double maxScoreForOptions =
-            userInputs[userInputIndex].selectionOptions.last.score;
+            userInputs![userInputIndex].selectionOptions.last.score;
         // .reduce<int>((a, b) => a.score > b.score ? a.score : b.score);
         _maxScore = _maxScore + maxScoreForOptions;
       }
@@ -221,7 +221,7 @@ class ScoreState extends ChangeNotifier {
     }
 
     // ** 4. Adjusted points (times by difficulty)
-    double difficulty = double.parse(challenge.difficulty);
+    double difficulty = double.parse(challenge.difficulty!);
     double adjustedPoints = points * (difficulty / 5);
 
     // ** 5. GolfChallenge score as percentage
@@ -235,14 +235,14 @@ class ScoreState extends ChangeNotifier {
   _updateElementsAndSkillScores(
     String userId,
     GolfChallenge challenge,
-    double newScorePercentage,
+    double? newScorePercentage,
     Stat updatedStatScores,
     List<Skill> skills,
   ) async {
-    String relevantSkillId = challenge.weightings.skillId;
+    String? relevantSkillId = challenge.weightings.skillId;
 
     // *** 1. Get the challenge weighting bands
-    List<ChallengeBand> challengeBands =
+    List<ChallengeBand>? challengeBands =
         await _dataService.getChallengeBands(challenge.weightingBandId);
     print(
         'Challenge band id: ' + challenge.weightingBandId.toString() + '\n\n');
@@ -253,7 +253,7 @@ class ScoreState extends ChangeNotifier {
     int skillStatIndex =
         updatedStatScores.findSkillIndex(challenge.weightings.skillId);
     if (skillStatIndex == -1) {
-      updatedStatScores.skillStats.add(
+      updatedStatScores.skillStats!.add(
         SkillStat(
             {'value': 0},
             challenge.weightings.skillId,
@@ -276,21 +276,21 @@ class ScoreState extends ChangeNotifier {
     int fixedSkillIndex =
         skills.indexWhere((skill) => skill.id == relevantSkillId);
     // 1. Cycle through elements for the skill
-    updatedStatScores.skillStats[skillStatIndex].elementStats
+    updatedStatScores.skillStats![skillStatIndex].elementStats!
         .forEach((elementStat) {
       // ** 1. Find element
       SkillElement skillElement = skills[fixedSkillIndex]
-          .elements
+          .elements!
           .firstWhere((element) => element.id == elementStat.id);
       print('\n   ${skillElement.name} -> ' + skillElement.weight.toString());
 
       // ** 2. Add updated element score to new skill score - element score is weighted.
       totalSkillPercentageScore = totalSkillPercentageScore +
-          (elementStat.value * (skillElement.weight / 100));
+          (elementStat.value! * (skillElement.weight! / 100));
       print('   totalSkillPercentageScore: ' +
           totalSkillPercentageScore.toString());
     });
-    updatedStatScores.skillStats[skillStatIndex].value =
+    updatedStatScores.skillStats![skillStatIndex].value =
         totalSkillPercentageScore;
     print('UPDATED SKILL SCORE => $totalSkillPercentageScore');
 
@@ -298,8 +298,8 @@ class ScoreState extends ChangeNotifier {
     print('\n*** UPDATE OVERALL SCORE');
     int totalSkills = skills.length + 1; // NB: plus 1 for physical score.
     double totalSkillsScore = 0;
-    updatedStatScores.skillStats.forEach(
-        (skillStat) => totalSkillsScore = totalSkillsScore + skillStat.value);
+    updatedStatScores.skillStats!.forEach(
+        (skillStat) => totalSkillsScore = totalSkillsScore + skillStat.value!);
 
     // add physical score
     totalSkillsScore =
@@ -316,28 +316,28 @@ class ScoreState extends ChangeNotifier {
   _updateElementScores(
     String userId,
     GolfChallenge challenge,
-    double newScorePercentage,
+    double? newScorePercentage,
     Stat updatedStatScores,
-    List<ChallengeBand> challengeBands,
+    List<ChallengeBand>? challengeBands,
     int skillStatIndex,
   ) async {
     // *** CYCLE THROUGH ELEMENT CONTRIBUTIONS
     print('\n\n *** UPDATE ELEMENT SCORES *** \n\n');
-    for (ChallengeWeighting weighting in challenge.weightings.weightings) {
-      if (weighting.weight > 0) {
+    for (ChallengeWeighting weighting in challenge.weightings.weightings!) {
+      if (weighting.weight! > 0) {
         // ** 1. Either exists or create a new one
         int exisitingElementStatIndex = updatedStatScores
-            .skillStats[skillStatIndex]
-            .findElementIndex(weighting.element.id);
+            .skillStats![skillStatIndex]
+            .findElementIndex(weighting.element!.id);
 
         print('   1. EXISTING ELEMENT INDEX => ' +
             exisitingElementStatIndex.toString());
         bool elementStatAlreadyExists = true;
         ElementStat updatedElementStat = exisitingElementStatIndex > -1
-            ? updatedStatScores.skillStats[skillStatIndex]
-                .elementStats[exisitingElementStatIndex]
+            ? updatedStatScores.skillStats![skillStatIndex]
+                .elementStats![exisitingElementStatIndex]
             : ElementStat(
-                {'id': weighting.element.id, 'value': 0}, weighting.element);
+                {'id': weighting.element!.id, 'value': 0}, weighting.element);
 
         print('ELEMENT NAME::: ' + weighting.getJson().toString());
         if (exisitingElementStatIndex == -1) {
@@ -352,19 +352,19 @@ class ScoreState extends ChangeNotifier {
 
         // ** 2. Unique index reference for skill element
         String skillIdElementId =
-            '${challenge.weightings.skillId}${weighting.element.id}';
+            '${challenge.weightings.skillId}${weighting.element!.id}';
         print('   3. SKILL-ELEMENT ID => ' + skillIdElementId.toString());
 
         // ** 3. Which band does current weighting fall into - get percentageContribution and noOfPrevResults of band
-        double elementPercentageContribution =
-            weighting.getWeightingBandContribution(challengeBands);
+        double? elementPercentageContribution =
+            weighting.getWeightingBandContribution(challengeBands!);
         int noOfPreviousResults =
-            weighting.getNumberOfPrevResultsToUse(challengeBands);
+            weighting.getNumberOfPrevResultsToUse(challengeBands)!;
         print(
             '   4. WEIGHTING BAND => percentageContribution - noOfPrevResults => $elementPercentageContribution - $noOfPreviousResults');
 
         // ** 4. While we're at it - set the new element band/contribution for the result
-        challengeResult.elementContributions.add(ElementContribution({
+        challengeResult.elementContributions!.add(ElementContribution({
           'percentage': elementPercentageContribution,
           'skillIdElementId': skillIdElementId
         }));
@@ -377,16 +377,16 @@ class ScoreState extends ChangeNotifier {
             previousResults.length.toString());
 
         // ** 6. Split/sort out into their respective bands
-        Map<double, List<double>> filteredPreviousElementScores = {};
+        Map<double?, List<double?>> filteredPreviousElementScores = {};
         previousResults.forEach((previousResult) {
           if (filteredPreviousElementScores[
-                  previousResult.elementContributions[0].percentage] !=
+                  previousResult.elementContributions![0].percentage] !=
               null) {
             filteredPreviousElementScores[
-                    previousResult.elementContributions[0].percentage]
+                    previousResult.elementContributions![0].percentage]!
                 .add(previousResult.percentage);
           } else {
-            filteredPreviousElementScores[previousResult.elementContributions[0]
+            filteredPreviousElementScores[previousResult.elementContributions![0]
                 .percentage] = [previousResult.percentage];
           }
         });
@@ -397,7 +397,7 @@ class ScoreState extends ChangeNotifier {
         // ** 7. Add in new score to contribute
         if (filteredPreviousElementScores[elementPercentageContribution] !=
             null) {
-          filteredPreviousElementScores[elementPercentageContribution]
+          filteredPreviousElementScores[elementPercentageContribution]!
               .add(newScorePercentage);
         } else {
           filteredPreviousElementScores[elementPercentageContribution] = [
@@ -414,14 +414,14 @@ class ScoreState extends ChangeNotifier {
         double redistributionVal = 0;
         // Iterable<double> contributionValueKeys = filteredPreviousElementScores.keys;
 
-        Iterable<double> contributionPercentageValues =
+        Iterable<double?> contributionPercentageValues =
             filteredPreviousElementScores.keys;
 
         for (var band in challengeBands) {
           if (contributionPercentageValues.contains(band.percentage)) {
             bandsWithScoreCount++; // should always be min of 1
           } else {
-            bandsWithNoScoreTally = bandsWithNoScoreTally + band.percentage;
+            bandsWithNoScoreTally = bandsWithNoScoreTally + band.percentage!;
           }
         }
         redistributionVal = bandsWithNoScoreTally / bandsWithScoreCount;
@@ -435,13 +435,13 @@ class ScoreState extends ChangeNotifier {
 
         // ** 8. Cycle through sorted bands and do calc
         List<double> elementContributionValues = [];
-        for (double key in contributionPercentageValues) {
-          int totalScores = filteredPreviousElementScores[key].length;
+        for (double? key in contributionPercentageValues) {
+          int totalScores = filteredPreviousElementScores[key]!.length;
           double totalScoresValue =
-              filteredPreviousElementScores[key].reduce((a, b) => a + b);
+              filteredPreviousElementScores[key]!.reduce((a, b) => a! + b!)!;
 
           elementContributionValues.add((totalScoresValue / totalScores) *
-              ((key + redistributionVal) / 100));
+              ((key! + redistributionVal) / 100));
 
           // print('BBBBBBBBBBBBBBBBBBBBBB: ' +
           //     key.toString() +
@@ -463,11 +463,11 @@ class ScoreState extends ChangeNotifier {
 
         // ** 10. Add to the stat object if it didn't exist, otherwise replace it with new element stat
         if (!elementStatAlreadyExists) {
-          updatedStatScores.skillStats[skillStatIndex].elementStats
+          updatedStatScores.skillStats![skillStatIndex].elementStats!
               .add(updatedElementStat);
         } else {
-          updatedStatScores.skillStats[skillStatIndex]
-              .elementStats[exisitingElementStatIndex] = updatedElementStat;
+          updatedStatScores.skillStats![skillStatIndex]
+              .elementStats![exisitingElementStatIndex] = updatedElementStat;
         }
       }
     }

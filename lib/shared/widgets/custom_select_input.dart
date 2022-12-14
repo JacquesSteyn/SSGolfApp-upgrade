@@ -11,7 +11,7 @@ class CustomSelectBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<SelectOptionScore> selections = input.selectionOptions;
+    List<SelectOptionScore>? selections = input.selectionOptions;
     return Container(
       width: Get.size.width * 0.40,
       height: 100,
@@ -22,14 +22,14 @@ class CustomSelectBox extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10),
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text(input.name,
+              child: Text(input.name!,
                   style: TextStyle(color: Colors.grey[300], fontSize: 18)),
             ),
           ),
           TextFormField(
             onTap: () {
               showDialog(
-                  context: Get.context,
+                  context: Get.context!,
                   builder: (BuildContext context) {
                     return Container(
                       width: double.infinity,
@@ -48,9 +48,9 @@ class CustomSelectBox extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8)),
                               child: ListView.builder(
                                   shrinkWrap: true,
-                                  itemCount: selections.length,
+                                  itemCount: selections!.length,
                                   itemBuilder: (context, index) {
-                                    String val = selections[index].option;
+                                    String val = selections[index].option!;
                                     return Container(
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.symmetric(

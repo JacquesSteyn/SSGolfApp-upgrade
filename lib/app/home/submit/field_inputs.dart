@@ -54,16 +54,16 @@ class _FieldInputsState extends State<FieldInputs> {
 
     int inputScoreResult = scoreState.getInputScoreResult(input.index);
     _readOnlyController.text =
-        inputScoreResult > -1 ? inputScoreResult.toString() : null;
+        inputScoreResult > -1 ? inputScoreResult.toString() : "";
     List<int> selectionOptions =
-        List.generate(input.maxScore + 1, (index) => index);
+        List.generate(input.maxScore! + 1, (index) => index);
     int initialIndex = 0;
-    if (inputScoreResult != null && inputScoreResult != 0) {
+    if (inputScoreResult != 0) {
       initialIndex =
           selectionOptions.indexWhere((val) => val == inputScoreResult);
     }
 
-    if (input.maxScore > 20) {
+    if (input.maxScore! > 20) {
       return Container(
         width: Get.size.width * 0.40,
         height: 100,
@@ -74,14 +74,14 @@ class _FieldInputsState extends State<FieldInputs> {
               padding: const EdgeInsets.only(bottom: 10),
               child: FittedBox(
                 fit: BoxFit.fitWidth,
-                child: Text(input.name,
+                child: Text(input.name!,
                     style: TextStyle(color: Colors.grey[300], fontSize: 18)),
               ),
             ),
             TextFormField(
               onTap: () {
                 showDialog(
-                    context: Get.context,
+                    context: Get.context!,
                     builder: (BuildContext context) {
                       return Container(
                         width: double.infinity,
@@ -104,7 +104,7 @@ class _FieldInputsState extends State<FieldInputs> {
                                     'Enter value between \n 0 and ${input.maxScore}',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Get.theme.accentColor,
+                                        color: Get.theme.colorScheme.secondary,
                                         fontSize: 16),
                                   ),
                                   Expanded(
@@ -114,7 +114,7 @@ class _FieldInputsState extends State<FieldInputs> {
                                       keyboardType: TextInputType.number,
                                       inputFormatters: [
                                         LimitRangeTextInputFormatter(
-                                            0, input.maxScore)
+                                            0, input.maxScore!)
                                       ],
                                       onChanged: (val) =>
                                           scoreState.setInputScoreResult(
@@ -170,14 +170,14 @@ class _FieldInputsState extends State<FieldInputs> {
               padding: const EdgeInsets.only(bottom: 10),
               child: FittedBox(
                 fit: BoxFit.fitWidth,
-                child: Text(input.name,
+                child: Text(input.name!,
                     style: TextStyle(color: Colors.grey[300], fontSize: 18)),
               ),
             ),
             TextFormField(
               onTap: () {
                 showDialog(
-                    context: Get.context,
+                    context: Get.context!,
                     builder: (BuildContext context) {
                       return Container(
                         width: double.infinity,
@@ -211,7 +211,7 @@ class _FieldInputsState extends State<FieldInputs> {
                               ),
                             ),
                             Divider(
-                              color: Get.theme.accentColor,
+                              color: Get.theme.colorScheme.secondary,
                               height: 3,
                             ),
                             TextButton(
@@ -255,7 +255,7 @@ class _FieldInputsState extends State<FieldInputs> {
   }
 
   Widget dropdownSelectScoreInput(ChallengeInputSelectScore input, scoreState) {
-    List<SelectOptionScore> selections = input.selectionOptions;
+    List<SelectOptionScore>? selections = input.selectionOptions;
     return Container(
       width: Get.size.width * 0.40,
       height: 100,
@@ -266,14 +266,14 @@ class _FieldInputsState extends State<FieldInputs> {
             padding: const EdgeInsets.only(bottom: 10),
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text(input.name,
+              child: Text(input.name!,
                   style: TextStyle(color: Colors.grey[300], fontSize: 18)),
             ),
           ),
           TextFormField(
             onTap: () {
               showDialog(
-                  context: Get.context,
+                  context: Get.context!,
                   builder: (BuildContext context) {
                     return Container(
                       width: double.infinity,
@@ -292,9 +292,9 @@ class _FieldInputsState extends State<FieldInputs> {
                                   borderRadius: BorderRadius.circular(8)),
                               child: ListView.builder(
                                   shrinkWrap: true,
-                                  itemCount: selections.length,
+                                  itemCount: selections!.length,
                                   itemBuilder: (context, index) {
-                                    String val = selections[index].option;
+                                    String val = selections[index].option!;
                                     return Container(
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.symmetric(

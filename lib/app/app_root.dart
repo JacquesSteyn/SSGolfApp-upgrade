@@ -4,23 +4,24 @@ import 'package:ss_golf/app/bottom_navbar.dart';
 import 'package:ss_golf/app/home/home_view.dart';
 import 'package:ss_golf/app/profile/profile_view.dart';
 import 'package:ss_golf/app/stats/stats_view.dart';
+import 'package:ss_golf/app/tickets/ticket_main.dart';
 import 'package:ss_golf/state/app.provider.dart';
 import 'package:ss_golf/state/bottom_navbar_index.provider.dart';
 
-class AppRoot extends StatefulWidget {
-  final String userId;
+class AppRoot extends ConsumerStatefulWidget {
+  final String? userId;
   AppRoot({this.userId});
 
   @override
   _AppRootState createState() => _AppRootState();
 }
 
-class _AppRootState extends State<AppRoot> {
+class _AppRootState extends ConsumerState<AppRoot> {
   @override
   void initState() {
     super.initState();
     // initialise app state
-    context.read(appStateProvider).initAppState(widget.userId);
+    ref.read(appStateProvider.notifier).initAppState(widget.userId);
   }
 
   @override
@@ -29,8 +30,8 @@ class _AppRootState extends State<AppRoot> {
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: true,
       body: Consumer(
-        builder: (context, watch, child) {
-          final navbarIndex = watch(indexStateProvider.state);
+        builder: (context, ref, child) {
+          final navbarIndex = ref.watch(indexStateProvider);
           return getViewFromIndex(navbarIndex);
         },
       ),
@@ -45,6 +46,8 @@ class _AppRootState extends State<AppRoot> {
       case 1:
         return StatsView();
       case 2:
+        return TicketMainScreen();
+      case 3:
         return ProfileView();
       // case 3:
       //   return ProfileView();

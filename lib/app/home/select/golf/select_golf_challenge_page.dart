@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -9,8 +10,8 @@ import 'package:ss_golf/shared/models/golf/golf_challenge.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
 
 class SelectGolfChallengePage extends StatefulWidget {
-  final String title;
-  final String skillIdElementId;
+  final String? title;
+  final String? skillIdElementId;
 
   SelectGolfChallengePage({this.title, this.skillIdElementId});
 
@@ -30,8 +31,8 @@ class _SelectGolfChallengePageState extends State<SelectGolfChallengePage> {
       backgroundColor: Colors.black,
       appBar: CustomAppBar(title: widget.title),
       body: Consumer(
-        builder: (context, watch, child) {
-          final golfChallengeState = watch(golfChallengeStateProvider);
+        builder: (context, ref, child) {
+          final golfChallengeState = ref.watch(golfChallengeStateProvider);
           return Container(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -47,41 +48,39 @@ class _SelectGolfChallengePageState extends State<SelectGolfChallengePage> {
   }
 
   Widget filterButton() {
-    return Container(
-      width: 100,
-      child: RaisedButton(
-        color: Get.theme.accentColor,
-        onPressed: () {
-          showDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) => GolfChallengeFilterDialog(),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(Icons.filter_alt_outlined, color: Colors.grey),
-              SizedBox(
-                width: 5,
-              ),
-              Text(
-                'filter',
-                style: TextStyle(
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
-        ),
-        shape: RoundedRectangleBorder(
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) => GolfChallengeFilterDialog(),
+        );
+      },
+      child: Container(
+        width: 100,
+        padding: const EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          color: Get.theme.colorScheme.secondary,
           borderRadius: new BorderRadius.circular(12.0),
-          side: const BorderSide(
+          border: Border.all(
             color: Colors.grey,
             width: 1,
           ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(Icons.filter_alt_outlined, color: Colors.grey),
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              'filter',
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -96,35 +95,32 @@ class _SelectGolfChallengePageState extends State<SelectGolfChallengePage> {
           return Center(child: CircularProgressIndicator());
         }
 
-        if (snap.hasData &&
-            !snap.hasError &&
-            snap.data.snapshot.value != null) {
+        if (snap.hasData && !snap.hasError && snap.data != null) {
           // print('DATA: ' + snap.data.snapshot.value.toString());
 
-          Map rawChallengeData = snap.data.snapshot.value;
+          final rawChallengeData = (snap.data! as DatabaseEvent).snapshot.value
+              as Map<Object?, dynamic>;
+
+          //Map rawChallengeData = snap.data as Map<dynamic, dynamic>;
           List<GolfChallengeCard> challengeCards = [];
 
-          // print('DATA: ' + rawChallengeData.keys.toString());
-
           rawChallengeData.keys.forEach((key) {
-            // print("TYPEEEEE: " +
-            //     rawChallengeData[key]['type'].toString() +
-            //     '    filter: ' +
-            //     golfChallengeState.challengeTypeFilter.toString());
-            if (golfChallengeState.challengeTypeFilter ==
-                    GolfChallengeTypeFilter.Course &&
-                rawChallengeData[key]['type'] == 'course') {
-              challengeCards.add(GolfChallengeCard(
-                  challenge: GolfChallenge(rawChallengeData[key], key)));
-            } else if (golfChallengeState.challengeTypeFilter ==
-                    GolfChallengeTypeFilter.Range &&
-                rawChallengeData[key]['type'] == 'range') {
-              challengeCards.add(GolfChallengeCard(
-                  challenge: GolfChallenge(rawChallengeData[key], key)));
-            } else if (golfChallengeState.challengeTypeFilter ==
-                GolfChallengeTypeFilter.All) {
-              challengeCards.add(GolfChallengeCard(
-                  challenge: GolfChallenge(rawChallengeData[key], key)));
+            if (rawChallengeData[key]['status'] == true) {
+              if (golfChallengeState.challengeTypeFilter ==
+                      GolfChallengeTypeFilter.Course &&
+                  rawChallengeData[key]['type'] == 'course') {
+                challengeCards.add(GolfChallengeCard(
+                    challenge: GolfChallenge(rawChallengeData[key], key)));
+              } else if (golfChallengeState.challengeTypeFilter ==
+                      GolfChallengeTypeFilter.Range &&
+                  rawChallengeData[key]['type'] == 'range') {
+                challengeCards.add(GolfChallengeCard(
+                    challenge: GolfChallenge(rawChallengeData[key], key)));
+              } else if (golfChallengeState.challengeTypeFilter ==
+                  GolfChallengeTypeFilter.All) {
+                challengeCards.add(GolfChallengeCard(
+                    challenge: GolfChallenge(rawChallengeData[key], key)));
+              }
             }
           });
 

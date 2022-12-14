@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SaveButton extends StatefulWidget {
-  final VoidCallback onPressed;
-  final bool isLoading;
-  final bool isSaved;
+  final VoidCallback? onPressed;
+  final bool? isLoading;
+  final bool? isSaved;
   SaveButton({this.onPressed, this.isLoading, this.isSaved});
 
   @override
@@ -16,9 +16,9 @@ class _SaveButtonState extends State<SaveButton>
   // Color _startingColor = Colors.blue;
   // Color _endingColor = Colors.green;
 
-  AnimationController _controller;
+  AnimationController? _controller;
   // Animation<Color> _appearAnimation;
-  Animation<Color> _successAnimation;
+  late Animation<Color?> _successAnimation;
   // Animation<Color> _disappearAnimation;
 
   @override
@@ -32,7 +32,7 @@ class _SaveButtonState extends State<SaveButton>
     _successAnimation = ColorTween(
             begin: Get.theme.backgroundColor.withOpacity(0.7),
             end: Colors.green)
-        .animate(_controller);
+        .animate(_controller!);
     // _disappearAnimation =
     //     ColorTween(begin: Colors.green, end: Colors.transparent).animate(_controller);
     super.initState();
@@ -46,11 +46,11 @@ class _SaveButtonState extends State<SaveButton>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isSaved) {
-      _controller.forward();
+    if (widget.isSaved!) {
+      _controller!.forward();
     }
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _controller!,
       builder: (context, child) {
         return Container(
           child: ElevatedButton(
@@ -58,24 +58,23 @@ class _SaveButtonState extends State<SaveButton>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
                 side: BorderSide(
-                  color: Colors.grey[300],
+                  color: Colors.grey[300]!,
                   width: 1,
                 ),
-              ),
-              primary: _successAnimation.value,
+              ), backgroundColor: _successAnimation.value,
               elevation: 10,
             ),
             onPressed: () {
               // _controller.forward();
-              widget.onPressed();
+              widget.onPressed!();
             },
             child: Padding(
               padding: const EdgeInsets.fromLTRB(1, 4, 1, 4),
-              child: widget.isLoading
+              child: widget.isLoading!
                   ? CircularProgressIndicator(
                       backgroundColor: Colors.grey[100],
                     )
-                  : widget.isSaved
+                  : widget.isSaved!
                       ? Column(
                           children: [
                             Icon(

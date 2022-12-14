@@ -3,10 +3,10 @@ import 'dart:math';
 import 'package:ss_golf/services/utilities_service.dart';
 
 class CustomRadialPainter extends CustomPainter {
-  double percentage;
-  double dimension;
-  double strokeWidth;
-  Color color;
+  double? percentage;
+  double? dimension;
+  double? strokeWidth;
+  Color? color;
   CustomRadialPainter(
       {this.percentage, this.dimension, this.strokeWidth, this.color});
   final _textPainter = TextPainter(textDirection: TextDirection.ltr);
@@ -17,16 +17,16 @@ class CustomRadialPainter extends CustomPainter {
       percentage = 0;
     }
     dimension = 155;
-    double width = dimension / 5;
+    double width = dimension! / 5;
     Offset center = Offset(width, 0);
-    double radius = dimension / 3;
+    double radius = dimension! / 3;
 
     final Paint line = new Paint()
       ..color = Color(
           0xFF1C1E22) // Colors.grey[300] // Color(0xFF625D7B) // Colors.grey
       ..strokeCap = StrokeCap.square
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
+      ..strokeWidth = strokeWidth!;
 
     // final Paint shadedLine = new Paint()
     //   ..shader = RadialGradient(
@@ -50,7 +50,7 @@ class CustomRadialPainter extends CustomPainter {
           Utilities.gradedColors(percentage) //   color // Color(0xFF0155A6)
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
+      ..strokeWidth = strokeWidth!;
     // ..shader = RadialGradient(colors: [
     //   Utilities.gradedColors(percentage),
     //   Utilities.gradedColors(percentage).withOpacity(0.85)
@@ -65,7 +65,7 @@ class CustomRadialPainter extends CustomPainter {
     canvas.drawCircle(center, radius, line);
     // canvas.drawCircle(center, radius, shadedLine);
 
-    double arcAngle = 2 * pi * (percentage / 100);
+    double arcAngle = 2 * pi * (percentage! / 100);
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2,
         arcAngle, false, filledInLine);
 
@@ -78,7 +78,7 @@ class CustomRadialPainter extends CustomPainter {
     // double decimalVal = percentage - intVal;
     // int percentageValue = decimalVal > 0.5 ? (intVal + 1) : intVal;
 
-    String textValue = Utilities.roundOffPercentageValue(percentage);
+    String textValue = Utilities.roundOffPercentageValue(percentage!);
 
     double widthFactor = 3;
 

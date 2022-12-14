@@ -5,9 +5,7 @@ import 'package:ss_golf/app/profile/profile_state.dart';
 import 'package:ss_golf/app/stats/deep_stats/bar_chart/bar_chart_page.dart';
 import 'package:ss_golf/app/stats/deep_stats/donut_chart/donut_chart_page.dart';
 import 'package:ss_golf/app/stats/deep_stats/dots_scroll_view_indicator.dart';
-import 'package:ss_golf/app/stats/deep_stats/spider_chart/spider_chart_page.dart';
 import 'package:ss_golf/app/stats/deep_stats/spider_chart/radar_chart.dart';
-import 'package:ss_golf/services/utilities_service.dart';
 import 'package:ss_golf/shared/models/benchmark.dart';
 import 'package:ss_golf/shared/models/golf/skill.dart';
 import 'package:ss_golf/shared/models/stat.dart';
@@ -16,14 +14,14 @@ import 'package:ss_golf/state/app.provider.dart';
 import 'package:ss_golf/state/auth.provider.dart';
 
 class DeepStat {
-  String name;
-  double value;
+  String? name;
+  double? value;
 
   DeepStat({this.name, this.value = 0});
 }
 
 class DeepStatsDialog extends StatefulWidget {
-  final String chartType;
+  final String? chartType;
   DeepStatsDialog({this.chartType});
 
   @override
@@ -34,12 +32,12 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
   final PageController _pageController = PageController();
   static const _kDuration = const Duration(milliseconds: 200);
   static const _kCurve = Curves.ease;
-  String _title = '';
-  String _nestedStatType;
+  String? _title = '';
+  String? _nestedStatType;
 
   @override
   void initState() {
-    print('INIT DEEP STATS DIALOG ' + widget.chartType);
+    print('INIT DEEP STATS DIALOG ' + widget.chartType!);
     if (widget.chartType == 'golf') {
       _title = 'Golf attributes';
       _nestedStatType = 'skill-element';
@@ -73,11 +71,15 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
     );
   }
 
-  List<double> getSkillHandicapValues(List<Skill> skills, String userHandicap,
-      Benchmark overallPhysicalBenchmark) {
+  List<double> getSkillHandicapValues(List<Skill>? skills, String? userHandicap,
+      Benchmark? overallPhysicalBenchmark) {
     List<double> tempList = [];
-    if (skills != null && userHandicap != null) {
+    if (skills != null) {
       int handicap = 0;
+
+      if (userHandicap == null) {
+        userHandicap = "0";
+      }
 
       if (userHandicap == 'N/A') {
         userHandicap = '-1';
@@ -85,6 +87,7 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
       if (userHandicap.contains('+')) {
         handicap = -1;
       } else {
+        handicap = 10;
         handicap = int.parse(userHandicap);
       }
 
@@ -137,14 +140,14 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
         maxHeight: Get.size.height,
       ),
       child: Consumer(
-        builder: (context, watch, child) {
-          final appState = watch(appStateProvider.state);
+        builder: (context, ref, child) {
+          final appState = ref.watch(appStateProvider);
           final latestStat = appState.latestStat;
           final allSkills = appState.skills;
           final overallPhysicalBenchmark = appState.overallPhysicalBenchmark;
           final allAttributes = appState.attributes;
-          final userState = watch(userStateProvider.state).user;
-          final profileState = watch(profileStateProvider);
+          final userState = ref.watch(userStateProvider).user;
+          final profileState = ref.watch(profileStateProvider);
 
           print('CHART TYPE: ' + widget.chartType.toString());
 
@@ -155,10 +158,10 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
           if (widget.chartType == 'golf') {
             // get skills
             allSkills.forEach((skill) {
-              int skillIndex = latestStat.findSkillIndex(skill.id);
+              int skillIndex = latestStat!.findSkillIndex(skill.id);
 
               if (skillIndex > -1) {
-                SkillStat skillStat = latestStat.skillStats[skillIndex];
+                SkillStat skillStat = latestStat.skillStats![skillIndex];
                 deepStats.add(
                     DeepStat(name: skillStat.name, value: skillStat.value));
               } else {
@@ -167,14 +170,14 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
             });
             // add physical contribution
             deepStats.add(DeepStat(
-                name: 'Physical', value: latestStat.physicalValue ?? 0));
+                name: 'Physical', value: latestStat!.physicalValue ?? 0));
           } else if (widget.chartType == 'physical') {
             // get attributes
             allAttributes.forEach((attribute) {
-              int attributeIndex = latestStat.findAttributeIndex(attribute.id);
+              int attributeIndex = latestStat!.findAttributeIndex(attribute.id);
               if (attributeIndex > -1) {
                 AttributeStat attributeStat =
-                    latestStat.attributeStats[attributeIndex];
+                    latestStat.attributeStats![attributeIndex];
                 deepStats.add(DeepStat(
                     name: attributeStat.name, value: attributeStat.value));
               } else {
@@ -187,16 +190,17 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
             //       .add(DeepStat(name: attributeStat.name, value: attributeStat.value));
             // });
           } else if (widget.chartType != null) {
-            int skillIndex = latestStat.findSkillIndexByName(widget.chartType);
+            int? skillIndex =
+                latestStat!.findSkillIndexByName(widget.chartType ?? "");
             int allSkillIndex =
                 allSkills.indexWhere((skill) => skill.name == widget.chartType);
             if (allSkillIndex > -1 && skillIndex > -1) {
-              allSkills[allSkillIndex].elements.forEach((element) {
-                int skillElementIndex = latestStat.skillStats[skillIndex]
+              allSkills[allSkillIndex].elements!.forEach((element) {
+                int skillElementIndex = latestStat.skillStats![skillIndex]
                     .findElementIndex(element.id);
                 if (skillElementIndex > -1) {
                   ElementStat elementStat = latestStat
-                      .skillStats[skillIndex].elementStats[skillElementIndex];
+                      .skillStats![skillIndex].elementStats![skillElementIndex];
                   print('ELEMENTTT STTATTTTTT: ' +
                       elementStat.getJson().toString());
                   deepStats.add(DeepStat(
@@ -206,7 +210,7 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
                 }
               });
             } else {
-              allSkills[allSkillIndex].elements.forEach((element) {
+              allSkills[allSkillIndex].elements!.forEach((element) {
                 deepStats.add(DeepStat(name: element.name, value: 0));
               });
             }
@@ -216,7 +220,7 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
               ? Column(
                   children: [
                     if (widget.chartType == 'golf' &&
-                        profileState?.handicap == null)
+                        profileState.handicap == null)
                       Text(
                         "Remember to set your handicap!",
                         style: TextStyle(color: Colors.white),
@@ -231,14 +235,14 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
                             return CustomRadarChart(
                                 chartType: widget.chartType,
                                 values: deepStats
-                                    .map<double>((e) => e.value)
+                                    .map<double?>((e) => e.value)
                                     .toList(),
                                 values2: getSkillHandicapValues(
                                     allSkills,
-                                    profileState?.handicap,
+                                    profileState.handicap,
                                     overallPhysicalBenchmark),
                                 labels: deepStats
-                                    .map<String>((e) => e.name)
+                                    .map<String?>((e) => e.name)
                                     .toList());
                           } else if (index == 1) {
                             return BarChartPage(

@@ -6,8 +6,8 @@ import 'package:ss_golf/shared/models/physical/physical_challenge.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
 
 class SelectPhysicalChallengePage extends StatefulWidget {
-  final String title;
-  final String attributeId;
+  final String? title;
+  final String? attributeId;
 
   SelectPhysicalChallengePage({this.title, this.attributeId});
 
@@ -42,17 +42,27 @@ class _SelectPhysicalChallengePageState
         if (snap.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
-        if (snap.hasData &&
-            !snap.hasError &&
-            snap.data.snapshot.value != null) {
+        if (snap.hasData && !snap.hasError && snap.data != null) {
           // print('DATA: ' + snap.data.snapshot.value.toString());
 
-          Map rawChallengeData = snap.data.snapshot.value;
+          Map rawChallengeData = snap.data as Map;
           List<PhysicalChallengeCard> challengeCards = [];
 
-          rawChallengeData.keys.forEach((key) => challengeCards.add(
-              PhysicalChallengeCard(
-                  challenge: PhysicalChallenge(rawChallengeData[key], key))));
+          rawChallengeData.keys.forEach((key) {
+            if (rawChallengeData[key]['status'] == true) {
+              challengeCards.add(PhysicalChallengeCard(
+                  challenge: PhysicalChallenge(rawChallengeData[key], key)));
+            }
+          });
+
+          if (challengeCards.length == 0) {
+            return Center(
+              child: Text(
+                'No challenges.',
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          }
 
           return GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

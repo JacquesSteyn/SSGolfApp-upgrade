@@ -1,9 +1,9 @@
 import 'package:ss_golf/shared/models/golf/skill_element.dart';
 
 class ChallengeWeightings {
-  String skill, skillId; // TODO -> skill should be skillName
-  int elementId;
-  List<ChallengeWeighting> weightings;
+  String? skill, skillId; // TODO -> skill should be skillName
+  int? elementId;
+  List<ChallengeWeighting>? weightings;
 
   ChallengeWeightings([data]) {
     if (data != null) {
@@ -29,8 +29,8 @@ class ChallengeWeightings {
 }
 
 class ChallengeWeighting {
-  SkillElement element;
-  int weight;
+  SkillElement? element;
+  int? weight;
 
   ChallengeWeighting([data]) {
     if (data != null) {
@@ -39,10 +39,10 @@ class ChallengeWeighting {
     }
   }
 
-  double getWeightingBandContribution(List<ChallengeBand> bands) {
-    double percentageContribution = 0;
+  double? getWeightingBandContribution(List<ChallengeBand> bands) {
+    double? percentageContribution = 0;
     bands.forEach((band) {
-      if (this.weight >= band.lowerRange && this.weight <= band.upperRange) {
+      if (this.weight! >= band.lowerRange! && this.weight! <= band.upperRange!) {
         percentageContribution = band.percentage;
       }
     });
@@ -50,10 +50,10 @@ class ChallengeWeighting {
     return percentageContribution;
   }
 
-  int getNumberOfPrevResultsToUse(List<ChallengeBand> bands) {
-    int noOfPrevResults = 20;
+  int? getNumberOfPrevResultsToUse(List<ChallengeBand> bands) {
+    int? noOfPrevResults = 20;
     bands.forEach((band) {
-      if (this.weight >= band.lowerRange && this.weight <= band.upperRange) {
+      if (this.weight! >= band.lowerRange! && this.weight! <= band.upperRange!) {
         noOfPrevResults = band.numberOfPreviousResults;
       }
     });
@@ -70,8 +70,8 @@ class ChallengeWeighting {
 }
 
 class ChallengeBand {
-  int id, upperRange, lowerRange, numberOfPreviousResults;
-  double percentage;
+  int? id, upperRange, lowerRange, numberOfPreviousResults;
+  double? percentage;
 
   ChallengeBand([data]) {
     if (data != null) {

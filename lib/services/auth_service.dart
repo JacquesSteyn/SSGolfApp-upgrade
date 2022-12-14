@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 abstract class AuthImplementation {
   Future<String> signIn(String email, String password);
   Future<String> signUp(String email, String password);
-  Future<User> getCurrentUser();
+  Future<User?> getCurrentUser();
   Future<void> signOut();
   Future<void> deleteUser();
   Future<void> resetPasswordEmail();
-  Stream<User> streamUserValue();
+  Stream<User?> streamUserValue();
 }
 
 class AuthService implements AuthImplementation {
@@ -17,10 +17,10 @@ class AuthService implements AuthImplementation {
     UserCredential userCredentials =
         (await _auth.signInWithEmailAndPassword(email: email, password: password));
 
-    return userCredentials.user.uid;
+    return userCredentials.user!.uid;
   }
 
-  Stream<User> streamUserValue() {
+  Stream<User?> streamUserValue() {
     return _auth.authStateChanges();
   }
 
@@ -28,11 +28,11 @@ class AuthService implements AuthImplementation {
     UserCredential userCredentials =
         (await _auth.createUserWithEmailAndPassword(email: email, password: password));
 
-    return userCredentials.user.uid;
+    return userCredentials.user!.uid;
   }
 
-  Future<User> getCurrentUser() async {
-    User user = _auth.currentUser;
+  Future<User?> getCurrentUser() async {
+    User? user = _auth.currentUser;
 
     if (user != null) {
       return user;
@@ -45,13 +45,13 @@ class AuthService implements AuthImplementation {
   }
 
   Future<void> deleteUser() async {
-    User user = _auth.currentUser;
+    User user = _auth.currentUser!;
     user.delete();
   }
 
   Future<void> resetPasswordEmail() async {
     // await _auth.currentUser.updateEmail('dukesmn10@gmail.com');
-    await _auth.sendPasswordResetEmail(email: _auth.currentUser.email);
+    await _auth.sendPasswordResetEmail(email: _auth.currentUser!.email!);
   }
 
   Future<void> resetPasswordEmailWithoutAuth(String email) async {

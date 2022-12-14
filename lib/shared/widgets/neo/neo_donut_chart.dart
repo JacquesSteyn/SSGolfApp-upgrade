@@ -5,9 +5,9 @@ import 'package:ss_golf/shared/widgets/neo/neuomorphic_circle.dart';
 import 'package:ss_golf/shared/widgets/neo/progress_ring.dart';
 
 class NeoDonutChart extends StatefulWidget {
-  double percentage;
-  double dimension;
-  NeoDonutChart({Key key, this.percentage, this.dimension}) : super(key: key);
+  double? percentage;
+  double? dimension;
+  NeoDonutChart({Key? key, this.percentage, this.dimension}) : super(key: key);
 
   @override
   _NeoDonutChartState createState() => _NeoDonutChartState();
@@ -15,7 +15,7 @@ class NeoDonutChart extends StatefulWidget {
 
 class _NeoDonutChartState extends State<NeoDonutChart> {
   Color shadowColor = Colors.black87;
-  Color backgroundColor = Get.theme.accentColor;
+  Color backgroundColor = Get.theme.colorScheme.secondary;
 
   /// Constants.backgroundColor;
   Color highlightColor = Colors.white.withOpacity(0.05);
@@ -49,7 +49,7 @@ class _NeoDonutChartState extends State<NeoDonutChart> {
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Text(
-                      Utilities.roundOffPercentageValue(widget.percentage).toString(),
+                      Utilities.roundOffPercentageValue(widget.percentage!).toString(),
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.w600, fontSize: 32),
                     ),

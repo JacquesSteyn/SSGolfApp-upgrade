@@ -11,9 +11,9 @@ import 'package:ss_golf/state/auth.provider.dart';
 
 class ProfileView extends ConsumerWidget {
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final userState = watch(userStateProvider.state).user;
-    final profileState = watch(profileStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userState = ref.watch(userStateProvider).user;
+    final profileState = ref.watch(profileStateProvider);
     // init
     profileState.initProfile(userState);
 
@@ -22,8 +22,8 @@ class ProfileView extends ConsumerWidget {
       color: Colors.black,
       child: SafeArea(
         child: Consumer(
-          builder: (ctx, watch, child) {
-            final profileState = watch(profileStateProvider);
+          builder: (ctx, ref, child) {
+            final profileState = ref.watch(profileStateProvider);
             return Column(
               children: [
                 editableUserImage(profileState),
@@ -79,7 +79,7 @@ class ProfileView extends ConsumerWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Get.theme.accentColor.withOpacity(0.8),
+                color: Get.theme.colorScheme.secondary.withOpacity(0.8),
               ),
               child: IconButton(
                 // padding: const EdgeInsets.all(5.0),
@@ -107,7 +107,7 @@ class ProfileView extends ConsumerWidget {
     return GestureDetector(
       onTap: () => showGeneralDialog(
         barrierDismissible: false,
-        context: Get.context,
+        context: Get.context!,
         barrierColor: Colors.black87,
         transitionDuration: Duration(milliseconds: 200),
         transitionBuilder: (context, a1, a2, child) {
@@ -121,7 +121,7 @@ class ProfileView extends ConsumerWidget {
         },
         pageBuilder: (BuildContext context, Animation animation,
             Animation secondaryAnimation) {
-          return null;
+          return Container();
         },
       ),
       child: Icon(

@@ -1,6 +1,6 @@
 class ChallengeFeedback {
-  String userId, challengeId, ratingNotes;
-  double rating;
+  String? userId, challengeId, ratingNotes;
+  double? rating;
 
   ChallengeFeedback([data]) {
     if (data != null) {

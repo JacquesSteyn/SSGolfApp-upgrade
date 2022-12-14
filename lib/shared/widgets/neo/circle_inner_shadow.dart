@@ -5,7 +5,7 @@ class CircleInnerShadow extends StatelessWidget {
   final Color backgroundColor;
 
   const CircleInnerShadow(
-      {Key key, @required this.shadowColor, @required this.backgroundColor})
+      {Key? key, required this.shadowColor, required this.backgroundColor})
       : super(key: key);
 
   @override

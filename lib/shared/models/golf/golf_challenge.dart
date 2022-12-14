@@ -7,7 +7,7 @@ import 'package:ss_golf/shared/models/golf/challenge_weightings.dart';
 import 'package:ss_golf/shared/models/tip.dart';
 
 class GolfChallenge {
-  String name,
+  String? name,
       id,
       description,
       purpose,
@@ -16,19 +16,19 @@ class GolfChallenge {
       difficulty,
       videoUrl,
       imageUrl;
-  List<String> equipment, instructions;
-  List<ChallengeNote> notes;
+  List<String>? equipment, instructions;
+  List<ChallengeNote>? notes;
 
-  List<TipGroup> tipGroups;
+  List<TipGroup>? tipGroups;
 
-  bool active;
+  bool? active;
 
-  ChallengeWeightings weightings;
-  List<ChallengeInput> inputs;
+  late ChallengeWeightings weightings;
+  List<ChallengeInput>? inputs;
   // List<dynamic> inputs;
 
-  String weightingBandId;
-  Benchmark benchmarks;
+  String? weightingBandId;
+  late Benchmark benchmarks;
 
   GolfChallenge([data, key]) {
     if (data != null) {
@@ -55,11 +55,11 @@ class GolfChallenge {
       int tempNotesIndex = 0;
       (data['notes'] ?? []).forEach((noteData) {
         print('NOTESSSSS: ' + noteData.toString());
-        this.notes.add(ChallengeNote(noteData, tempNotesIndex));
+        this.notes!.add(ChallengeNote(noteData, tempNotesIndex));
         tempNotesIndex++;
       });
       // add custom notes
-      this.notes.add(ChallengeNote({'title': 'Custom notes'}, tempNotesIndex));
+      this.notes!.add(ChallengeNote({'title': 'Custom notes'}, tempNotesIndex));
 
       this.active = data['active'];
 
@@ -72,12 +72,12 @@ class GolfChallenge {
       inputsData.forEach((fieldInput) {
         if (fieldInput != null) {
           if (fieldInput['type'] == 'select') {
-            inputs.add(ChallengeInputSelect(fieldInput, tempInputsIndex));
+            inputs!.add(ChallengeInputSelect(fieldInput, tempInputsIndex));
           } else if (fieldInput['type'] == 'score' ||
               fieldInput['type'] == 'inverted-score') {
-            inputs.add(ChallengeInputScore(fieldInput, tempInputsIndex));
+            inputs!.add(ChallengeInputScore(fieldInput, tempInputsIndex));
           } else if (fieldInput['type'] == 'select-score') {
-            inputs.add(ChallengeInputSelectScore(fieldInput, tempInputsIndex));
+            inputs!.add(ChallengeInputSelectScore(fieldInput, tempInputsIndex));
           }
         }
         tempInputsIndex++;
@@ -96,7 +96,7 @@ class GolfChallenge {
   List<ChallengeInputResult> getAllChallengeInputResults() {
     List<ChallengeInputResult> challengeInputResults = [];
 
-    this.inputs.forEach((input) {
+    this.inputs!.forEach((input) {
       // print('NAME: ' + input.name.toString() + ' INDXE: ' + input.index.toString());
 
       if (input.type == 'score') {
@@ -123,7 +123,7 @@ class GolfChallenge {
 
   List<ChallengeNoteResult> getChallengeNoteResults() {
     return this
-        .notes
+        .notes!
         .map<ChallengeNoteResult>((note) =>
             ChallengeNoteResult({'title': note.title, 'index': note.index}))
         .toList();

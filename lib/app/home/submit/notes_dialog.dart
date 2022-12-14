@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
-import 'package:ss_golf/app/home/submit/golf/golf_score_state.dart';
 import 'package:ss_golf/shared/models/challenge_note.dart';
 import 'package:ss_golf/shared/widgets/primary_button.dart';
 
@@ -14,7 +12,7 @@ class NotesDialog extends StatefulWidget {
 }
 
 class _NotesDialogState extends State<NotesDialog> {
-  List<ChallengeNote> challengeNotes = [];
+  List<ChallengeNote>? challengeNotes = [];
   // List<ChallengeNoteResult> challengeNoteResults = [];
   bool _isClosing = false;
 
@@ -83,7 +81,7 @@ class _NotesDialogState extends State<NotesDialog> {
 
   Widget viewNotes(scoreState) {
     return Column(
-      children: challengeNotes
+      children: challengeNotes!
           .map<Widget>((note) => individualNote(note, scoreState))
           .toList(),
     );
@@ -93,9 +91,9 @@ class _NotesDialogState extends State<NotesDialog> {
     return Container(
       child: Column(
         children: [
-          title(note.title),
+          title(note.title!),
           Theme(
-            data: Theme.of(Get.context).copyWith(
+            data: Theme.of(Get.context!).copyWith(
               unselectedWidgetColor: Colors.grey,
             ),
             child: note.title == 'Custom notes'
@@ -121,7 +119,7 @@ class _NotesDialogState extends State<NotesDialog> {
                   )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: note.options
+                    children: note.options!
                         .map((option) => SizedBox(
                               height: 50,
                               child: RadioListTile(
@@ -139,7 +137,7 @@ class _NotesDialogState extends State<NotesDialog> {
                                   value: option,
                                   groupValue: scoreState
                                       .getChallengeNoteResult(note.index),
-                                  onChanged: (val) {
+                                  onChanged: (dynamic val) {
                                     setState(() {
                                       scoreState.setChallengeNoteResult(
                                           note.index, val);

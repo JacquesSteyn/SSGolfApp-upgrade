@@ -1,6 +1,6 @@
 class TipGroup {
-  String title;
-  List<Tip> tips;
+  String? title;
+  List<Tip>? tips;
 
   TipGroup([data]) {
     if (data != null) {
@@ -11,8 +11,8 @@ class TipGroup {
 }
 
 class Tip {
-  bool checked;
-  String text;
+  bool? checked;
+  String? text;
 
   Tip([data]) {
     if (data != null) {
