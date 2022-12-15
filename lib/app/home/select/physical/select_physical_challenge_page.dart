@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ss_golf/app/home/select/physical/physical_challenge_card.dart';
@@ -45,7 +46,8 @@ class _SelectPhysicalChallengePageState
         if (snap.hasData && !snap.hasError && snap.data != null) {
           // print('DATA: ' + snap.data.snapshot.value.toString());
 
-          Map rawChallengeData = snap.data as Map;
+          Map rawChallengeData = (snap.data as DatabaseEvent).snapshot.value
+              as Map<Object?, dynamic>;
           List<PhysicalChallengeCard> challengeCards = [];
 
           rawChallengeData.keys.forEach((key) {

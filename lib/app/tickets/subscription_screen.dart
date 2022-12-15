@@ -40,17 +40,22 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         pageIndex = 1;
       });
     }
+    checkTrailAllowed();
     super.initState();
   }
 
   void fetchOffers() async {
     final offerings = await Purchases.getOfferings();
-
     if (offerings.current != null) {
       setState(() {
         packagesList = offerings.current!.availablePackages;
       });
     }
+  }
+
+  void checkTrailAllowed() async {
+    CustomerInfo info = await Purchases.getCustomerInfo();
+    print(info.latestExpirationDate);
   }
 
   void startPurchase(bool trail) async {

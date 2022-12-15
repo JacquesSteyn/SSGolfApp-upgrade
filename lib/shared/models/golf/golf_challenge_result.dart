@@ -32,7 +32,7 @@ class GolfChallengeResult {
 
       if (data['notes'] != null) {
         try {
-          this.notes = data['notes'].map<ChallengeNoteResult>((noteData) {
+          this.notes = (data?['notes'] as Iterable).map((noteData) {
             return ChallengeNoteResult(noteData);
           }).toList();
         } catch (error) {
@@ -41,11 +41,6 @@ class GolfChallengeResult {
       } else {
         this.notes = [];
       }
-      // this.notes = data['notes'] != null
-      // ? data['notes'].map<ChallengeNoteResult>((noteData) {
-      //     return ChallengeNoteResult(noteData);
-      //   }).toList()
-      // : [];
 
       this.elementContributions = [];
       if (skillIdElementId != null) {
@@ -70,11 +65,9 @@ class GolfChallengeResult {
       'challengeName': this.challengeName ?? '',
       'difficulty': this.difficulty ?? '0',
       'inputResults': this
-              .inputResults!
-              .map((dynamic challengeInputResult) =>
-                  challengeInputResult.getJson())
-              .toList() ??
-          0,
+          .inputResults!
+          .map((dynamic challengeInputResult) => challengeInputResult.getJson())
+          .toList(),
       'notes': this.notes!.map((note) => note.getJson()).toList(),
       'percentage': this.percentage ?? 0.0,
       'dateTimeCreated': this.dateTimeCreated,

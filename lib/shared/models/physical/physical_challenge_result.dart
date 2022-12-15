@@ -19,7 +19,7 @@ class PhysicalChallengeResult {
       this.dateTimeCreated = data['dateTimeCreated'] ?? '';
 
       this.inputResults = data['inputResults'] != null
-          ? data['inputResults'].map<ChallengeInputResult>((resultData) {
+          ? (data?['inputResults'] as Iterable).map((resultData) {
               if (resultData['type'] == 'select') {
                 return ChallengeInputSelectResult(resultData);
               } else if (resultData['type'] == 'select-score') {
@@ -31,7 +31,7 @@ class PhysicalChallengeResult {
           : [];
 
       this.notes = data['notes'] != null
-          ? data['notes'].map<ChallengeNoteResult>((noteData) {
+          ? (data?['notes'] as Iterable).map((noteData) {
               return ChallengeNoteResult(noteData);
             }).toList()
           : [];
@@ -57,16 +57,16 @@ class PhysicalChallengeResult {
       'challengeName': this.challengeName ?? '',
       'difficulty': this.difficulty ?? '0',
       'inputResults': this
-              .inputResults!
-              .map((dynamic challengeInputResult) => challengeInputResult.getJson())
-              .toList() ??
-          0,
+          .inputResults!
+          .map((dynamic challengeInputResult) => challengeInputResult.getJson())
+          .toList(),
       'notes': this.notes!.map((note) => note.getJson()).toList(),
       'percentage': this.percentage ?? 0.0,
       'dateTimeCreated': this.dateTimeCreated,
     };
 
-    this.attributeContributions.forEach((e) => jsonObject['${e.attributeId}'] = {
+    this.attributeContributions.forEach((e) =>
+        jsonObject['${e.attributeId}'] = {
           'value': e.percentage,
           'attributeId_index': '${e.attributeId}_${this.index}'
         });

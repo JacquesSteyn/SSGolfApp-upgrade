@@ -223,8 +223,7 @@ class PhysicalScoreState extends ChangeNotifier {
     // ** 3. Achieved score * total points
     double points = (score / _maxScore) * totalPoints;
 
-    if (challenge.benchmarks.threshold != null &&
-        challenge.benchmarks.threshold.toDouble() > 0) {
+    if (challenge.benchmarks.threshold.toDouble() > 0) {
       if (score >= challenge.benchmarks.threshold.toDouble()) {
         points = (_maxScore / _maxScore) * totalPoints;
       }

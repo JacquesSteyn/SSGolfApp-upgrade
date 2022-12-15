@@ -41,8 +41,10 @@ class UserState extends StateNotifier<UserStateModel> {
         try {
           Purchases.logIn(currentUser.email!);
           CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+
           if (customerInfo.activeSubscriptions.length > 0) {
             // Make sure that the plan in the db is the same as on RevenueCat
+            print("Has active subscriptions");
             if (currentUser.plan != "pro") {
               await _dataService.updateUserPlan(currentUser.id, "pro", false);
               state.user!.plan = "pro";
