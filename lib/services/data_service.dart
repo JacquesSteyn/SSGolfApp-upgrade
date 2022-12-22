@@ -620,7 +620,7 @@ class DataService {
               String updatePath = "$voucherPath/$voucherID/voucherStatus";
               await dbReference.child(updatePath).set('Complete');
             }
-            return Future.value(0);
+            throw ("Max redemptions reached!");
           }
 
           if (redeemedUsers.length > 0) {
@@ -633,11 +633,9 @@ class DataService {
 
             //-1 for vouchers already used by the current user
             if (allRedemption == false) {
-              return Future.value(0);
+              throw ("You already redeemed this voucher!");
             }
           }
-
-          return Future.value(0);
 
           if (value['voucherExpireDate'] != null) {
             try {
@@ -650,10 +648,11 @@ class DataService {
                   String updatePath = "$voucherPath/$voucherID/voucherStatus";
                   await dbReference.child(updatePath).set('Expired');
                 }
+
                 return Future.value(0);
               }
             } catch (e) {
-              print("invalid date format");
+              throw ("Voucher expired");
             }
           }
 
@@ -679,6 +678,7 @@ class DataService {
       }
     } catch (e) {
       print(e);
+      throw e;
     }
 
     return Future.value(updatePrice);

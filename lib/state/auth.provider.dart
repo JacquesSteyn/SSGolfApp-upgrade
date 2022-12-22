@@ -106,14 +106,19 @@ class UserState extends StateNotifier<UserStateModel> {
 
   Future<double> redeemVoucher(
       String voucherNumber, double userOldBalance, String? uuid) async {
-    double voucherPrice = await _dataService.redeemVoucher(voucherNumber, uuid);
-    //print(voucherPrice);
-    double newBalance = userOldBalance + voucherPrice;
-    await this.updateBalance(newBalance);
-    if (voucherPrice > 0) {
-      return Future.value(voucherPrice);
+    try {
+      double voucherPrice =
+          await _dataService.redeemVoucher(voucherNumber, uuid);
+      //print(voucherPrice);
+      double newBalance = userOldBalance + voucherPrice;
+      await this.updateBalance(newBalance);
+      if (voucherPrice > 0) {
+        return Future.value(voucherPrice);
+      }
+      return Future.value(0);
+    } catch (e) {
+      throw e;
     }
-    return Future.value(0);
   }
 
   Future<double> redeemGift(

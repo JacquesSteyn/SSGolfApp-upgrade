@@ -59,7 +59,7 @@ class _RedeemState extends ConsumerState<Redeem> {
           }
         }).catchError((e) {
           setState(() {
-            errorMessage = "Something went wrong.";
+            errorMessage = e.toString();
             isLoading = false;
           });
         });
@@ -137,7 +137,6 @@ class _RedeemState extends ConsumerState<Redeem> {
           }
         case "Complete Challenge (1/2)":
           {
-            print(user.lastChallengeRedemption);
             if (user.completedChallenges >= 1 &&
                 (user.lastChallengeRedemption == null ||
                     user.lastChallengeRedemption!.compareTo(today) < 0)) {
@@ -356,10 +355,17 @@ class _RedeemState extends ConsumerState<Redeem> {
           child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            errorMessage,
-            style: TextStyle(
-                color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+          SizedBox(
+            width: Get.width * 0.6,
+            child: FittedBox(
+              child: Text(
+                errorMessage,
+                style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
           IconButton(
             onPressed: () {

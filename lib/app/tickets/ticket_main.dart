@@ -676,6 +676,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: SingleChildScrollView(
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 children: [
                   OrbitronHeading(
