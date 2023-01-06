@@ -122,8 +122,10 @@ class UserState extends StateNotifier<UserStateModel> {
   }
 
   Future<double> redeemGift(
-      String title, double price, double userOldBalance, String? uuid) async {
-    double giftPrice = await _dataService.redeemGifts(title, price, uuid);
+      String title, double price, double userOldBalance, String? uuid,
+      {int completedChallenges = 0}) async {
+    double giftPrice = await _dataService.redeemGifts(title, price, uuid,
+        completedChallenges: completedChallenges);
     double newBalance = userOldBalance + giftPrice;
     await this.updateBalance(newBalance);
     if (giftPrice > 0) {

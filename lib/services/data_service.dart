@@ -525,7 +525,7 @@ class DataService {
       final today = DateTime(now.year, now.month, now.day);
       final yesterday = DateTime(now.year, now.month, now.day - 1);
       double total = 0;
-      final customDateFormat = DateFormat('y-M-dd');
+      final customDateFormat = DateFormat('y-MM-dd');
 
       String toDate = customDateFormat.format(today);
       String fromDate = customDateFormat.format(yesterday);
@@ -684,7 +684,8 @@ class DataService {
     return Future.value(updatePrice);
   }
 
-  Future<double> redeemGifts(String title, double price, String? uuid) async {
+  Future<double> redeemGifts(String title, double price, String? uuid,
+      {int completedChallenges = 0}) async {
     double? updatePrice = 0;
 
     String type = "";
@@ -693,19 +694,28 @@ class DataService {
         type = "check-in";
         break;
       case "3 Day Check-In Streak":
-        type = "3day";
+        {
+          type = "3day";
+          await this.resetUserRedeemStreak(uuid, "redeemDay3Streak");
+        }
         break;
       case "5 Day Check-In Streak":
-        type = "3day";
+        {
+          type = "3day";
+          await this.resetUserRedeemStreak(uuid, "redeemDay5Streak");
+        }
         break;
       case "7 Day Check-In Streak":
-        type = "3day";
+        {
+          type = "3day";
+          await this.resetUserRedeemStreak(uuid, "redeemDay7Streak");
+        }
         break;
       case "Complete Challenge (1/2)":
         type = "challenge";
         break;
       case "Complete Challenge (2/2)":
-        type = "challenge";
+        type = "challengeTwo";
         break;
     }
 
@@ -716,10 +726,14 @@ class DataService {
       String status = await this.createUserTransaction(transaction, uuid);
       if (status == 'success') {
         updatePrice = transaction.price;
-        if (type == "check-in" || type == "3day") {
+        if (type == "check-in") {
           await this.resetUserStreak(uuid);
+        } else if (type == "challengeTwo") {
+          await this.resetUserChallengeCompleted(
+              uuid, completedChallenges, "challengeTwo");
         } else {
-          await this.resetUserChallengeCompleted(uuid);
+          await this
+              .resetUserChallengeCompleted(uuid, completedChallenges, "One");
         }
       }
     } catch (e) {
@@ -743,31 +757,76 @@ class DataService {
       final aDate =
           DateTime(dateToCheck.year, dateToCheck.month, dateToCheck.day);
 
-      if ((aDate == today && user.checkInStreak == 0) ||
-          (aDate.compareTo(today) < 0) ||
-          (aDate == yesterday && user.checkInStreak! >= 1 ||
-              user.checkInStreak == null)) {
-        DatabaseReference countDbRef =
-            dbReference.child("$usersPath/${user.id}");
+      DatabaseReference countDbRef = dbReference.child("$usersPath/${user.id}");
 
-        await countDbRef.runTransaction((Object? val) {
-          if (val == null) {
-            return Transaction.success(val);
-          } else {
-            Map<String, dynamic> _val = Map<String, dynamic>.from(val as Map);
+      bool isFuture = today.compareTo(aDate) < 0;
 
-            if (_val['checkInStreak'] == null) {
-              _val['checkInStreak'] = 1;
+      if (isFuture == false) {
+        if ((aDate == today && user.checkInStreak == 0) ||
+            (aDate == yesterday && user.checkInStreak! >= 1 ||
+                user.checkInStreak == null)) {
+          await countDbRef.runTransaction((Object? val) {
+            if (val == null) {
+              return Transaction.success(val);
             } else {
-              int checkInStreak = _val['checkInStreak'] as int;
-              _val['checkInStreak'] = checkInStreak + 1;
+              Map<String, dynamic> _val = Map<String, dynamic>.from(val as Map);
+
+              if (_val['checkInStreak'] == null) {
+                _val['checkInStreak'] = 1;
+                _val['redeemStreak'] = 1;
+              } else {
+                int checkInStreak = 0;
+                if (_val['checkInStreak'] != null) {
+                  checkInStreak = _val['checkInStreak'] as int;
+                }
+
+                _val['checkInStreak'] = checkInStreak + 1;
+
+                int redeemStreak = 0;
+                if (_val['redeemStreak'] != null) {
+                  redeemStreak = _val['redeemStreak'] as int;
+                }
+
+                redeemStreak += 1;
+                if (redeemStreak == 3) {
+                  _val['redeemDay3Streak'] = 1;
+                } else if (redeemStreak == 5) {
+                  _val['redeemDay5Streak'] = 1;
+                } else if (redeemStreak == 7) {
+                  _val['redeemDay7Streak'] = 1;
+                }
+
+                if (redeemStreak > 7) {
+                  _val['redeemStreak'] = 1;
+                } else {
+                  _val['redeemStreak'] = redeemStreak;
+                }
+              }
+
+              _val['lastClockInTime'] = DateTime.now().toString();
+
+              return Transaction.success(_val);
             }
+          });
+        } else {
+          //Reset the streak and redeem streak as more than two days has passed since check-in
+          await countDbRef.runTransaction((Object? val) {
+            if (val == null) {
+              return Transaction.success(val);
+            } else {
+              Map<String, dynamic> _val = Map<String, dynamic>.from(val as Map);
 
-            _val['lastClockInTime'] = DateTime.now().toString();
+              _val['checkInStreak'] = 1;
+              if (user.checkInStreak == 0) {
+                _val['redeemStreak'] = 0;
+              }
 
-            return Transaction.success(_val);
-          }
-        });
+              _val['lastClockInTime'] = DateTime.now().toString();
+
+              return Transaction.success(_val);
+            }
+          });
+        }
       }
     } catch (e) {
       print("USER STREAK UPDATE ERROR: $e");
@@ -806,6 +865,15 @@ class DataService {
     return Future.value();
   }
 
+  Future<void> resetUserRedeemStreak(String? userID, String streak) async {
+    try {
+      await dbReference.child("$usersPath/$userID/$streak").set(0);
+    } catch (e) {
+      print("RESET USER STREAK UPDATE ERROR: $e");
+    }
+    return Future.value();
+  }
+
   Future<void> updateUserChallengeCompleted(String userID) async {
     try {
       DatabaseReference countDbRef =
@@ -828,20 +896,36 @@ class DataService {
     return Future.value();
   }
 
-  Future<void> resetUserChallengeCompleted(String? userID) async {
+  Future<void> resetUserChallengeCompleted(
+      String? userID, int completedChallenges, String challengeCount) async {
     try {
       DatabaseReference countDbRef =
           dbReference.child("$usersPath/$userID/completedChallenges");
 
+      int count = 0;
+      if (challengeCount == "challengeTwo") {
+        // the count will be 3 when you have completed 2 challenges but selected to redeem the two before the one
+        if (completedChallenges == 3) {
+          count = 0;
+        } else {
+          count = 1;
+        }
+      } else {
+        if (completedChallenges > 1) {
+          // set count to 3 to insure backwards compatibility
+          count = 3;
+        }
+      }
+
       await countDbRef.runTransaction((Object? val) {
         if (val == null) {
-          return Transaction.success(0);
+          return Transaction.success(count);
         } else {
-          return Transaction.success(0);
+          return Transaction.success(count);
         }
       });
 
-      await updateUserChallengeRedemption(userID);
+      await updateUserChallengeRedemption(userID, challengeCount);
     } catch (e) {
       print("RESET USER CHALLENGE COMPLETED UPDATE ERROR: $e");
     }
@@ -849,10 +933,16 @@ class DataService {
     return Future.value();
   }
 
-  Future<void> updateUserChallengeRedemption(String? userID) async {
+  Future<void> updateUserChallengeRedemption(
+      String? userID, String challengeCount) async {
     try {
+      String path = "lastChallengeRedemption";
+      if (challengeCount == "challengeTwo") {
+        path = "lastChallengeRedemptionTwo";
+      }
+
       DatabaseReference countDbRef =
-          dbReference.child("$usersPath/$userID/lastChallengeRedemption");
+          dbReference.child("$usersPath/$userID/$path");
 
       return countDbRef.set(DateTime.now().toString());
     } catch (e) {

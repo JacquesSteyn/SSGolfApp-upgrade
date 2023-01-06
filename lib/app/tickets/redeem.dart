@@ -75,7 +75,8 @@ class _RedeemState extends ConsumerState<Redeem> {
     if (user != null) {
       ref
           .read(userStateProvider.notifier)
-          .redeemGift(title, price, user.balance!, user.id)
+          .redeemGift(title, price, user.balance!, user.id,
+              completedChallenges: user.completedChallenges)
           .then((value) {
         if (value > 0) {
           ref.read(userStateProvider.notifier).updateRedeemValues(user.id!);
@@ -106,6 +107,7 @@ class _RedeemState extends ConsumerState<Redeem> {
       final dateToCheck = user.lastClockInTime!;
       final aDate =
           DateTime(dateToCheck.year, dateToCheck.month, dateToCheck.day);
+
       switch (title) {
         case "Daily Check-In":
           {
@@ -116,21 +118,21 @@ class _RedeemState extends ConsumerState<Redeem> {
           }
         case "3 Day Check-In Streak":
           {
-            if (aDate == today && user.checkInStreak == 3) {
+            if (user.redeemDay3Streak! > 0) {
               return true;
             }
             break;
           }
         case "5 Day Check-In Streak":
           {
-            if (aDate == today && user.checkInStreak == 5) {
+            if (user.redeemDay5Streak! > 0) {
               return true;
             }
             break;
           }
         case "7 Day Check-In Streak":
           {
-            if (aDate == today && user.checkInStreak! >= 7) {
+            if (user.redeemDay7Streak! > 0) {
               return true;
             }
             break;
@@ -147,8 +149,8 @@ class _RedeemState extends ConsumerState<Redeem> {
         case "Complete Challenge (2/2)":
           {
             if (user.completedChallenges >= 2 &&
-                (user.lastChallengeRedemption == null ||
-                    user.lastChallengeRedemption!.compareTo(today) < 0)) {
+                (user.lastChallengeRedemptionTwo == null ||
+                    user.lastChallengeRedemptionTwo!.compareTo(today) < 0)) {
               return true;
             }
             break;
@@ -181,7 +183,7 @@ class _RedeemState extends ConsumerState<Redeem> {
                 : () {
                     Get.dialog(SimpleDialog(
                       backgroundColor: Color.fromARGB(255, 90, 90, 90),
-                      insetPadding: EdgeInsets.symmetric(horizontal: 10),
+                      insetPadding: EdgeInsets.symmetric(horizontal: 30),
                       children: [
                         Align(
                           alignment: Alignment.topLeft,

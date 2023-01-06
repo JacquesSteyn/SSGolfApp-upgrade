@@ -64,10 +64,19 @@ class UserProfile {
   late PhysicalProfile physicalProfile;
 
   int? checkInStreak;
+  int? redeemStreak;
+  int? redeemDay3Streak;
+  int? redeemDay5Streak;
+  int? redeemDay7Streak;
   late int completedChallenges;
   DateTime? lastClockInTime; //Only the first clock in for the day
+
   DateTime?
       lastChallengeRedemption; //Only allow one challenge a day to be redeemed
+
+  DateTime?
+      lastChallengeRedemptionTwo; //Only allow one challenge a day to be redeemed
+
   DateTime? freeTrailExpireDate;
 
   UserProfile([data]) {
@@ -89,6 +98,18 @@ class UserProfile {
         this.checkInStreak =
             data['checkInStreak'] != null ? data['checkInStreak'] : 0;
 
+        this.redeemStreak =
+            data['redeemStreak'] != null ? data['redeemStreak'] : 0;
+
+        this.redeemDay3Streak =
+            data['redeemDay3Streak'] != null ? data['redeemDay3Streak'] : 0;
+
+        this.redeemDay5Streak =
+            data['redeemDay5Streak'] != null ? data['redeemDay5Streak'] : 0;
+
+        this.redeemDay7Streak =
+            data['redeemDay7Streak'] != null ? data['redeemDay7Streak'] : 0;
+
         this.completedChallenges = data['completedChallenges'] != null
             ? data['completedChallenges']
             : 0;
@@ -100,6 +121,11 @@ class UserProfile {
         this.lastChallengeRedemption = data['lastChallengeRedemption'] != null
             ? DateTime.parse(data['lastChallengeRedemption'])
             : null;
+
+        this.lastChallengeRedemptionTwo =
+            data['lastChallengeRedemptionTwo'] != null
+                ? DateTime.parse(data['lastChallengeRedemptionTwo'])
+                : null;
 
         this.freeTrailExpireDate = data['freeTrailExpireDate'] != null
             ? DateTime.parse(data['freeTrailExpireDate'])

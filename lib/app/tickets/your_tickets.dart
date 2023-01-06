@@ -34,6 +34,26 @@ class _YourTicketsState extends State<YourTickets> {
           color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600);
   }
 
+  Widget winningContainer(PromotionalDraw draw) {
+    if (draw.hasWinningTicket()) {
+      return Text(
+        'WINNER!!!',
+        style: TextStyle(
+            color: Colors.green[600],
+            fontSize: 16,
+            fontWeight: FontWeight.bold),
+      );
+    } else if (draw.drawStatus == "closed") {
+      return Text(
+        'UNLUCKY',
+        style: TextStyle(
+            color: Colors.red[600], fontSize: 16, fontWeight: FontWeight.bold),
+      );
+    } else {
+      return Container();
+    }
+  }
+
   Widget ticketContainer(PromotionalDraw draw) => Consumer(
         builder: (context, ref, child) => InkWell(
           onTap: () {
@@ -127,14 +147,7 @@ class _YourTicketsState extends State<YourTickets> {
                               ),
                             ],
                           ),
-                          if (draw.hasWinningTicket())
-                            Text(
-                              'WINNER!!!',
-                              style: TextStyle(
-                                  color: Colors.green[600],
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                          winningContainer(draw)
                         ],
                       ),
                     ),

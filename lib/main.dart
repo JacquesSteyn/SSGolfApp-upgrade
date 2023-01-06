@@ -76,10 +76,9 @@ class AuthWidget extends ConsumerWidget {
   }
 
   Widget _data(BuildContext context, WidgetRef ref, User? user) {
-    print('BUILD DATA AUTH STATE CHANGES: ' + user.toString());
+    //print('BUILD DATA AUTH STATE CHANGES: ' + user.toString());
     if (user != null) {
       // Authenticated
-      //ref.watch(userStateProvider.notifier).initUser(user);
       return FutureBuilder(
           future: ref.watch(userStateProvider.notifier).initUser(user),
           builder: ((context, snapshot) {

@@ -19,7 +19,7 @@ class TicketHistoryScreen extends ConsumerStatefulWidget {
 class _TicketHistoryScreenState extends ConsumerState<TicketHistoryScreen> {
   final customDateFormat = DateFormat('MMMM d');
   final monthFormat = DateFormat('MMMM');
-  final passingMonthFormat = DateFormat('y-M');
+  final passingMonthFormat = DateFormat('y-MM');
   UserProfile? currentUser;
   bool isLoading = true;
   List<UserTransaction> transactions = [];

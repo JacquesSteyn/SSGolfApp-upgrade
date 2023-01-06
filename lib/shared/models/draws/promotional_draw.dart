@@ -1,4 +1,6 @@
+import 'package:ss_golf/services/data_service.dart';
 import 'package:ss_golf/shared/models/draws/ticket.dart';
+import 'package:ss_golf/shared/models/user.dart';
 
 class PromotionalDraw {
   String? id;
@@ -90,7 +92,7 @@ class PromotionalDraw {
     return this.totalTicketsIssued - this.ticketsSold!;
   }
 
-  Future<TicketWinner?> getTicketWinner() {
+  Future<TicketWinner?> getTicketWinner() async {
     if (drawStatus == "closed") {
       if (tickets!.isNotEmpty &&
           winningTicketID!.isNotEmpty &&
@@ -98,6 +100,7 @@ class PromotionalDraw {
         try {
           PromotionalTicket ticket =
               tickets!.firstWhere((ticket) => ticket.id == winningTicketID);
+
           TicketWinner ticketWinner = new TicketWinner(
               ticketID: winningTicketID,
               userID: drawWinnerID,
@@ -105,6 +108,20 @@ class PromotionalDraw {
               drawID: id);
           return Future.value(ticketWinner);
         } catch (e) {
+          //You are not the winner so find the overall winner from the main object
+          if (drawWinnerID != null && drawWinnerID!.isNotEmpty) {
+            DataService db = DataService();
+            UserProfile winningUser = await db.fetchUser(drawWinnerID!);
+            if (winningUser.name!.isNotEmpty) {
+              TicketWinner ticketWinner = new TicketWinner(
+                  ticketID: winningTicketID,
+                  userID: drawWinnerID,
+                  userName: winningUser.name,
+                  drawID: id);
+              return Future.value(ticketWinner);
+            }
+          }
+
           return Future.value(null);
         }
       }
