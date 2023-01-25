@@ -22,7 +22,6 @@ class TicketDetails extends ConsumerStatefulWidget {
 }
 
 class _TicketDetailsState extends ConsumerState<TicketDetails> {
-  bool _aboutDrawOpen = false;
   final customDateFormat = DateFormat('MMMM d, y H:mm');
 
   Container headerImages(PromotionalDraw draw) => Container(
@@ -272,7 +271,7 @@ class _TicketDetailsState extends ConsumerState<TicketDetails> {
         ),
       );
 
-  Container aboutDrawContainerOpen(PromotionalDraw draw) => Container(
+  Container aboutDrawContainer(PromotionalDraw draw) => Container(
         key: UniqueKey(),
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -294,6 +293,8 @@ class _TicketDetailsState extends ConsumerState<TicketDetails> {
               ),
               Text(
                 draw.aboutOffer!,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
                 style: TextStyle(color: Colors.white),
               ),
               SizedBox(
@@ -302,9 +303,35 @@ class _TicketDetailsState extends ConsumerState<TicketDetails> {
               Center(
                 child: InkWell(
                   onTap: () {
-                    setState(() {
-                      _aboutDrawOpen = !_aboutDrawOpen;
-                    });
+                    showDialog(
+                        context: context,
+                        builder: (_) => SimpleDialog(
+                              backgroundColor: Color.fromARGB(232, 83, 83, 83),
+                              title: Text(
+                                "About this draw",
+                                style: TextStyle(color: Colors.white),
+                                textAlign: TextAlign.center,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 14),
+                              children: [
+                                Text(
+                                  draw.aboutOffer!,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                TextButton(
+                                    onPressed: () {
+                                      Get.back();
+                                    },
+                                    child: Text(
+                                      "Show Less",
+                                      style: TextStyle(color: Colors.white),
+                                    ))
+                              ],
+                            ));
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
@@ -313,59 +340,7 @@ class _TicketDetailsState extends ConsumerState<TicketDetails> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      'Show Less',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-            ]),
-      );
-
-  Container aboutDrawContainerClose(PromotionalDraw draw) => Container(
-        key: UniqueKey(),
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(85, 92, 92, 92),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'About this offer',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text(
-                draw.aboutOffer!,
-                maxLines: _aboutDrawOpen ? null : 3,
-                style: TextStyle(color: Colors.white),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _aboutDrawOpen = !_aboutDrawOpen;
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(85, 92, 92, 92),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      'Show More',
+                      "Show More",
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
@@ -591,6 +566,7 @@ class _TicketDetailsState extends ConsumerState<TicketDetails> {
                     padding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                     child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
                       child: Column(
                         children: [
                           Align(
@@ -634,7 +610,7 @@ class _TicketDetailsState extends ConsumerState<TicketDetails> {
                             height: 30,
                           ),
                           if (draw.drawStatus != 'closed' &&
-                              user!.plan != "free")
+                              (draw.drawType == "free" || user!.plan == "pro"))
                             Column(
                               children: [
                                 SizedBox(
@@ -666,17 +642,7 @@ class _TicketDetailsState extends ConsumerState<TicketDetails> {
                           SizedBox(
                             height: 10,
                           ),
-                          AnimatedSwitcher(
-                            duration: Duration(milliseconds: 500),
-                            transitionBuilder:
-                                (Widget child, Animation<double> animation) {
-                              return SizeTransition(
-                                  sizeFactor: animation, child: child);
-                            },
-                            child: _aboutDrawOpen
-                                ? aboutDrawContainerOpen(draw)
-                                : aboutDrawContainerClose(draw),
-                          ),
+                          aboutDrawContainer(draw),
                           SizedBox(
                             height: 10,
                           ),

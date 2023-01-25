@@ -115,7 +115,7 @@ class EarnMore extends StatelessWidget {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: AssetImage('assets/images/blue_lines.jpg'),
+                      image: AssetImage('assets/images/earn_more.jpg'),
                     ),
                     borderRadius: BorderRadius.circular(5)),
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
