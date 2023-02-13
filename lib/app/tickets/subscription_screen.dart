@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:ss_golf/shared/models/user.dart';
 import 'package:ss_golf/shared/widgets/glow_button.dart';
 import 'package:ss_golf/state/auth.provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../shared/widgets/orbitron_heading.dart';
 
@@ -442,7 +444,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                           fontSize: 18),
                     ),
                   ),
-                )
+                ),
+                privacyPolicy()
               ]),
             )
           : Center(
@@ -457,6 +460,49 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             );
     }
   }
+
+  Widget privacyPolicy() => RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+            text: "For more Terms and Conditions please read the full ",
+            style: TextStyle(color: Colors.white, fontSize: 16),
+            children: [
+              TextSpan(
+                  text: "Terms Agreement",
+                  style: TextStyle(color: Colors.blue[300], fontSize: 16),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () async {
+                      Uri url = Uri(
+                        scheme: 'https',
+                        host: 'www.smartstats.co.za',
+                        path: '/terms/',
+                      );
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
+                    }),
+              TextSpan(text: " and "),
+              TextSpan(
+                  text: "Privacy Policy Agreement",
+                  style: TextStyle(color: Colors.blue[300], fontSize: 16),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () async {
+                      Uri url = Uri(
+                        scheme: 'https',
+                        host: 'www.smartstats.co.za',
+                        path: '/privacy-policy/',
+                      );
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      } else {
+                        throw 'Could not launch $url';
+                      }
+                    }),
+              TextSpan(text: " on our website."),
+            ]),
+      );
 
   @override
   Widget build(BuildContext context) {

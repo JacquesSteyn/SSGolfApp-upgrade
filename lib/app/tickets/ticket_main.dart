@@ -733,37 +733,57 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                   SizedBox(
                     height: 10,
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (userState.plan == "free") {
-                        Get.toNamed(AppRoutes.subscription);
-                      } else {
-                        Get.toNamed(AppRoutes.yourTickets);
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            offset: Offset(0, 0),
-                            blurRadius: 10.0,
-                            color: Color.fromARGB(218, 255, 255, 255),
+                  if (userState.plan == "free")
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.subscription);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(0, 0),
+                                  blurRadius: 10.0,
+                                  color: Color.fromARGB(218, 255, 255, 255),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 16),
+                                child: Text(
+                                  'GO PRO',
+                                  style: TextStyle(
+                                      color: Colors.yellow[700],
+                                      fontWeight: FontWeight.bold),
+                                )),
                           ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 16),
-                        child: userState.plan == 'free'
-                            ? Text(
-                                'GO PRO',
-                                style: TextStyle(
-                                    color: Colors.yellow[700],
-                                    fontWeight: FontWeight.bold),
-                              )
-                            : Row(
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.yourTickets);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(0, 0),
+                                  blurRadius: 10.0,
+                                  color: Color.fromARGB(218, 255, 255, 255),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 16),
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ImageIcon(
@@ -781,9 +801,52 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                                   )
                                 ],
                               ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(AppRoutes.yourTickets);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              offset: Offset(0, 0),
+                              blurRadius: 10.0,
+                              color: Color.fromARGB(218, 255, 255, 255),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 16),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ImageIcon(
+                                AssetImage('assets/images/ticket_icon.png'),
+                                color: Colors.yellow[700],
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Your Tickets',
+                                style: TextStyle(
+                                    color: Colors.yellow[700],
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
                   SizedBox(
                     height: 20,
                   ),
