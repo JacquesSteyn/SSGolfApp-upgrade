@@ -64,6 +64,28 @@ class Settings extends ConsumerWidget {
                 socialLinks(),
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 30),
+                  child: TextButton(
+                      onPressed: () => {
+                            showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    deleteAccountDialog(userState, ref))
+                          },
+                      child: Text(
+                        "Delete Account",
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      )),
+                )
+              ],
+            ),
             Expanded(
               child: privacyPolicy(),
             ),
@@ -71,6 +93,56 @@ class Settings extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  AlertDialog deleteAccountDialog(UserState userState, ref) {
+    TextEditingController passwordController = TextEditingController();
+    return AlertDialog(
+      title: Text('Are you sure?'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+              'This will permanently delete all of your data associated to this account as well as the account itself!'),
+          TextField(
+            controller: passwordController,
+            decoration: InputDecoration(
+              hintText: 'Enter current password',
+            ),
+            obscureText: true,
+          )
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => {Get.back()},
+          child: Text(
+            'Cancel',
+            style: TextStyle(
+                color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ),
+        TextButton(
+            onPressed: () =>
+                deleteAccount(userState, passwordController.text, ref),
+            child: Text(
+              'Delete Account',
+              style: TextStyle(
+                  color: Colors.red, fontSize: 14, fontWeight: FontWeight.bold),
+            ))
+      ],
+    );
+  }
+
+  void deleteAccount(
+      UserState userState, String password, WidgetRef ref) async {
+    String? errorMessage = await userState.deleteAccount(password);
+    if (errorMessage == null) {
+      ref.read(indexStateProvider.notifier).setIndex(0);
+      Get.offAll(LandingPage());
+      ref.read(profileStateProvider).resetProfile();
+      ref.read(appStateProvider.notifier).resetAppState();
+    }
   }
 
   Widget passwordResetEmailSentDialog() {
