@@ -304,7 +304,9 @@ class LandingPage extends ConsumerWidget {
                 _showErrorDialog(landingState);
               } else {
                 navIndexState.setIndex(2);
-                Get.offAll(AuthWidget());
+                Get.offAll(AuthWidget(
+                  isSignUp: true,
+                ));
               }
             },
             text: 'Sign Up',

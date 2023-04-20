@@ -53,6 +53,11 @@ class HistoryState extends ChangeNotifier {
     }
     return _dataService.streamedChallengeResults(userId, '${userId}_$type');
   }
+
+  Future<void> deleteChallengeResult(String resultKey) async {
+    await _dataService.deleteChallengeResult(resultKey);
+    return Future.value();
+  }
 }
 
 final historyStateProvider = ChangeNotifierProvider((ref) => HistoryState());

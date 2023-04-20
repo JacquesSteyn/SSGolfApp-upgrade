@@ -184,16 +184,22 @@ class OpenDraws extends ConsumerWidget {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Text(
-                                                          "Unavailable",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.grey,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 16),
-                                                        )
+                                                        InkWell(
+                                                          onTap: () {
+                                                            Get.toNamed(AppRoutes
+                                                                .subscription);
+                                                          },
+                                                          child: Text(
+                                                            "GO PRO",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 16),
+                                                          ),
+                                                        ),
                                                       ],
                                                     )
                                                   : Column(

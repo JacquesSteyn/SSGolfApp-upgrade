@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:ss_golf/app/home/history/history_state.dart';
 import 'package:ss_golf/services/utilities_service.dart';
 import 'package:ss_golf/shared/models/challenge_note_result.dart';
 import 'package:ss_golf/shared/widgets/custom_app_bar.dart';
@@ -50,6 +52,15 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             scoreAndDate(),
+            Container(
+                alignment: Alignment.centerRight,
+                margin: EdgeInsets.only(right: 10),
+                child: InkWell(
+                    onTap: () => {deleteConfirmation(context)},
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ))),
             Divider(color: Colors.grey),
             resultInputs(),
             Divider(color: Colors.grey),
@@ -61,24 +72,54 @@ class _ChallengeResultDialogState extends State<ChallengeResultDialog> {
     );
   }
 
+  void deleteConfirmation(BuildContext ctx) {
+    showDialog(
+        context: ctx,
+        builder: (_) => Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
+                print(widget.result.skillIdElementId);
+                return AlertDialog(
+                  title: Text('Confirm'),
+                  content: Text('Are you sure you want to delete this entry?'),
+                  actions: [
+                    TextButton(
+                        onPressed: () => {Get.back()},
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.black),
+                        )),
+                    TextButton(
+                        onPressed: () => {deleteScore(ref)},
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.red),
+                        )),
+                  ],
+                );
+              },
+            ));
+  }
+
+  void deleteScore(WidgetRef ref) async {
+    if (widget.result != null && widget.result.skillIdElementId != null) {
+      final historyState = ref.read(historyStateProvider.notifier);
+
+      historyState.deleteChallengeResult(widget.result.skillIdElementId);
+      Get.back(closeOverlays: true);
+      Get.back();
+    }
+  }
+
   Widget scoreAndDate() {
     return Container(
       height: 150,
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.only(top: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
             flex: 1,
             child: Center(
-              // color: Colors.yellow,
-              // child: CustomPaint(
-              //   painter: CustomRadialPainter(
-              //     percentage: widget.result.percentage,
-              //     dimension: Get.height * 0.25,
-              //     strokeWidth: 15,
-              //   ),
-              // ),
               child: DonutChart(value: widget.result.percentage),
             ),
           ),

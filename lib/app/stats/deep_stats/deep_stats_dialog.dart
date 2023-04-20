@@ -232,18 +232,22 @@ class _DeepStatsDialogState extends State<DeepStatsDialog> {
                         itemBuilder: (BuildContext context, int index) {
                           if (index == 0) {
                             //return SpiderChartPage(deepStats: deepStats);
-                            return CustomRadarChart(
-                                chartType: widget.chartType,
-                                values: deepStats
-                                    .map<double?>((e) => e.value)
-                                    .toList(),
-                                values2: getSkillHandicapValues(
-                                    allSkills,
-                                    profileState.handicap,
-                                    overallPhysicalBenchmark),
-                                labels: deepStats
-                                    .map<String?>((e) => e.name)
-                                    .toList());
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              child: CustomRadarChart(
+                                  chartType: widget.chartType,
+                                  values: deepStats
+                                      .map<double?>((e) => e.value)
+                                      .toList(),
+                                  values2: getSkillHandicapValues(
+                                      allSkills,
+                                      profileState.handicap,
+                                      overallPhysicalBenchmark),
+                                  labels: deepStats
+                                      .map<String?>((e) => e.name)
+                                      .toList()),
+                            );
                           } else if (index == 1) {
                             return BarChartPage(
                               deepStats: deepStats,

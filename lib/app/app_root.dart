@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:ss_golf/app/bottom_navbar.dart';
 import 'package:ss_golf/app/home/home_view.dart';
 import 'package:ss_golf/app/profile/profile_view.dart';
@@ -8,9 +9,12 @@ import 'package:ss_golf/app/tickets/ticket_main.dart';
 import 'package:ss_golf/state/app.provider.dart';
 import 'package:ss_golf/state/bottom_navbar_index.provider.dart';
 
+import 'app_router.dart';
+
 class AppRoot extends ConsumerStatefulWidget {
   final String? userId;
-  AppRoot({this.userId});
+  final bool isSignUp;
+  AppRoot({this.userId, this.isSignUp = false});
 
   @override
   _AppRootState createState() => _AppRootState();
@@ -20,8 +24,13 @@ class _AppRootState extends ConsumerState<AppRoot> {
   @override
   void initState() {
     super.initState();
-    // initialise app state
+    // initialize app state
     ref.read(appStateProvider.notifier).initAppState(widget.userId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.isSignUp == true) {
+        Get.toNamed(AppRoutes.subscription);
+      }
+    });
   }
 
   @override
@@ -32,6 +41,7 @@ class _AppRootState extends ConsumerState<AppRoot> {
       body: Consumer(
         builder: (context, ref, child) {
           final navbarIndex = ref.watch(indexStateProvider);
+
           return getViewFromIndex(navbarIndex);
         },
       ),

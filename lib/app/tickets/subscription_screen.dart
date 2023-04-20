@@ -224,7 +224,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                       }
                     },
                     content: Text(
-                      'Start 1 month trail for FREE',
+                      'Start 1 month trial for FREE',
                       style: TextStyle(
                           color: Colors.yellow[700],
                           fontWeight: FontWeight.bold,

@@ -951,4 +951,10 @@ class DataService {
 
     return Future.value();
   }
+
+  Future<void> deleteChallengeResult(String key) async {
+    DatabaseReference resultRef = dbReference.child("$resultsPath/$key");
+    await resultRef.remove();
+    return Future.value(null);
+  }
 }

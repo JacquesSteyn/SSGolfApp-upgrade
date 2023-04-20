@@ -42,12 +42,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Smart Stats Golf',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
         primaryColor: Color(0xFF17171A),
-        // ignore: deprecated_member_use
-        accentColor: Color(0xFF222229),
         appBarTheme: AppBarTheme(color: Color(0xFF222229)),
-        backgroundColor: Color(0xFF0169FF),
         // Color(0xFF0169FF)
         // primaryColorLight: Color(0xFF0169FF),
 
@@ -55,6 +51,9 @@ class MyApp extends StatelessWidget {
           buttonColor: Color(0xFF0169FF), // 0561A4
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+            .copyWith(secondary: Color(0xFF222229))
+            .copyWith(background: Color(0xFF0169FF)),
       ),
       // darkTheme: ThemeData.dark().copyWith(primaryColor: Colors.black),
       home: AuthWidget(),
@@ -64,6 +63,9 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthWidget extends ConsumerWidget {
+  final bool isSignUp;
+  AuthWidget({this.isSignUp = false});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authStateChanges = ref.watch(authStateChangesProvider);
@@ -83,7 +85,10 @@ class AuthWidget extends ConsumerWidget {
           future: ref.watch(userStateProvider.notifier).initUser(user),
           builder: ((context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              return AppRoot(userId: user.uid);
+              return AppRoot(
+                userId: user.uid,
+                isSignUp: isSignUp,
+              );
             } else {
               return Center(
                 child: CircularProgressIndicator(),

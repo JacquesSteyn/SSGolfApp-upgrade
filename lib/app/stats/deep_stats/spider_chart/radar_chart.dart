@@ -79,7 +79,7 @@ class _CustomRadarChartState extends State<CustomRadarChart> {
                       getTitle: (index, angle) {
                         String title = widget.labels[index]!;
                         if (title.length > 11) {
-                          title = title.replaceFirst(' ', '\n');
+                          title = title.replaceAll(' ', '\n');
                         }
                         title += "\n" + tempValues[index]!.round().toString();
                         return RadarChartTitle(text: title);

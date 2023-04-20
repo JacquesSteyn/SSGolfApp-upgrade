@@ -33,7 +33,8 @@ class Settings extends ConsumerWidget {
                   Get.toNamed(AppRoutes.subscription);
                 },
                     Icons.payment_outlined,
-                    userState.state.user!.plan != "pro"
+                    userState.state.user != null &&
+                            userState.state.user!.plan != "pro"
                         ? 'Free plan'
                         : 'Pro plan'),
                 settingsButton(() {
@@ -52,6 +53,11 @@ class Settings extends ConsumerWidget {
                   ref.read(appStateProvider.notifier).resetAppState();
                   userState.logout();
                 }, Icons.exit_to_app_sharp, 'Log out'),
+                settingsButton(() {
+                  showDialog(
+                      context: context,
+                      builder: (_) => deleteAccountDialog(userState, ref));
+                }, Icons.delete, 'Delete account'),
               ],
             ),
             Divider(
@@ -62,28 +68,6 @@ class Settings extends ConsumerWidget {
               children: [
                 aboutTheApp(),
                 socialLinks(),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 30),
-                  child: TextButton(
-                      onPressed: () => {
-                            showDialog(
-                                context: context,
-                                builder: (_) =>
-                                    deleteAccountDialog(userState, ref))
-                          },
-                      child: Text(
-                        "Delete Account",
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      )),
-                )
               ],
             ),
             Expanded(

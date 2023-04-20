@@ -80,13 +80,17 @@ class UserState extends StateNotifier<UserStateModel> {
 
   Future<String?> deleteAccount(String password) async {
     if (state.user != null) {
-      final userID = await _authService.signIn(state.user!.email!, password);
-      if (userID.isNotEmpty) {
-        await _authService.deleteUser();
-        print("Account Deleted");
-        return Future.value();
-      } else {
-        print("Unable to delete");
+      try {
+        final userID = await _authService.signIn(state.user!.email!, password);
+        if (userID.isNotEmpty) {
+          await _authService.deleteUser();
+          print("Account Deleted");
+          return Future.value();
+        } else {
+          print("Unable to delete");
+          return Future.value('Could not be verified.');
+        }
+      } catch (e) {
         return Future.value('Could not be verified.');
       }
     }

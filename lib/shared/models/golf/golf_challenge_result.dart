@@ -2,6 +2,7 @@ import 'package:ss_golf/shared/models/challenge_input_result.dart';
 import 'package:ss_golf/shared/models/challenge_note_result.dart';
 
 class GolfChallengeResult {
+  String? skillIdElementId;
   String? challengeId, challengeName, difficulty, dateTimeCreated, index;
   List<ChallengeNoteResult>? notes;
   List<dynamic>? inputResults;
@@ -11,6 +12,7 @@ class GolfChallengeResult {
 
   GolfChallengeResult([data, skillIdElementId]) {
     if (data != null) {
+      this.skillIdElementId = skillIdElementId;
       this.index = data['index'];
       this.challengeId = data['challengeId'];
       this.challengeName = data['challengeName'] ?? '';
