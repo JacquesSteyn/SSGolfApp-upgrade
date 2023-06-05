@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
         buttonTheme: ButtonThemeData(
           buttonColor: Color(0xFF0169FF), // 0561A4
         ),
+
         visualDensity: VisualDensity.adaptivePlatformDensity,
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
             .copyWith(secondary: Color(0xFF222229))

@@ -141,7 +141,8 @@ class _SelectElementAttributePageState
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: TextStyle(color: Colors.white, fontSize: 22),
+        style:
+            TextStyle(color: Colors.white, fontSize: Get.textScaleFactor * 22),
       ),
     );
   }

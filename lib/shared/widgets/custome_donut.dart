@@ -10,11 +10,13 @@ class DonutChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double checkedVal = (value != null && value! > total) ? 100 : total;
+
     return Container(
       height: Get.size.width * 0.28,
       child: SleekCircularSlider(
         min: 0,
-        max: total ?? 50,
+        max: checkedVal,
         initialValue: value ?? 0,
         appearance: CircularSliderAppearance(
           startAngle: 270,
@@ -32,7 +34,9 @@ class DonutChart extends StatelessWidget {
             child: Text(
           val.round().toString(),
           style: TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              fontSize: Get.textScaleFactor * 20,
+              fontWeight: FontWeight.bold),
         )),
       ),
     );

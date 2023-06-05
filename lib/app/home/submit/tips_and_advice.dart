@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ss_golf/shared/models/tip.dart';
 
 class TipsAndAdvice extends StatefulWidget {
@@ -37,7 +38,8 @@ class _TipsAndAdviceState extends State<TipsAndAdvice> {
       0,
       Text(
         '${tipGroup.title}',
-        style: TextStyle(color: Colors.white, fontSize: 18),
+        style:
+            TextStyle(color: Colors.white, fontSize: Get.textScaleFactor * 18),
       ),
     );
     return Container(
@@ -64,7 +66,8 @@ class _TipsAndAdviceState extends State<TipsAndAdvice> {
             child: Text(
               tip.text!,
               style: TextStyle(
-                  color: tip.checked! ? Colors.green : Colors.red, fontSize: 18),
+                  color: tip.checked! ? Colors.green : Colors.red,
+                  fontSize: Get.textScaleFactor * 18),
             ),
           ),
         ],

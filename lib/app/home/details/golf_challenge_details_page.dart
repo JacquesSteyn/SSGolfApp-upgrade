@@ -12,7 +12,8 @@ class GolfChallengeDetailsPage extends StatefulWidget {
   GolfChallengeDetailsPage({this.challenge});
 
   @override
-  _GolfChallengeDetailsPageState createState() => _GolfChallengeDetailsPageState();
+  _GolfChallengeDetailsPageState createState() =>
+      _GolfChallengeDetailsPageState();
 }
 
 class _GolfChallengeDetailsPageState extends State<GolfChallengeDetailsPage> {
@@ -69,6 +70,7 @@ class _GolfChallengeDetailsPageState extends State<GolfChallengeDetailsPage> {
           alignment: Alignment.centerLeft,
           child: ChallengeDifficultyRating(
             difficultyRating: double.parse(widget.challenge!.difficulty!),
+            ignoreGestures: true,
           ),
         ),
       ],
@@ -105,7 +107,8 @@ class _GolfChallengeDetailsPageState extends State<GolfChallengeDetailsPage> {
         PrimaryButton(
           text: 'Start',
           onPressed: () {
-            Get.toNamed(AppRoutes.golfChallengeSubmitPage, arguments: widget.challenge);
+            Get.toNamed(AppRoutes.golfChallengeSubmitPage,
+                arguments: widget.challenge);
           },
         ),
         SizedBox(height: 10),
@@ -119,7 +122,7 @@ class _GolfChallengeDetailsPageState extends State<GolfChallengeDetailsPage> {
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: TextStyle(color: Get.theme.backgroundColor, fontSize: 22),
+        style: TextStyle(color: Get.theme.colorScheme.background, fontSize: 22),
       ),
     );
   }
@@ -130,7 +133,8 @@ class _GolfChallengeDetailsPageState extends State<GolfChallengeDetailsPage> {
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: TextStyle(color: Colors.white, fontSize: 18),
+        style:
+            TextStyle(color: Colors.white, fontSize: Get.textScaleFactor * 18),
       ),
     );
   }

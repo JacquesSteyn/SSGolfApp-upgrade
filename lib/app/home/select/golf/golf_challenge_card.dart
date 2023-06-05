@@ -56,7 +56,7 @@ class _GolfChallengeCardState extends State<GolfChallengeCard> {
                             widget.challenge!.name!,
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: Get.textScaleFactor * 16,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -70,7 +70,7 @@ class _GolfChallengeCardState extends State<GolfChallengeCard> {
                               icon: Icon(
                                 Icons.info_outline,
                                 color: Colors.blue,
-                                size: 30,
+                                size: Get.textScaleFactor * 30,
                               ))
                         ],
                       ),
@@ -104,6 +104,7 @@ class _GolfChallengeCardState extends State<GolfChallengeCard> {
               showText: false,
               iconColor: Colors.white,
               difficultyRating: double.parse(widget.challenge!.difficulty!),
+              ignoreGestures: true,
             ),
           ),
 

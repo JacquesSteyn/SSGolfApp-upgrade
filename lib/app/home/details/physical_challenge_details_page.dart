@@ -71,6 +71,7 @@ class _PhysicalChallengeDetailsPageState
           alignment: Alignment.centerLeft,
           child: ChallengeDifficultyRating(
             difficultyRating: double.parse(widget.challenge!.difficulty!),
+            ignoreGestures: true,
           ),
         ),
       ],
@@ -122,7 +123,9 @@ class _PhysicalChallengeDetailsPageState
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: TextStyle(color: Get.theme.backgroundColor, fontSize: 22),
+        style: TextStyle(
+            color: Get.theme.colorScheme.background,
+            fontSize: Get.textScaleFactor * 22),
       ),
     );
   }
@@ -133,7 +136,8 @@ class _PhysicalChallengeDetailsPageState
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: TextStyle(color: Colors.white, fontSize: 18),
+        style:
+            TextStyle(color: Colors.white, fontSize: Get.textScaleFactor * 18),
       ),
     );
   }

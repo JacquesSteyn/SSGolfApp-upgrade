@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -15,9 +14,7 @@ class PrimaryButton extends StatelessWidget {
         alignment: Alignment.center,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: primary
-              ? Get.theme.backgroundColor.withOpacity(0.7)
-              : Colors.grey[800],
+          color: primary ? Color(0xFF0169FF) : Colors.grey[800],
           borderRadius: new BorderRadius.circular(18.0),
           border: Border.all(
             color: primary ? Colors.grey[300]! : Colors.grey,

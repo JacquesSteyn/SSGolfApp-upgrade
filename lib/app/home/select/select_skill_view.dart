@@ -70,7 +70,7 @@ class SelectSkillView extends ConsumerWidget {
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18),
+                    fontSize: Get.textScaleFactor * 18),
               ),
             ],
           ),

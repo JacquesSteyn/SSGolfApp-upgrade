@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ss_golf/app/home/history/challenge_result_dialog.dart';
 import 'package:ss_golf/services/utilities_service.dart';
 import 'package:ss_golf/shared/models/golf/golf_challenge_result.dart';
@@ -79,7 +80,8 @@ class _ChallengeResultCardState extends State<ChallengeResultCard> {
             widget.result!.challengeName == ''
                 ? 'Challenge Name'
                 : widget.result!.challengeName!,
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(
+                color: Colors.white, fontSize: Get.textScaleFactor * 16),
           ),
           RichText(
             text: TextSpan(
@@ -110,18 +112,18 @@ class _ChallengeResultCardState extends State<ChallengeResultCard> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Text(
-              Utilities.formatDate(
-                  DateTime.parse(widget.result!.dateTimeCreated!)),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
+          Text(
+            Utilities.formatDate(
+                DateTime.parse(widget.result!.dateTimeCreated!)),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            style: TextStyle(
+                color: Colors.white, fontSize: Get.textScaleFactor * 16),
           ),
           Center(
             child: ChallengeDifficultyRating(
               difficultyRating: double.parse(widget.result!.difficulty!),
+              ignoreGestures: true,
               reverse: true,
             ),
           ),

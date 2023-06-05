@@ -36,7 +36,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
               heading,
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: 24,
+                  fontSize: Get.textScaleFactor * 22,
                   fontWeight: FontWeight.bold),
             ),
           ),
@@ -99,7 +99,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                         'Today',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: Get.textScaleFactor * 24,
                             fontWeight: FontWeight.bold),
                       ),
                       Row(
@@ -108,7 +108,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                             'Earned',
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 12,
+                                fontSize: Get.textScaleFactor * 12,
                                 fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
@@ -118,7 +118,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                             '+',
                             style: TextStyle(
                                 color: Colors.yellow[700],
-                                fontSize: 18,
+                                fontSize: Get.textScaleFactor * 18,
                                 fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
@@ -133,7 +133,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                             total!.toStringAsFixed(2),
                             style: TextStyle(
                                 color: Colors.yellow[700],
-                                fontSize: 18,
+                                fontSize: Get.textScaleFactor * 18,
                                 fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -175,7 +175,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 18,
+                                      fontSize: Get.textScaleFactor * 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -187,7 +187,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                         '+ ' + transaction.price!.toStringAsFixed(2),
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: Get.textScaleFactor * 18,
                             fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -313,7 +313,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                         'Today',
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: Get.textScaleFactor * 24,
                             fontWeight: FontWeight.bold),
                       ),
                       Row(
@@ -322,7 +322,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                             'Spent',
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 12,
+                                fontSize: Get.textScaleFactor * 12,
                                 fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
@@ -332,7 +332,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                             '-',
                             style: TextStyle(
                                 color: Colors.yellow[700],
-                                fontSize: 18,
+                                fontSize: Get.textScaleFactor * 18,
                                 fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
@@ -347,7 +347,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                             total!.toStringAsFixed(2),
                             style: TextStyle(
                                 color: Colors.yellow[700],
-                                fontSize: 18,
+                                fontSize: Get.textScaleFactor * 18,
                                 fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -389,7 +389,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 18,
+                                      fontSize: Get.textScaleFactor * 18,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -401,7 +401,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                         '- ' + transaction.price!.toStringAsFixed(2),
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: Get.textScaleFactor * 18,
                             fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -579,7 +579,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
               maxLines: 1,
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: Get.textScaleFactor * 15,
+                  fontSize: Get.textScaleFactor * 14,
                   fontWeight: FontWeight.bold),
             ),
             Text(
@@ -587,7 +587,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
               maxLines: 1,
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: Get.textScaleFactor * 15,
+                  fontSize: Get.textScaleFactor * 14,
                   fontWeight: FontWeight.bold),
             ),
             SizedBox(
@@ -632,7 +632,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
               maxLines: 2,
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: Get.textScaleFactor * 15,
+                  fontSize: Get.textScaleFactor * 14,
                   fontWeight: FontWeight.bold),
             ),
             SizedBox(
@@ -724,7 +724,7 @@ class _TicketMainScreenState extends ConsumerState<TicketMainScreen> {
                               color: userState.plan == 'free'
                                   ? Color.fromARGB(255, 200, 183, 145)
                                   : Colors.yellow[700],
-                              fontSize: 40,
+                              fontSize: Get.textScaleFactor * 40,
                               fontWeight: FontWeight.w600),
                         ),
                       )

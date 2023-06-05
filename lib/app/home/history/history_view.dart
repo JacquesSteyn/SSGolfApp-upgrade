@@ -113,41 +113,44 @@ class HistoryView extends ConsumerWidget {
       stream: historyViewState.challengeResultsStream(userId),
       builder: (context, snap) {
         if (snap.hasData && !snap.hasError && snap.data != null) {
-          Map? rawChallengeData = (snap.data as DatabaseEvent).snapshot.value
-              as Map<Object?, dynamic>;
+          Map? rawChallengeData =
+              (snap.data as DatabaseEvent).snapshot.value as Map?;
+
           List<ChallengeResultCard> challengeCards = [];
 
-          var rawChallengeDataKeys = [];
-          rawChallengeDataKeys = rawChallengeData.keys.toList();
-          rawChallengeDataKeys.sort((a, b) => b.compareTo(a));
+          if (rawChallengeData != null) {
+            var rawChallengeDataKeys = [];
+            rawChallengeDataKeys = rawChallengeData.keys.toList();
+            rawChallengeDataKeys.sort((a, b) => b.compareTo(a));
 
-          rawChallengeDataKeys.forEach((key) {
-            if (historyViewState.difficultyFilter > -1) {
-              // GolfChallengeResult result =
-              //     GolfChallengeResult(rawChallengeData[key], key);
+            rawChallengeDataKeys.forEach((key) {
+              if (historyViewState.difficultyFilter > -1) {
+                // GolfChallengeResult result =
+                //     GolfChallengeResult(rawChallengeData[key], key);
 
-              if (double.parse(rawChallengeData[key]['difficulty']) ==
-                  historyViewState.difficultyFilter) {
+                if (double.parse(rawChallengeData[key]['difficulty']) ==
+                    historyViewState.difficultyFilter) {
+                  challengeCards.add(ChallengeResultCard(
+                    result: GolfChallengeResult(rawChallengeData[key], key),
+                  ));
+                }
+              } else {
                 challengeCards.add(ChallengeResultCard(
                   result: GolfChallengeResult(rawChallengeData[key], key),
                 ));
               }
-            } else {
-              challengeCards.add(ChallengeResultCard(
-                result: GolfChallengeResult(rawChallengeData[key], key),
-              ));
-            }
-          });
-
-          // only call setstate after build method is complete
-          if (challengeCards.length != historyViewState.totalResults) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              print('Post frame ${challengeCards.length}');
-              historyViewState.setTotalResults(challengeCards.length);
             });
+
+            // only call setstate after build method is complete
+            if (challengeCards.length != historyViewState.totalResults) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                print('Post frame ${challengeCards.length}');
+                historyViewState.setTotalResults(challengeCards.length);
+              });
+            }
           }
 
-          if (challengeCards.length == 0) {
+          if (rawChallengeData == null || challengeCards.length == 0) {
             return Center(
               child: Text(
                 'No completed challenges yet.',

@@ -63,10 +63,12 @@ class _GolfSubmitPageState extends State<GolfSubmitPage> {
                   color: name == activeHandicap ? Colors.green : Colors.white),
               borderRadius: BorderRadius.circular(200)),
           child: Center(
-            child: Text(
-              name,
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            child: FittedBox(
+              child: Text(
+                name,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ),

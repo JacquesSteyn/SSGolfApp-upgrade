@@ -72,7 +72,8 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
             Flexible(
               child: Text(
                 widget.challenge!.name!,
-                style: TextStyle(color: Colors.white, fontSize: 14),
+                style: TextStyle(
+                    color: Colors.white, fontSize: Get.textScaleFactor * 14),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -86,8 +87,9 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
             child: FittedBox(
               child: Text(
                 'Duration: ${widget.challenge!.duration}',
-                style:
-                    TextStyle(color: Get.theme.backgroundColor, fontSize: 14),
+                style: TextStyle(
+                    color: Get.theme.colorScheme.background,
+                    fontSize: Get.textScaleFactor * 14),
               ),
             ),
           ),
@@ -104,6 +106,7 @@ class _PhysicalChallengeCardState extends State<PhysicalChallengeCard> {
           iconColor: Colors.white,
           showText: false,
           difficultyRating: double.parse(widget.challenge!.difficulty!),
+          ignoreGestures: true,
         ),
         IconButton(
             onPressed: () => showSheet(),

@@ -49,14 +49,16 @@ class _InstructionsState extends State<Instructions> {
         children: [
           Icon(
             Icons.location_searching,
-            color: Get.theme.backgroundColor,
+            color: Get.theme.colorScheme.background,
             size: 18,
           ),
           SizedBox(width: 10),
           Flexible(
             child: Text(
               text,
-              style: TextStyle(color: Get.theme.backgroundColor, fontSize: 22),
+              style: TextStyle(
+                  color: Get.theme.colorScheme.background,
+                  fontSize: Get.textScaleFactor * 20),
             ),
           ),
         ],
@@ -72,13 +74,15 @@ class _InstructionsState extends State<Instructions> {
         children: [
           Text(
             bulletNumber,
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: TextStyle(
+                color: Colors.white, fontSize: Get.textScaleFactor * 16),
           ),
           SizedBox(width: 10),
           Flexible(
             child: Text(
               text,
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(
+                  color: Colors.white, fontSize: Get.textScaleFactor * 16),
             ),
           ),
         ],

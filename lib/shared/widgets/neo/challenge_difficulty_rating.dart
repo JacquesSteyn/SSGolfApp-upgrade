@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:get/get.dart';
 
 class ChallengeDifficultyRating extends StatefulWidget {
   const ChallengeDifficultyRating(
@@ -7,12 +8,14 @@ class ChallengeDifficultyRating extends StatefulWidget {
       this.difficultyRating = 0,
       this.reverse = false,
       this.showText = true,
-      this.iconColor = Colors.amber})
+      this.iconColor = Colors.amber,
+      required this.ignoreGestures})
       : super(key: key);
   final double difficultyRating;
   final bool reverse;
   final bool showText;
   final Color iconColor;
+  final bool ignoreGestures;
 
   @override
   _ChallengeDifficultyRatingState createState() =>
@@ -57,7 +60,8 @@ class _ChallengeDifficultyRatingState extends State<ChallengeDifficultyRating> {
           minRating: 0,
           allowHalfRating: true,
           itemCount: 5,
-          itemSize: 18,
+          itemSize: Get.textScaleFactor * 18,
+          ignoreGestures: widget.ignoreGestures,
           unratedColor: Colors.grey,
           itemBuilder: (context, _) =>
               Icon(Icons.star, color: widget.iconColor),
