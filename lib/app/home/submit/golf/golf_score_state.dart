@@ -164,73 +164,125 @@ class ScoreState extends ChangeNotifier {
   }
 
   double _calculateChallengeScorePercentage(GolfChallenge challenge) {
-    // print('\n\n==================================== CHALLENGE RESULT SCORE: ${challenge.name}\n\n');
-
-    // ** 1. Total points from each elements contribution
-    int totalPoints = 0;
-    challenge.weightings.weightings!
-        .forEach((value) => totalPoints = totalPoints + value.weight!);
-    // print('Challenge weightings: ' + challenge.weightings.getJson().toString());
-    // print('\nChallenge weightings total: ' + totalPoints.toString());
-
-    // ** 2. Additive total and division factor
     double score = 0;
-    int divisionFactor = 0;
-    double _maxScore = 0;
+
     inputResults!.forEach((inputResult) {
       if (inputResult.type == 'score') {
         score = score + inputResult.selectedScore;
-        divisionFactor++;
-        // find max score - this is not ideal but works
-        int userInputIndex =
-            userInputs!.indexWhere((input) => input.name == inputResult.name);
-        _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
       } else if (inputResult.type == 'inverted-score') {
-        // find max score - this is not ideal but works
         int userInputIndex =
             userInputs!.indexWhere((input) => input.name == inputResult.name);
-        _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
+        double _maxScore = userInputs![userInputIndex].maxScore;
 
         //create the inverse of the score
         score = score + (_maxScore - inputResult.selectedScore);
-        divisionFactor++;
       } else if (inputResult.type == 'select-score') {
         score = score + inputResult.selectedOption.score;
-        divisionFactor++;
-        // TODO: find max score - this is not ideal but works
-        int userInputIndex =
-            userInputs!.indexWhere((input) => input.name == inputResult.name);
-        double maxScoreForOptions =
-            userInputs![userInputIndex].selectionOptions.last.score;
-        // .reduce<int>((a, b) => a.score > b.score ? a.score : b.score);
-        _maxScore = _maxScore + maxScoreForOptions;
       }
     });
 
-    score = score / divisionFactor;
-    _maxScore = _maxScore / divisionFactor;
-
-    // ** 3. Achieved score * total points
-    double points = (score / _maxScore) * totalPoints;
-
-    if (challenge.benchmarks.threshold != null &&
-        challenge.benchmarks.threshold.toDouble() > 0) {
-      if (score >= challenge.benchmarks.threshold.toDouble()) {
-        points = (_maxScore / _maxScore) * totalPoints;
+    print("Challenge original score: $score");
+    double threshold = challenge.benchmarks.threshold.toDouble();
+    if (threshold > 0) {
+      print("Challenge Threshold: $threshold");
+      if (score < threshold) {
+        score = score / threshold;
+        print("Challenge Points >= threshold: $score");
+      } else {
+        score = threshold / threshold;
       }
     }
 
-    // ** 4. Adjusted points (times by difficulty)
     double difficulty = double.parse(challenge.difficulty!);
-    double adjustedPoints = points * (difficulty / 5);
+    double adjustedPoints = score * (difficulty / 5);
 
-    // ** 5. GolfChallenge score as percentage
-    double _calculatedScorePercentage = ((adjustedPoints / totalPoints) * 100);
-
+    print("Challenge difficulty: $difficulty");
+    double _calculatedScorePercentage = (adjustedPoints * 100);
     print(
         '\n*** CHALLENGE PERCENTAGE: ' + _calculatedScorePercentage.toString());
     return _calculatedScorePercentage;
   }
+
+  // double _calculateChallengeScorePercentage(GolfChallenge challenge) {
+  //   // print('\n\n==================================== CHALLENGE RESULT SCORE: ${challenge.name}\n\n');
+
+  //   // ** 1. Total points from each elements contribution
+  //   //int totalPoints = 0;
+  //   // challenge.weightings.weightings!
+  //   //     .forEach((value) => totalPoints = totalPoints + value.weight!);
+
+  //   // ** 2. Additive total and division factor
+  //   double score = 0;
+  //   int divisionFactor = 0;
+  //   double _maxScore = 0;
+  //   inputResults!.forEach((inputResult) {
+  //     if (inputResult.type == 'score') {
+  //       score = score + inputResult.selectedScore;
+  //       divisionFactor++;
+  //       // find max score - this is not ideal but works
+  //       int userInputIndex =
+  //           userInputs!.indexWhere((input) => input.name == inputResult.name);
+  //       _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
+  //     } else if (inputResult.type == 'inverted-score') {
+  //       // find max score - this is not ideal but works
+  //       int userInputIndex =
+  //           userInputs!.indexWhere((input) => input.name == inputResult.name);
+  //       _maxScore = _maxScore + userInputs![userInputIndex].maxScore;
+
+  //       //create the inverse of the score
+  //       score = score + (_maxScore - inputResult.selectedScore);
+  //       divisionFactor++;
+  //     } else if (inputResult.type == 'select-score') {
+  //       score = score + inputResult.selectedOption.score;
+  //       divisionFactor++;
+  //       // TODO: find max score - this is not ideal but works
+  //       int userInputIndex =
+  //           userInputs!.indexWhere((input) => input.name == inputResult.name);
+  //       double maxScoreForOptions =
+  //           userInputs![userInputIndex].selectionOptions.last.score;
+  //       // .reduce<int>((a, b) => a.score > b.score ? a.score : b.score);
+  //       _maxScore = _maxScore + maxScoreForOptions;
+  //     }
+  //   });
+
+  //   print("Challenge original score: $score");
+
+  //   score = score / divisionFactor;
+  //   _maxScore = _maxScore / divisionFactor;
+
+  //   print("Challenge after score: $score");
+  //   print("Challenge max score: $_maxScore");
+
+  //   // ** 3. Achieved score * total points
+  //   //double points = (score / _maxScore) * totalPoints;
+  //   double points = (score / _maxScore) * 100;
+  //   double threshold = challenge.benchmarks.threshold.toDouble();
+
+  //   print("Challenge Points: $points");
+  //   if (threshold > 0) {
+  //     print("Challenge Threshold: $threshold");
+  //     if (score >= threshold) {
+  //       //points = (_maxScore / _maxScore) * totalPoints;
+  //       points = (_maxScore / _maxScore) * 100;
+  //       print("Challenge Points < threshold: $points");
+  //     }
+  //   }
+
+  //   // ** 4. Adjusted points (times by difficulty)
+  //   double difficulty = double.parse(challenge.difficulty!);
+  //   double adjustedPoints = points * (difficulty / 5);
+
+  //   print("Challenge difficulty: $difficulty");
+  //   //print("Challenge total points: $totalPoints");
+
+  //   // ** 5. GolfChallenge score as percentage
+  //   //double _calculatedScorePercentage = ((adjustedPoints / totalPoints) * 100);
+  //   double _calculatedScorePercentage = (adjustedPoints * 100);
+
+  //   print(
+  //       '\n*** CHALLENGE PERCENTAGE: ' + _calculatedScorePercentage.toString());
+  //   return _calculatedScorePercentage;
+  // }
 
   _updateElementsAndSkillScores(
     String userId,
@@ -386,7 +438,8 @@ class ScoreState extends ChangeNotifier {
                     previousResult.elementContributions![0].percentage]!
                 .add(previousResult.percentage);
           } else {
-            filteredPreviousElementScores[previousResult.elementContributions![0]
+            filteredPreviousElementScores[previousResult
+                .elementContributions![0]
                 .percentage] = [previousResult.percentage];
           }
         });
